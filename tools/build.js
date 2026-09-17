@@ -16,7 +16,10 @@ const Post = sandbox.window.FloweriePost;
 
 const dataPath = path.join(ROOT, "posts.json");
 const data = JSON.parse(fs.readFileSync(dataPath, "utf8"));
-const posts = (data.posts || []).slice().sort(function (a, b) { return (b.date || "").localeCompare(a.date || ""); });
+const posts = (data.posts || []).slice().sort(function (a, b) {
+  if (a.created && b.created && a.created !== b.created) return b.created - a.created;
+  return (b.date || "").localeCompare(a.date || "");
+});
 
 let changed = 0;
 posts.forEach(function (p, i) {
@@ -62,8 +65,8 @@ const lines = ["<?xml version=\"1.0\" encoding=\"utf-8\"?>",
 posts.forEach(function (p) {
   lines.push("  <entry>",
     "    <title>" + esc(p.title) + "</title>",
-    "    <link href=\"https://lingcat521.github.io/posts/" + p.slug + "/\"/>",
-    "    <id>https://lingcat521.github.io/posts/" + p.slug + "/</id>",
+    "    <link href=\"https://lingcat521.github.io/posts/\" + encodeURIComponent(p.slug) + \"/\"/>",
+    "    <id>https://lingcat521.github.io/posts/" + encodeURIComponent(p.slug) + "/</id>",
     "    <updated>" + (p.date || "") + "T12:00:00+08:00</updated>",
     "    <summary>" + esc(p.summary || "") + "</summary>",
     "  </entry>");

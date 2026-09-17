@@ -96,8 +96,8 @@
     var items = posts.slice().sort(function (a, b) { return (b.date || "").localeCompare(a.date || ""); }).map(function (p) {
       return ["  <entry>",
         "    <title>" + esc(p.title) + "</title>",
-        "    <link href=\"https://lingcat521.github.io/posts/" + p.slug + "/\"/>",
-        "    <id>https://lingcat521.github.io/posts/" + p.slug + "/</id>",
+        "    <link href=\"https://lingcat521.github.io/posts/\" + encodeURIComponent(p.slug) + \"/\"/>",
+        "    <id>https://lingcat521.github.io/posts/" + encodeURIComponent(p.slug) + "/</id>",
         "    <updated>" + (p.date || "") + "T12:00:00+08:00</updated>",
         "    <summary>" + esc(p.summary || "") + "</summary>",
         "  </entry>"].join("\n");
@@ -114,10 +114,15 @@
 
   /* ---------- 编辑器 ---------- */
   function toSlug(s) {
-    return String(s).toLowerCase().trim()
+    /* 保留中文（同参考站做法），只去掉不适合放进网址的符号 */
+    var t = String(s).toLowerCase().trim()
       .replace(/[^a-z0-9\u4e00-\u9fa5]+/g, "-")
-      .replace(/[\u4e00-\u9fa5]/g, "")
-      .replace(/^-+|-+$/g, "").replace(/-{2,}/g, "-") || "post-" + Date.now().toString(36);
+      .replace(/^-+|-+$/g, "")
+      .replace(/-{2,}/g, "-");
+    if (!t || t.length > 40) {
+      t = "post-" + new Date().toISOString().slice(0, 10).replace(/-/g, "") + "-" + Math.random().toString(36).slice(2, 6);
+    }
+    return t;
   }
 
   function fillForm(p, body) {
@@ -156,7 +161,7 @@
     var title = $("f-title").value.trim();
     if (!title) throw new Error("标题不能为空");
     var slug = ($("f-slug").value.trim() || toSlug(title));
-    if (!/^[a-z0-9][a-z0-9-]*$/.test(slug)) throw new Error("网址片段只能用英文小写、数字和连字符，例如 my-first-post");
+    if (!/^[a-z0-9一-龥][a-z0-9\-一-龥]*$/.test(slug)) throw new Error("网址片段只能用中文、英文小写、数字和连字符（例如 my-first-post 或 我的第一篇）");
     var date = $("f-date").value || new Date().toISOString().slice(0, 10);
     var tags = $("f-tags").value.split(/[,，]/).map(function (s) { return s.trim(); }).filter(Boolean);
     var summary = $("f-summary").value.trim();
@@ -192,8 +197,10 @@
     try { d = collect(); } catch (e) { say(e.message, "err"); return; }
     if (!tok()) { say("请先填 GitHub 令牌", "err"); return; }
 
+    var prevRec = state.posts.filter(function (p) { return p.slug === d.slug; })[0] || {};
     var list = state.posts.filter(function (p) { return p.slug !== d.slug; });
     list.push({ title: d.title, slug: d.slug, date: d.date, tags: d.tags, read: 1, summary: d.summary,
+      created: prevRec.created || Date.now(),
       pinned: !!d.pinned, private: !!d.private });
     list.sort(sortByDate);
 

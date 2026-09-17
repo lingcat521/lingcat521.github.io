@@ -49,6 +49,7 @@
 
   function byDate(a, b) {
     if (!!b.pinned !== !!a.pinned) return b.pinned ? 1 : -1;
+    if (a.created && b.created && a.created !== b.created) return b.created - a.created;
     return (b.date || "").localeCompare(a.date || "");
   }
 
