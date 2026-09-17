@@ -36,6 +36,9 @@ html::after{background:url("/assets/bg.jpg") center/contain no-repeat;
   opacity:var(--bg-image-opacity);will-change:opacity}
 :root[data-theme="dark"]::before{filter:blur(28px) saturate(1.05) brightness(.5)}
 @media (prefers-color-scheme:dark){:root[data-theme="auto"]::before{filter:blur(28px) saturate(1.05) brightness(.5)}}
+/* ③ 轻度蒙版：夹在背景与内容之间。浅色主题提亮、深色主题压暗，两边都让文字更好读 */
+body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:linear-gradient(color-mix(in srgb,var(--bg) 32%,transparent),color-mix(in srgb,var(--bg) 46%,transparent))}
 /* 内容必须抬到两层背景之上（背景层是 z-index:0 的定位元素） */
 .site-header,main,.site-footer{position:relative;z-index:1}
 /* 宽屏：清晰的那层靠右放，人物从内容栏旁边露出来（内容栏居中，约 700px） */
