@@ -34,6 +34,18 @@
       "summary": "免费、自带 HTTPS、能绑自己的域名。但它只能跑静态文件——这一点决定了什么能挂上去、什么不能。"
     },
     {
+      "title": "随便写写…",
+      "slug": "post-mu5upy6g",
+      "date": "2026-09-17",
+      "tags": [
+        "随笔"
+      ],
+      "read": 1,
+      "summary": "咱也不知道这是什么（",
+      "pinned": false,
+      "private": false
+    },
+    {
       "slug": "zero-js-webui",
       "title": "我为什么给机器人的后台加上「零 JavaScript」这条铁律",
       "date": "2026-09-16",
