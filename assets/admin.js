@@ -163,31 +163,52 @@
     return { title: title, slug: slug, date: date, tags: tags, summary: summary, body: body };
   }
 
+  function sortByDate(a, b) { return (b.date || "").localeCompare(a.date || ""); }
+
+  /* 读取某篇的 Markdown 源（已在编辑器里的那篇直接用当前内容） */
+  function readSource(p, edited) {
+    if (edited && p.slug === edited.slug) return Promise.resolve(edited.body);
+    return fetch(RAW + "posts/" + p.slug + "/post.md?v=" + Date.now())
+      .then(function (r) { return r.ok ? r.text() : null; })
+      .catch(function () { return null; });
+  }
+
   function save() {
     var d;
     try { d = collect(); } catch (e) { say(e.message, "err"); return; }
     if (!tok()) { say("请先填 GitHub 令牌", "err"); return; }
-    var read = window.FlowerieMD.readMinutes(d.body);
-    var bodyHtml = window.FlowerieMD.render(d.body);
-    var meta = { title: d.title, slug: d.slug, date: d.date, tags: d.tags, read: read, summary: d.summary };
+
     var list = state.posts.filter(function (p) { return p.slug !== d.slug; });
-    list.push(meta);
-    var nb = neighbours(d.slug);
-    var pageHtml = window.FloweriePost.postPage(meta, bodyHtml, nb.prev, nb.next);
-    var files = [
-      { path: "posts/" + d.slug + "/post.md", content: d.body },
-      { path: "posts/" + d.slug + "/index.html", content: pageHtml },
-      { path: "posts.json", content: JSON.stringify({ posts: list }, null, 2) + "\n" },
-      { path: "atom.xml", content: atom(list) }
-    ];
-    say("正在提交到 GitHub…", "");
+    list.push({ title: d.title, slug: d.slug, date: d.date, tags: d.tags, read: 1, summary: d.summary });
+    list.sort(sortByDate);
+
+    say("正在收集各篇源文件…", "");
     $("btn-save").disabled = true;
-    commitFiles(files, (state.editing ? "post: 更新《" + d.title + "》" : "post: 新增《" + d.title + "》") + "（站内后台）")
-      .then(function (c) {
-        state.posts = list;
-        state.editing = d.slug;
-        renderList();
-        say("✅ 已提交 " + c.sha.slice(0, 7) + "，Pages 约 1 分钟后生效：" + d.slug, "ok");
+
+    Promise.all(list.map(function (p) { return readSource(p, d); }))
+      .then(function (sources) {
+        /* 重算阅读时长，并重新生成每一篇（这样相邻文章的「上一篇/下一篇」永远是对的） */
+        var files = [{ path: "posts/" + d.slug + "/post.md", content: d.body }];
+        list.forEach(function (p, i) {
+          var src = sources[i];
+          if (src == null) return;                       /* 没有源文件就不动它的页面 */
+          p.read = window.FlowerieMD.readMinutes(src);
+          files.push({
+            path: "posts/" + p.slug + "/index.html",
+            content: window.FloweriePost.postPage(p, window.FlowerieMD.render(src), list[i + 1] || null, list[i - 1] || null)
+          });
+        });
+        files.push({ path: "posts.json", content: JSON.stringify({ posts: list }, null, 2) + "\n" });
+        files.push({ path: "atom.xml", content: atom(list) });
+
+        say("正在提交 " + files.length + " 个文件到 GitHub…", "");
+        return commitFiles(files, (state.editing ? "post: 更新《" + d.title + "》" : "post: 新增《" + d.title + "》") + "（站内后台）")
+          .then(function (c) {
+            state.posts = list;
+            state.editing = d.slug;
+            renderList();
+            say("✅ 已提交 " + c.sha.slice(0, 7) + "（含 " + files.length + " 个文件），Pages 约 1 分钟后生效", "ok");
+          });
       })
       .catch(function (e) { say("提交失败：" + e.message, "err"); })
       .then(function () { $("btn-save").disabled = false; });
