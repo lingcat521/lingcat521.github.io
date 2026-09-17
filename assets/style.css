@@ -25,13 +25,24 @@
   }
 }
 *{box-sizing:border-box}
-html{scroll-behavior:smooth;
-  /* 整页背景图放在根元素上：任何内容都不可能遮住它（负 z-index 的伪元素方案在部分浏览器上会失效）
-     图片上面盖一层同底色蒙版，蒙版 alpha = 1 - 背景图不透明度，所以滑块越大图越清楚 */
-  background-color:var(--bg);
-  background-image:linear-gradient(rgba(var(--bg-rgb),calc(1 - var(--bg-image-opacity))),rgba(var(--bg-rgb),calc(1 - var(--bg-image-opacity)))),url("/assets/bg.jpg");
-  background-position:center,center;background-size:cover,cover;
-  background-repeat:no-repeat,no-repeat;background-attachment:fixed,fixed}
+html{scroll-behavior:smooth;background-color:var(--bg)}
+/* 背景分两层，解决「竖图 vs 横屏」的比例问题：
+   ① 模糊铺底（cover）：任何屏幕都填满，且看不出拉伸
+   ② 清晰前景（contain）：完整显示整张图、不裁切也不放大 —— 所以不糊 */
+html::before,html::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:0}
+html::before{background:url("/assets/bg.jpg") center/cover no-repeat;
+  filter:blur(28px) saturate(1.12) brightness(.96);transform:scale(1.18)}
+html::after{background:url("/assets/bg.jpg") center/contain no-repeat;
+  opacity:var(--bg-image-opacity);will-change:opacity}
+:root[data-theme="dark"]::before{filter:blur(28px) saturate(1.05) brightness(.5)}
+@media (prefers-color-scheme:dark){:root[data-theme="auto"]::before{filter:blur(28px) saturate(1.05) brightness(.5)}}
+/* 内容必须抬到两层背景之上（背景层是 z-index:0 的定位元素） */
+.site-header,main,.site-footer{position:relative;z-index:1}
+/* 宽屏：清晰的那层靠右放，人物从内容栏旁边露出来（内容栏居中，约 700px） */
+@media (min-width:1100px){
+  html::after{background-position:right center}
+  html::before{background-position:right center}
+}
 
 @supports (background:color-mix(in srgb,red 50%,transparent)){
   /* 三个主题选择器都列上，否则深色/跟随系统的 rgba 兜底会因优先级更高而覆盖掉（后台滑块就失效了） */
