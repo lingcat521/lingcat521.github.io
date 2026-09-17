@@ -1,10 +1,13 @@
 <!doctype html>
-<html lang="zh-CN" data-theme="auto">
+<html lang="zh-CN" data-theme="auto" data-post-slug="hello-world">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>开站：第三遍造轮子，这次造自己的 · 铃樱の小站</title>
 <meta name="description" content="折腾过很多次博客，这次决定不再搬家——手写 HTML/CSS/JS，零依赖零构建，扔到 GitHub Pages 上就完事。">
+<meta property="og:title" content="开站：第三遍造轮子，这次造自己的 · 铃樱の小站">
+<meta property="og:description" content="折腾过很多次博客，这次决定不再搬家——手写 HTML/CSS/JS，零依赖零构建，扔到 GitHub Pages 上就完事。">
+<meta property="og:type" content="article">
 <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="/assets/style.css">
 <link rel="alternate" type="application/atom+xml" title="铃樱の小站" href="/atom.xml">
@@ -21,10 +24,13 @@
 <main class="wrap fade-in">
 <article class="post">
 <header>
+
 <h1>开站：第三遍造轮子，这次造自己的</h1>
 <div class="meta"><span>2026-09-17</span><span>·</span><span>约 1 分钟</span>
-<a class="tag" href="/tags/">#随笔</a><a class="tag" href="/tags/">#建站</a>
-</div></header>
+<a class="tag" href="/tags/?tag=%E9%9A%8F%E7%AC%94">#随笔</a><a class="tag" href="/tags/?tag=%E5%BB%BA%E7%AB%99">#建站</a>
+</div>
+<div class="post-extras" id="post-extras"></div>
+</header>
 <div class="toc" id="toc"><strong>目录</strong></div>
 <div class="content">
 <p>折腾博客这件事，我大概已经干过三回了。第一回用现成的博客程序，第二回换了静态生成器，每一回都死在同一个地方：<strong>主题改不动</strong>，或者改完之后一升级就全没了。</p>
@@ -51,12 +57,14 @@
 <blockquote><p>这个小站的每一行代码我都能解释清楚——折腾这么多年，这大概是我最想要的东西。</p></blockquote>
 </div>
 </article>
+<div id="post-below"></div>
 <div class="post-nav"><a href="/posts/flowerie-bot/">← 花璃：一个 DeepSeek 驱动的 QQ 群聊机器人</a><span></span></div>
 </main>
 <footer class="site-footer"><div class="wrap">© 2026 铃樱 · <a href="/atom.xml">RSS</a> · 
 <a href="https://github.com/lingcat521" target="_blank" rel="noopener">GitHub</a> · 托管于 GitHub Pages · 手写 HTML/CSS/JS，零依赖</div></footer>
 <button id="to-top" type="button" aria-label="回到顶部">↑</button>
 <script src="/assets/app.js" defer></script>
+<script src="/assets/extras.js" defer></script>
 
 </body>
 </html>

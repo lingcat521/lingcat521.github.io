@@ -1,0 +1,25 @@
+{
+  "appearance": {
+    "cardAlpha": 0.5,
+    "bgImageOpacity": 0.5,
+    "cardBlur": "12px"
+  },
+  "views": {
+    "provider": "busuanzi",
+    "endpoint": ""
+  },
+  "comments": {
+    "provider": "none",
+    "repo": "",
+    "repoId": "",
+    "category": "",
+    "categoryId": "",
+    "reactions": true,
+    "inputPosition": "top"
+  },
+  "features": {
+    "device": true,
+    "share": true,
+    "like": true
+  }
+}

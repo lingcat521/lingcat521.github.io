@@ -1,10 +1,13 @@
 <!doctype html>
-<html lang="zh-CN" data-theme="auto">
+<html lang="zh-CN" data-theme="auto" data-post-slug="zero-js-webui">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>我为什么给机器人的后台加上「零 JavaScript」这条铁律 · 铃樱の小站</title>
 <meta name="description" content="不是反技术，是被现实教做人了：手机上打不开、白屏、脚本报错、旧浏览器不支持……服务端渲染全都解决了。">
+<meta property="og:title" content="我为什么给机器人的后台加上「零 JavaScript」这条铁律 · 铃樱の小站">
+<meta property="og:description" content="不是反技术，是被现实教做人了：手机上打不开、白屏、脚本报错、旧浏览器不支持……服务端渲染全都解决了。">
+<meta property="og:type" content="article">
 <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="/assets/style.css">
 <link rel="alternate" type="application/atom+xml" title="铃樱の小站" href="/atom.xml">
@@ -21,10 +24,13 @@
 <main class="wrap fade-in">
 <article class="post">
 <header>
+
 <h1>我为什么给机器人的后台加上「零 JavaScript」这条铁律</h1>
 <div class="meta"><span>2026-09-16</span><span>·</span><span>约 1 分钟</span>
-<a class="tag" href="/tags/">#建站</a><a class="tag" href="/tags/">#随笔</a>
-</div></header>
+<a class="tag" href="/tags/?tag=%E5%BB%BA%E7%AB%99">#建站</a><a class="tag" href="/tags/?tag=%E9%9A%8F%E7%AC%94">#随笔</a>
+</div>
+<div class="post-extras" id="post-extras"></div>
+</header>
 <div class="toc" id="toc"><strong>目录</strong></div>
 <div class="content">
 <p>给花璃做管理后台的时候，我给自己定了一条很硬的规矩：<strong>这个后台里不允许出现 JavaScript</strong>。</p>
@@ -49,12 +55,14 @@
 <p>所以我的标准从来不是「不许用 JS」，而是：<strong>JS 挂掉之后，核心内容还能不能用</strong>。能用，那就随便加。</p>
 </div>
 </article>
+<div id="post-below"></div>
 <div class="post-nav"><span></span><a href="/posts/github-pages/">用 GitHub Pages 挂个人站：能做与不能做 →</a></div>
 </main>
 <footer class="site-footer"><div class="wrap">© 2026 铃樱 · <a href="/atom.xml">RSS</a> · 
 <a href="https://github.com/lingcat521" target="_blank" rel="noopener">GitHub</a> · 托管于 GitHub Pages · 手写 HTML/CSS/JS，零依赖</div></footer>
 <button id="to-top" type="button" aria-label="回到顶部">↑</button>
 <script src="/assets/app.js" defer></script>
+<script src="/assets/extras.js" defer></script>
 
 </body>
 </html>

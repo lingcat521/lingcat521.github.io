@@ -127,6 +127,8 @@
     $("f-tags").value = p ? (p.tags || []).join(", ") : "";
     $("f-summary").value = p ? (p.summary || "") : "";
     $("f-body").value = body || "";
+    $("f-pinned").checked = !!(p && p.pinned);
+    $("f-private").checked = !!(p && p.private);
     state.editing = p ? p.slug : null;
     $("editor-title").textContent = p ? "编辑文章：" + p.title : "新建文章";
     $("btn-delete").style.display = p ? "" : "none";
@@ -160,7 +162,8 @@
     var summary = $("f-summary").value.trim();
     var body = $("f-body").value;
     if (!body.trim()) throw new Error("正文不能为空");
-    return { title: title, slug: slug, date: date, tags: tags, summary: summary, body: body };
+    return { title: title, slug: slug, date: date, tags: tags, summary: summary, body: body,
+      pinned: $("f-pinned").checked, private: $("f-private").checked };
   }
 
   function sortByDate(a, b) { return (b.date || "").localeCompare(a.date || ""); }
@@ -179,7 +182,8 @@
     if (!tok()) { say("请先填 GitHub 令牌", "err"); return; }
 
     var list = state.posts.filter(function (p) { return p.slug !== d.slug; });
-    list.push({ title: d.title, slug: d.slug, date: d.date, tags: d.tags, read: 1, summary: d.summary });
+    list.push({ title: d.title, slug: d.slug, date: d.date, tags: d.tags, read: 1, summary: d.summary,
+      pinned: !!d.pinned, private: !!d.private });
     list.sort(sortByDate);
 
     say("正在收集各篇源文件…", "");
@@ -231,6 +235,74 @@
       .catch(function (e) { say("删除失败：" + e.message, "err"); });
   }
 
+  /* ---------- 站点设置（site.json）---------- */
+  function siteStatus(msg, kind) {
+    var e = $("site-status");
+    if (!e) return;
+    e.textContent = msg;
+    e.className = "admin-status" + (kind ? " " + kind : "");
+  }
+
+  function pct(v) { return Math.round((v == null ? 0.5 : v) * 100); }
+
+  function fillSite(c) {
+    c = c || {};
+    var a = c.appearance || {};
+    if (!$("s-card")) return;
+    $("s-card").value = pct(a.cardAlpha);
+    $("s-bg").value = pct(a.bgImageOpacity);
+    $("v-card").textContent = pct(a.cardAlpha) + "%";
+    $("v-bg").textContent = pct(a.bgImageOpacity) + "%";
+    $("s-blur").value = a.cardBlur || "12px";
+    $("s-views").value = (c.views && c.views.provider) || "none";
+    $("s-views-endpoint").value = (c.views && c.views.endpoint) || "";
+    $("s-comments").value = (c.comments && c.comments.provider) || "none";
+    $("s-c-repo").value = (c.comments && c.comments.repo) || "";
+    $("s-c-repoid").value = (c.comments && c.comments.repoId) || "";
+    $("s-c-catid").value = (c.comments && c.comments.categoryId) || "";
+  }
+
+  function loadSite() {
+    return fetch(RAW + "site.json?v=" + Date.now())
+      .then(function (r) { return r.ok ? r.json() : {}; })
+      .then(function (d) { fillSite(d); return d; })
+      .catch(function () { fillSite({}); });
+  }
+
+  function saveSite() {
+    if (!tok()) { siteStatus("请先填 GitHub 令牌", "err"); return; }
+    var cfg = {
+      appearance: {
+        cardAlpha: Number($("s-card").value) / 100,
+        bgImageOpacity: Number($("s-bg").value) / 100,
+        cardBlur: $("s-blur").value.trim() || "12px"
+      },
+      views: { provider: $("s-views").value, endpoint: $("s-views-endpoint").value.trim() },
+      comments: {
+        provider: $("s-comments").value,
+        repo: $("s-c-repo").value.trim(),
+        repoId: $("s-c-repoid").value.trim(),
+        category: "Announcements",
+        categoryId: $("s-c-catid").value.trim(),
+        reactions: true,
+        inputPosition: "top"
+      },
+      features: { device: true, share: true, like: true }
+    };
+    siteStatus("正在保存…", "");
+    commitFiles([{ path: "site.json", content: JSON.stringify(cfg, null, 2) + "\n" }], "chore: 更新站点设置（站内后台）")
+      .then(function (c) { siteStatus("✅ 已保存 " + c.sha.slice(0, 7) + "，刷新页面即生效", "ok"); })
+      .catch(function (e) { siteStatus("保存失败：" + e.message, "err"); });
+  }
+
+  function bindSite() {
+    if (!$("btn-save-site")) return;
+    $("btn-save-site").addEventListener("click", saveSite);
+    $("btn-load-site").addEventListener("click", function () { loadSite(); siteStatus("已重新载入", ""); });
+    $("s-card").addEventListener("input", function () { $("v-card").textContent = $("s-card").value + "%"; });
+    $("s-bg").addEventListener("input", function () { $("v-bg").textContent = $("s-bg").value + "%"; });
+  }
+
   function bind() {
     $("btn-save-token").addEventListener("click", function () {
       var t = $("f-token").value.trim();
@@ -262,6 +334,8 @@
     $("f-token").value = tok();
     if (tok()) say("已从本机读取到令牌（只存在你这台设备的浏览器里）", "");
     bind();
+    bindSite();
+    loadSite();
     loadPosts().then(function () { renderList(); }).catch(function (e) { say("文章列表加载失败：" + e.message, "err"); });
     fillForm(null, "");
   }

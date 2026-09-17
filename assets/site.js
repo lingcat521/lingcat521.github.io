@@ -11,7 +11,8 @@
     var hay = (p.title + " " + (p.summary || "") + " " + tags).toLowerCase();
     return [
       "<li class=\"post-card\" data-search=\"" + esc(hay) + "\" data-tags=\"" + esc((p.tags || []).join(",")) + "\">",
-      "<h3><a href=\"/posts/" + esc(p.slug) + "/\">" + esc(p.title) + "</a></h3>",
+      "<h3>" + (p.pinned ? "<span class=\"pinned-mark\" title=\"置顶\">📌 </span>" : "") +
+        "<a href=\"/posts/" + esc(p.slug) + "/\">" + esc(p.title) + "</a></h3>",
       p.summary ? "<p>" + esc(p.summary) + "</p>" : "",
       "<div class=\"meta\"><span>" + esc(p.date) + "</span><span>·</span><span>约 " + (p.read || 1) + " 分钟</span>",
       (p.tags || []).map(function (t) { return "<span class=\"tag\">#" + esc(t) + "</span>"; }).join(""),
@@ -19,7 +20,16 @@
     ].join("");
   }
 
-  function byDate(a, b) { return (b.date || "").localeCompare(a.date || ""); }
+  /* 排序：置顶优先，其余按日期倒序 */
+  function byDate(a, b) {
+    if (!!b.pinned !== !!a.pinned) return b.pinned ? 1 : -1;
+    return (b.date || "").localeCompare(a.date || "");
+  }
+
+  /* 私密文章不出现在任何列表里（但注意：文件仍在公开仓库，拿到直链可访问） */
+  function visible(posts) {
+    return posts.filter(function (p) { return !p.private; });
+  }
 
   function renderInto(el, posts) {
     if (!el) return;
@@ -81,7 +91,7 @@
     fetch("/posts.json?v=" + Date.now())
       .then(function (r) { return r.json(); })
       .then(function (data) {
-        var posts = (data.posts || []).slice().sort(byDate);
+        var posts = visible((data.posts || []).slice().sort(byDate));
         renderInto(document.getElementById("post-list"), posts);
         tagChips(posts, document.getElementById("tag-cloud"));
         /* 归档页：按年份分组 */

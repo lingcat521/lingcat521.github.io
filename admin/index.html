@@ -32,6 +32,10 @@
 .hint{color:var(--muted);font-size:.85rem;line-height:1.6}
 .preview{border:1px dashed var(--line);border-radius:12px;padding:.8rem 1rem;background:var(--bg-soft);max-height:22rem;overflow:auto}
 .chip-on{background:var(--accent);color:#fff}
+
+.check{display:flex;align-items:center;gap:.4rem;font-size:.92rem;padding:.4rem 0}
+.check input{width:auto}
+input[type=range]{width:100%;padding:0}
 </style>
 <script src="/assets/md.js" defer></script>
 <script src="/assets/post-template.js" defer></script>
@@ -78,6 +82,11 @@
 </div>
 <label class="field"><span>标签（逗号分隔）</span><input id="f-tags" type="text" placeholder="随笔, 建站"></label>
 <label class="field"><span>摘要（列表页和 RSS 显示）</span><input id="f-summary" type="text" placeholder="一句话概括这篇内容"></label>
+<div class="row2" style="align-items:center">
+<label class="check"><input id="f-pinned" type="checkbox"> 📌 置顶（列表最前面）</label>
+<label class="check"><input id="f-private" type="checkbox"> 🔒 私密（不进列表 / 归档 / 标签 / RSS）</label>
+</div>
+<p class="hint">⚠️ 私密只是「不在列表里露出」，文件仍在公开仓库中，拿到直链的人依然能看。要真正保密请勿发布敏感内容。</p>
 <label class="field"><span>正文（Markdown：## 标题 / - 列表 / **粗体** / `代码` / ```代码块```）</span>
 <textarea id="f-body" placeholder="在这里写正文…"></textarea></label>
 <div style="display:flex;gap:.5rem;flex-wrap:wrap">
@@ -89,6 +98,42 @@
 <div class="preview content" id="preview"></div>
 </section>
 </div>
+<section class="card" style="margin-top:1rem">
+<h2>③ 站点设置 <span class="hint" style="font-weight:400">（保存到 site.json，刷新即生效）</span></h2>
+<div class="row2">
+<label class="field"><span>卡片不透明度：<b id="v-card">50%</b></span>
+<input id="s-card" type="range" min="0" max="100" step="5" value="50"></label>
+<label class="field"><span>背景图不透明度：<b id="v-bg">50%</b></span>
+<input id="s-bg" type="range" min="0" max="100" step="5" value="50"></label>
+</div>
+<label class="field"><span>卡片模糊（毛玻璃强度，如 12px / 18px / 0）</span><input id="s-blur" type="text" placeholder="12px"></label>
+<div class="row2">
+<label class="field"><span>阅读量来源</span><select id="s-views">
+<option value="none">关闭</option>
+<option value="busuanzi">不蒜子（零配置，国内可用）</option>
+<option value="custom">自建接口（Cloudflare Worker 等）</option>
+</select></label>
+<label class="field"><span>自建接口地址（provider=custom 时填）</span><input id="s-views-endpoint" type="text" placeholder="https://xxx.workers.dev/views"></label>
+</div>
+<div class="row2">
+<label class="field"><span>评论服务</span><select id="s-comments">
+<option value="none">关闭</option>
+<option value="giscus">giscus（GitHub Discussions）</option>
+</select></label>
+<label class="field"><span>giscus repo（owner/name）</span><input id="s-c-repo" type="text" placeholder="lingcat521/lingcat521.github.io"></label>
+</div>
+<div class="row2">
+<label class="field"><span>giscus repoId</span><input id="s-c-repoid" type="text" placeholder="R_kgDO…"></label>
+<label class="field"><span>giscus categoryId</span><input id="s-c-catid" type="text" placeholder="DIC_kwDO…"></label>
+</div>
+<p class="hint">评论/点赞用 GitHub Discussions：先去 <a href="https://giscus.app/zh-CN" target="_blank" rel="noopener">giscus.app</a> 填仓库拿到两个 ID，
+并在仓库 Settings → General → Features 勾选 <b>Discussions</b>、安装 giscus App。配好前评论区自动隐藏。</p>
+<div style="display:flex;gap:.5rem;flex-wrap:wrap">
+<button id="btn-save-site" class="btn btn-primary" type="button">保存站点设置</button>
+<button id="btn-load-site" class="btn" type="button">重新载入</button>
+</div>
+<p class="admin-status" id="site-status"></p>
+</section>
 </main>
 <footer class="site-footer"><div class="wrap">© 2026 铃樱 · 管理后台只对持有令牌的人有效 · 页面与仓库均为公开内容</div></footer>
 <button id="to-top" type="button" aria-label="回到顶部">↑</button>

@@ -3,21 +3,26 @@
   "use strict";
   var SITE = { title: "铃樱の小站", author: "铃樱", gh: "https://github.com/lingcat521" };
 
-  function head(title, desc) {
-    return [
-      "<!doctype html>",
-      "<html lang=\"zh-CN\" data-theme=\"auto\">",
+  function head(title, desc, opts) {
+    opts = opts || {};
+    var html = ["<!doctype html>",
+      "<html lang=\"zh-CN\" data-theme=\"auto\"" + (opts.slug ? " data-post-slug=\"" + opts.slug + "\"" : "") + ">",
       "<head>",
       "<meta charset=\"utf-8\">",
       "<meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">",
       "<title>" + title + "</title>",
-      "<meta name=\"description\" content=\"" + desc + "\">",
+      "<meta name=\"description\" content=\"" + (desc || "") + "\">"];
+    if (opts.noindex) html.push("<meta name=\"robots\" content=\"noindex,nofollow\">");
+    html.push(
+      "<meta property=\"og:title\" content=\"" + title + "\">",
+      "<meta property=\"og:description\" content=\"" + (desc || "") + "\">",
+      "<meta property=\"og:type\" content=\"article\">",
       "<link rel=\"icon\" href=\"/assets/favicon.svg\" type=\"image/svg+xml\">",
       "<link rel=\"stylesheet\" href=\"/assets/style.css\">",
       "<link rel=\"alternate\" type=\"application/atom+xml\" title=\"" + SITE.title + "\" href=\"/atom.xml\">",
       "<script>(function(){try{var t=localStorage.getItem(\"theme\")||\"auto\";document.documentElement.setAttribute(\"data-theme\",t);}catch(e){}})();</script>",
-      "</head>"
-    ].join("\n");
+      "</head>");
+    return html.join("\n");
   }
 
   function shell(main, extraScript) {
@@ -37,6 +42,7 @@
       "<a href=\"" + SITE.gh + "\" target=\"_blank\" rel=\"noopener\">GitHub</a> · 托管于 GitHub Pages · 手写 HTML/CSS/JS，零依赖</div></footer>",
       "<button id=\"to-top\" type=\"button\" aria-label=\"回到顶部\">↑</button>",
       "<script src=\"/assets/app.js\" defer></script>",
+      "<script src=\"/assets/extras.js\" defer></script>",
       (extraScript || ""),
       "</body>",
       "</html>",
@@ -44,11 +50,14 @@
     ].join("\n");
   }
 
-  /* meta: {title, date, tags, read, summary}, bodyHtml: 已渲染正文 */
+  /* meta: {title, slug, date, tags, read, summary, pinned, private} */
   function postPage(meta, bodyHtml, prev, next) {
     var tagHtml = (meta.tags || []).map(function (t) {
-      return "<a class=\"tag\" href=\"/tags/\">#" + t + "</a>";
+      return "<a class=\"tag\" href=\"/tags/?tag=" + encodeURIComponent(t) + "\">#" + t + "</a>";
     }).join("");
+    var badges = "";
+    if (meta.pinned) badges += "<span class=\"badge\">📌 置顶</span>";
+    if (meta.private) badges += "<span class=\"badge badge-private\">🔒 私密</span>";
     var nav = [
       "<div class=\"post-nav\">",
       prev ? "<a href=\"/posts/" + prev.slug + "/\">← " + prev.title + "</a>" : "<span></span>",
@@ -58,18 +67,22 @@
     var main = [
       "<article class=\"post\">",
       "<header>",
+      badges,
       "<h1>" + meta.title + "</h1>",
       "<div class=\"meta\"><span>" + meta.date + "</span><span>·</span><span>约 " + (meta.read || 1) + " 分钟</span>",
       tagHtml,
-      "</div></header>",
+      "</div>",
+      "<div class=\"post-extras\" id=\"post-extras\"></div>",
+      "</header>",
       "<div class=\"toc\" id=\"toc\"><strong>目录</strong></div>",
       "<div class=\"content\">",
       bodyHtml,
       "</div>",
       "</article>",
+      "<div id=\"post-below\"></div>",
       nav
     ].join("\n");
-    return head(meta.title + " · " + SITE.title, meta.summary || "") + "\n" + shell(main);
+    return head(meta.title + " · " + SITE.title, meta.summary || "", { slug: meta.slug, noindex: !!meta.private }) + "\n" + shell(main);
   }
 
   window.FloweriePost = { postPage: postPage, SITE: SITE };

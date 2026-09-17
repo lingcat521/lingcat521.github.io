@@ -26,7 +26,8 @@ posts.forEach(function (p, i) {
   const read = MD.readMinutes(src);
   if (read !== p.read) { p.read = read; }
   const html = Post.postPage(
-    { title: p.title, slug: p.slug, date: p.date, tags: p.tags || [], read: read, summary: p.summary || "" },
+    { title: p.title, slug: p.slug, date: p.date, tags: p.tags || [], read: read, summary: p.summary || "",
+      pinned: !!p.pinned, private: !!p.private },
     MD.render(src),
     posts[i + 1] || null,
     posts[i - 1] || null
