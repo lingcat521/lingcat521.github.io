@@ -1,34 +1,38 @@
 :root{
-  --bg:#fdfbfd; --bg-soft:#f6f1f6; --card:#ffffff; --text:#2b2b33; --muted:#7a7482;
+  --bg:#fdfbfd; --bg-rgb:253,251,253; --bg-soft:#f6f1f6; --card:#ffffff; --text:#2b2b33; --muted:#7a7482;
   /* 可调外观（后台可改）：卡片不透明度 / 背景图不透明度 / 模糊 */
-  --card-rgb:255,255,255; --card-alpha:.5; --bg-image-opacity:.9; --card-blur:14px; --glass-line:rgba(255,255,255,.55);
+  --card-rgb:255,255,255; --card-alpha:.5; --bg-image-opacity-set:.9; --bg-image-opacity:var(--bg-image-opacity-set); --card-blur:14px; --glass-line:rgba(255,255,255,.55);
   --card-bg:rgba(255,255,255,.5);
   --accent:#e0568c; --accent-soft:#ffe3ee; --line:#ece6ee; --code-bg:#f7f3f8;
   --shadow:0 1px 2px rgba(43,43,51,.05),0 8px 24px rgba(43,43,51,.06);
   --radius:16px; --maxw:44rem;
 }
 :root[data-theme="dark"]{
-  --bg:#16141a; --bg-soft:#1c1922; --card:#1f1c26; --text:#e9e6ef; --muted:#9d97a8;
+  --bg:#16141a; --bg-rgb:22,20,26; --bg-soft:#1c1922; --card:#1f1c26; --text:#e9e6ef; --muted:#9d97a8;
   --card-rgb:31,28,38; --card-alpha:.55; --card-bg:rgba(31,28,38,.55); --glass-line:rgba(255,255,255,.14);
+  --bg-image-opacity-set:.9; --bg-image-opacity:calc(var(--bg-image-opacity-set) * .6);
   --accent:#ff9dc6; --accent-soft:#33202c; --line:#2c2833; --code-bg:#221f2b;
   --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 30px rgba(0,0,0,.35);
 }
 @media (prefers-color-scheme:dark){
   :root[data-theme="auto"]{
-    --bg:#16141a; --bg-soft:#1c1922; --card:#1f1c26; --text:#e9e6ef; --muted:#9d97a8;
+    --bg:#16141a; --bg-rgb:22,20,26; --bg-soft:#1c1922; --card:#1f1c26; --text:#e9e6ef; --muted:#9d97a8;
     --card-rgb:31,28,38; --card-alpha:.55; --card-bg:rgba(31,28,38,.55); --glass-line:rgba(255,255,255,.14);
+    --bg-image-opacity-set:.9; --bg-image-opacity:calc(var(--bg-image-opacity-set) * .6);
+  --bg-image-opacity-set:.9; --bg-image-opacity:calc(var(--bg-image-opacity-set) * .6);
     --accent:#ff9dc6; --accent-soft:#33202c; --line:#2c2833; --code-bg:#221f2b;
     --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 30px rgba(0,0,0,.35);
   }
 }
 *{box-sizing:border-box}
-html{scroll-behavior:smooth}
-/* 整页背景图（不透明度可调）+ 一层淡淡的主色调覆盖，保证文字可读 */
-body::before{content:"";position:fixed;inset:0;z-index:-2;pointer-events:none;
-  background:url("/assets/bg.jpg") center/cover no-repeat,url("/assets/bg-tiny.jpg") center/cover no-repeat;
-  opacity:var(--bg-image-opacity)}
-body::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
-  background:linear-gradient(color-mix(in srgb,var(--bg) 18%,transparent),color-mix(in srgb,var(--bg) 38%,transparent))}
+html{scroll-behavior:smooth;
+  /* 整页背景图放在根元素上：任何内容都不可能遮住它（负 z-index 的伪元素方案在部分浏览器上会失效）
+     图片上面盖一层同底色蒙版，蒙版 alpha = 1 - 背景图不透明度，所以滑块越大图越清楚 */
+  background-color:var(--bg);
+  background-image:linear-gradient(rgba(var(--bg-rgb),calc(1 - var(--bg-image-opacity))),rgba(var(--bg-rgb),calc(1 - var(--bg-image-opacity)))),url("/assets/bg.jpg");
+  background-position:center,center;background-size:cover,cover;
+  background-repeat:no-repeat,no-repeat;background-attachment:fixed,fixed}
+
 @supports (background:color-mix(in srgb,red 50%,transparent)){
   /* 三个主题选择器都列上，否则深色/跟随系统的 rgba 兜底会因优先级更高而覆盖掉（后台滑块就失效了） */
   :root,
@@ -37,7 +41,7 @@ body::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
     --card-bg:color-mix(in srgb, rgb(var(--card-rgb)) calc(var(--card-alpha) * 100%), transparent)
   }
 }
-body{margin:0;background:var(--bg);color:var(--text);line-height:1.75;
+body{margin:0;background:transparent;color:var(--text);line-height:1.75;
   font-family:system-ui,-apple-system,"PingFang SC","Noto Sans CJK SC","Microsoft YaHei",sans-serif;
   -webkit-font-smoothing:antialiased;font-size:16px}
 a{color:var(--accent);text-decoration:none}

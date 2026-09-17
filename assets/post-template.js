@@ -2,6 +2,7 @@
 (function () {
   "use strict";
   var SITE = { title: "铃樱の小站", author: "铃樱", gh: "https://github.com/lingcat521" };
+  var V = "102b7ecb";   /* 资源版本号，后台/构建脚本会注入最新的 */
 
   function head(title, desc, opts) {
     opts = opts || {};
@@ -18,7 +19,7 @@
       "<meta property=\"og:description\" content=\"" + (desc || "") + "\">",
       "<meta property=\"og:type\" content=\"article\">",
       "<link rel=\"icon\" href=\"/assets/favicon.svg\" type=\"image/svg+xml\">",
-      "<link rel=\"stylesheet\" href=\"/assets/style.css\">",
+      "<link rel=\"stylesheet\" href=\"/assets/style.css?v=" + V + "\">",
       "<link rel=\"alternate\" type=\"application/atom+xml\" title=\"" + SITE.title + "\" href=\"/atom.xml\">",
       "<script>(function(){try{var t=localStorage.getItem(\"theme\")||\"auto\";document.documentElement.setAttribute(\"data-theme\",t);}catch(e){}})();</script>",
       "</head>");
@@ -41,8 +42,8 @@
       "<footer class=\"site-footer\"><div class=\"wrap\">© 2026 " + SITE.author + " · <a href=\"/atom.xml\">RSS</a> · ",
       "<a href=\"" + SITE.gh + "\" target=\"_blank\" rel=\"noopener\">GitHub</a> · 托管于 GitHub Pages · 手写 HTML/CSS/JS，零依赖</div></footer>",
       "<button id=\"to-top\" type=\"button\" aria-label=\"回到顶部\">↑</button>",
-      "<script src=\"/assets/app.js\" defer></script>",
-      "<script src=\"/assets/extras.js\" defer></script>",
+      "<script src=\"/assets/app.js?v=" + V + "\" defer></script>",
+      "<script src=\"/assets/extras.js?v=" + V + "\" defer></script>",
       (extraScript || ""),
       "</body>",
       "</html>",

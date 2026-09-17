@@ -24,7 +24,7 @@
     var a = cfg.appearance || {};
     var r = document.documentElement.style;
     if (typeof a.cardAlpha === "number") r.setProperty("--card-alpha", String(a.cardAlpha));
-    if (typeof a.bgImageOpacity === "number") r.setProperty("--bg-image-opacity", String(a.bgImageOpacity));
+    if (typeof a.bgImageOpacity === "number") r.setProperty("--bg-image-opacity-set", String(a.bgImageOpacity));
     if (a.cardBlur) r.setProperty("--card-blur", a.cardBlur);
   }
 
