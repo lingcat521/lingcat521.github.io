@@ -1,7 +1,7 @@
 :root{
   --bg:#fdfbfd; --bg-rgb:253,251,253; --bg-soft:#f6f1f6; --card:#ffffff; --text:#2b2b33; --muted:#7a7482;
   /* 可调外观（后台可改）：卡片不透明度 / 背景图不透明度 / 模糊 */
-  --card-rgb:255,255,255; --card-alpha:.82; --bg-image-opacity-set:.42; --bg-image-opacity:var(--bg-image-opacity-set); --card-blur:14px; --glass-line:rgba(255,255,255,.55);
+  --card-rgb:255,255,255; --card-alpha:.82; --bg-image-opacity-set:.75; --bg-image-opacity:var(--bg-image-opacity-set); --card-blur:14px; --glass-line:rgba(255,255,255,.55);
   --card-bg:rgba(255,255,255,.82);
   --accent:#e0568c; --accent-soft:#ffe3ee; --line:#ece6ee; --code-bg:#f7f3f8;
   --shadow:0 1px 2px rgba(43,43,51,.05),0 8px 24px rgba(43,43,51,.06);
@@ -10,7 +10,7 @@
 :root[data-theme="dark"]{
   --bg:#16141a; --bg-rgb:22,20,26; --bg-soft:#1c1922; --card:#1f1c26; --text:#e9e6ef; --muted:#9d97a8;
   --card-rgb:31,28,38; --card-alpha:.85; --card-bg:rgba(31,28,38,.85); --glass-line:rgba(255,255,255,.14);
-  --bg-image-opacity-set:.42; --bg-image-opacity:calc(var(--bg-image-opacity-set) * .6);
+  --bg-image-opacity-set:.75; --bg-image-opacity:calc(var(--bg-image-opacity-set) * .6);
   --accent:#ff9dc6; --accent-soft:#33202c; --line:#2c2833; --code-bg:#221f2b;
   --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 30px rgba(0,0,0,.35);
 }
@@ -18,8 +18,8 @@
   :root[data-theme="auto"]{
     --bg:#16141a; --bg-rgb:22,20,26; --bg-soft:#1c1922; --card:#1f1c26; --text:#e9e6ef; --muted:#9d97a8;
     --card-rgb:31,28,38; --card-alpha:.85; --card-bg:rgba(31,28,38,.85); --glass-line:rgba(255,255,255,.14);
-    --bg-image-opacity-set:.42; --bg-image-opacity:calc(var(--bg-image-opacity-set) * .6);
-  --bg-image-opacity-set:.42; --bg-image-opacity:calc(var(--bg-image-opacity-set) * .6);
+    --bg-image-opacity-set:.75; --bg-image-opacity:calc(var(--bg-image-opacity-set) * .6);
+  --bg-image-opacity-set:.75; --bg-image-opacity:calc(var(--bg-image-opacity-set) * .6);
     --accent:#ff9dc6; --accent-soft:#33202c; --line:#2c2833; --code-bg:#221f2b;
     --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 30px rgba(0,0,0,.35);
   }
@@ -38,7 +38,7 @@ html::after{background:url("/assets/bg.jpg") center/contain no-repeat;
 @media (prefers-color-scheme:dark){:root[data-theme="auto"]::before{filter:blur(28px) saturate(1.05) brightness(.5)}}
 /* ③ 轻度蒙版：夹在背景与内容之间。浅色主题提亮、深色主题压暗，两边都让文字更好读 */
 body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
-  background:linear-gradient(color-mix(in srgb,var(--bg) 52%,transparent),color-mix(in srgb,var(--bg) 70%,transparent))}
+  background:linear-gradient(color-mix(in srgb,var(--bg) 28%,transparent),color-mix(in srgb,var(--bg) 45%,transparent))}
 /* 内容必须抬到两层背景之上（背景层是 z-index:0 的定位元素） */
 .site-header,main,.site-footer{position:relative;z-index:1}
 /* 宽屏：清晰的那层靠右放，人物从内容栏旁边露出来（内容栏居中，约 700px） */

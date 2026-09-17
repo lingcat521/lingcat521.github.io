@@ -1,7 +1,7 @@
 {
   "appearance": {
     "cardAlpha": 0.82,
-    "bgImageOpacity": 0.42,
+    "bgImageOpacity": 0.75,
     "cardBlur": "12px"
   },
   "views": {
@@ -22,5 +22,5 @@
     "share": true,
     "like": true
   },
-  "assetVersion": "dfa3d117"
+  "assetVersion": "7813827f"
 }
