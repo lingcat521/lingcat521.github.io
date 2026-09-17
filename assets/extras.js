@@ -206,10 +206,12 @@
     document.body.appendChild(box);
   }
 
-  /* ---------- 页脚统计：本站已运行 / 文章总数 / 总字数 / 最后更新 ---------- */
+  /* ---------- 页脚统计：直接写进页脚那句话里 ---------- */
   function mountStats() {
-    var box = document.getElementById("footer-stats");
-    if (!box) return;
+    var wrap = document.querySelector(".site-footer .wrap");
+    if (!wrap) return;
+    var legacy = document.getElementById("footer-stats");
+    if (legacy && legacy.parentNode) legacy.parentNode.removeChild(legacy);
     function grab(url, fb) {
       return fetch(url + "?v=" + Date.now()).then(function (r) { return r.ok ? r.json() : fb; }).catch(function () { return fb; });
     }
@@ -221,11 +223,17 @@
         var since = new Date((sc.since || "2026-09-17") + "T00:00:00+08:00");
         var words = idx.reduce(function (n, p) { return n + (p.text ? p.text.length : 0); }, 0);
         var last = posts.map(function (p) { return p.date || ""; }).sort().pop() || "—";
-        box.innerHTML =
-          "<div class=\"stat\"><b id=\"stat-uptime\">…</b><span>本站已运行</span></div>" +
-          "<div class=\"stat\"><b>" + posts.length + "</b><span>文章总数</span></div>" +
-          "<div class=\"stat\"><b>" + words.toLocaleString() + "</b><span>总字数</span></div>" +
-          "<div class=\"stat\"><b>" + last + "</b><span>最后更新</span></div>";
+        var span = document.createElement("span");
+        span.className = "footer-stats-inline";
+        span.innerHTML = "已运行 <b id=\"stat-uptime\">…</b> · 文章 <b>" + posts.length +
+          "</b> 篇 · 总字数 <b>" + words.toLocaleString() + "</b> · 最后更新 <b>" + last + "</b> · ";
+        var anchor = null;
+        for (var i = 0; i < wrap.childNodes.length; i++) {
+          var nd = wrap.childNodes[i];
+          if (nd.nodeType === 3 && nd.textContent.indexOf("©") >= 0) { anchor = nd; break; }
+        }
+        if (anchor) wrap.insertBefore(span, anchor.nextSibling);
+        else wrap.insertBefore(span, wrap.firstChild);
         var up = document.getElementById("stat-uptime");
         function pad(n) { return (n < 10 ? "0" : "") + n; }
         function tick() {
