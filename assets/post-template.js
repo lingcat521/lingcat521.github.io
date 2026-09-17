@@ -2,7 +2,7 @@
 (function () {
   "use strict";
   var SITE = { title: "铃樱の小站", author: "铃樱", gh: "https://github.com/lingcat521" };
-  var V = "42e19a5e";   /* 资源版本号，后台/构建脚本会注入最新的 */
+  var V = "8d352423";   /* 资源版本号，后台/构建脚本会注入最新的 */
 
   function head(title, desc, opts) {
     opts = opts || {};
