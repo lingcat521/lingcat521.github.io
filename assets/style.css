@@ -25,7 +25,8 @@
 html{scroll-behavior:smooth}
 /* 整页背景图（不透明度可调）+ 一层淡淡的主色调覆盖，保证文字可读 */
 body::before{content:"";position:fixed;inset:0;z-index:-2;pointer-events:none;
-  background:url("/assets/bg.jpg") center/cover no-repeat;opacity:var(--bg-image-opacity)}
+  background:url("/assets/bg.jpg") center/cover no-repeat,url("/assets/bg-tiny.jpg") center/cover no-repeat;
+  opacity:var(--bg-image-opacity)}
 body::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
   background:linear-gradient(color-mix(in srgb,var(--bg) 55%,transparent),color-mix(in srgb,var(--bg) 72%,transparent))}
 @supports (background:color-mix(in srgb,red 50%,transparent)){
