@@ -5,7 +5,7 @@
     appearance: { cardAlpha: 0.5, bgImageOpacity: 0.5, cardBlur: "12px" },
     views: { provider: "none", endpoint: "" },
     comments: { provider: "none" },
-    features: { device: true, share: true, like: true }
+    features: { device: true, share: true, like: true, petals: true }
   };
   var cfg = DEFAULTS;
 
@@ -182,6 +182,30 @@
     mount.appendChild(s);
   }
 
+  /* ---------- 樱花飘落：填充背景图之外的留白 ---------- */
+  function mountPetals(enabled) {
+    if (enabled === false) return;
+    if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    var box = document.createElement("div");
+    box.className = "petals";
+    box.setAttribute("aria-hidden", "true");
+    var n = window.innerWidth < 700 ? 9 : 14;
+    for (var i = 0; i < n; i++) {
+      var s = document.createElement("span");
+      s.className = "petal";
+      var size = 9 + Math.random() * 11;
+      s.style.left = (Math.random() * 100).toFixed(1) + "%";
+      s.style.width = size.toFixed(1) + "px";
+      s.style.height = size.toFixed(1) + "px";
+      s.style.setProperty("--drift", (Math.random() * 90 - 30).toFixed(0) + "px");
+      s.style.animationDuration = (11 + Math.random() * 12).toFixed(1) + "s";
+      s.style.animationDelay = (-Math.random() * 20).toFixed(1) + "s";
+      s.style.opacity = (0.45 + Math.random() * 0.4).toFixed(2);
+      box.appendChild(s);
+    }
+    document.body.appendChild(box);
+  }
+
   function boot() {
     var slug = document.documentElement.getAttribute("data-post-slug") || "";
     var meta = { title: (document.querySelector("article.post h1") || {}).textContent || document.title };
@@ -198,6 +222,7 @@
           };
         }
         applyAppearance();
+        mountPetals((cfg.features || {}).petals);
         var box = $("post-extras");
         if (box) {
           var f = cfg.features || {};

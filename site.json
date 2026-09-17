@@ -20,7 +20,8 @@
   "features": {
     "device": true,
     "share": true,
-    "like": true
+    "like": true,
+    "petals": true
   },
-  "assetVersion": "56dfd678"
+  "assetVersion": "b1c1d5f0"
 }
