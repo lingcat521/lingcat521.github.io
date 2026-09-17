@@ -30,7 +30,12 @@ body::before{content:"";position:fixed;inset:0;z-index:-2;pointer-events:none;
 body::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
   background:linear-gradient(color-mix(in srgb,var(--bg) 18%,transparent),color-mix(in srgb,var(--bg) 38%,transparent))}
 @supports (background:color-mix(in srgb,red 50%,transparent)){
-  :root{--card-bg:color-mix(in srgb, rgb(var(--card-rgb)) calc(var(--card-alpha) * 100%), transparent)}
+  /* 三个主题选择器都列上，否则深色/跟随系统的 rgba 兜底会因优先级更高而覆盖掉（后台滑块就失效了） */
+  :root,
+  :root[data-theme="dark"],
+  :root[data-theme="auto"]{
+    --card-bg:color-mix(in srgb, rgb(var(--card-rgb)) calc(var(--card-alpha) * 100%), transparent)
+  }
 }
 body{margin:0;background:var(--bg);color:var(--text);line-height:1.75;
   font-family:system-ui,-apple-system,"PingFang SC","Noto Sans CJK SC","Microsoft YaHei",sans-serif;
