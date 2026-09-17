@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="auto">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>管理后台 · 铃樱の小站</title>
+<meta name="robots" content="noindex,nofollow">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/assets/style.css">
+<style>
+.admin-grid{display:grid;grid-template-columns:1fr;gap:1rem}
+@media (min-width:900px){.admin-grid{grid-template-columns:minmax(0,1fr) minmax(0,1.2fr)}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:1rem 1.1rem;box-shadow:var(--shadow)}
+.card h2{margin:.1rem 0 .7rem;font-size:1.02rem}
+.field{display:block;margin:.55rem 0}
+.field span{display:block;font-size:.85rem;color:var(--muted);margin-bottom:.2rem}
+.field input,.field textarea,.field select{width:100%;padding:.55rem .7rem;border:1px solid var(--line);border-radius:10px;
+  background:var(--bg);color:var(--text);font-family:inherit;font-size:.94rem}
+.field textarea{min-height:16rem;line-height:1.6;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.9rem}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:.6rem}
+.btn{display:inline-block;padding:.5rem .95rem;border-radius:10px;border:1px solid var(--line);background:var(--card);
+  color:var(--text);cursor:pointer;font-size:.92rem;font-family:inherit}
+.btn:hover{border-color:var(--accent);color:var(--accent)}
+.btn-primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn-primary:hover{color:#fff;opacity:.92}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.admin-actions{display:flex;gap:.35rem;flex:0 0 auto}
+.admin-row{display:flex;gap:.6rem;align-items:flex-start;justify-content:space-between;padding:.6rem 0;border-bottom:1px solid var(--line)}
+.admin-row:last-child{border-bottom:0}
+.admin-status{margin:.6rem 0 0;font-size:.9rem;color:var(--muted);min-height:1.4em}
+.admin-status.ok{color:#1a8f5a}.admin-status.err{color:#d2453f}
+.hint{color:var(--muted);font-size:.85rem;line-height:1.6}
+.preview{border:1px dashed var(--line);border-radius:12px;padding:.8rem 1rem;background:var(--bg-soft);max-height:22rem;overflow:auto}
+.chip-on{background:var(--accent);color:#fff}
+</style>
+<script src="/assets/md.js" defer></script>
+<script src="/assets/post-template.js" defer></script>
+<script src="/assets/admin.js" defer></script>
+</head>
+<body>
+<header class="site-header"><div class="wrap header-inner">
+<a class="brand" href="/"><span class="brand-mark">❀</span> 铃樱の小站</a>
+<nav class="nav"><a href="/">首页</a><a href="/archive/">归档</a><a href="/tags/">标签</a><a href="/about/">关于</a>
+<a href="/admin/" aria-current="page">后台</a></nav>
+<button id="theme-toggle" class="icon-btn" type="button" aria-label="切换主题">🌗</button>
+</div></header>
+<main class="wrap fade-in">
+<div class="section-title">管理后台</div>
+
+<div class="card" style="margin-bottom:1rem">
+<h2>① GitHub 令牌</h2>
+<p class="hint">令牌只保存在<strong>你这台设备的浏览器</strong>（localStorage），页面直接调用 GitHub API，不经过任何第三方服务器。
+建议用 <strong>Fine-grained token</strong>：只勾这一个仓库、权限只给 <code>Contents: Read and write</code>，并设置过期时间。
+公共电脑上用完请点「清除」。</p>
+<div class="row2" style="align-items:end">
+<label class="field"><span>Fine-grained personal access token（github_pat_… 或 ghp_…）</span>
+<input id="f-token" type="password" autocomplete="off" placeholder="粘贴令牌后点右侧按钮"></label>
+<div style="display:flex;gap:.5rem;padding-bottom:.55rem">
+<button id="btn-save-token" class="btn btn-primary" type="button">保存并校验</button>
+<button id="btn-clear-token" class="btn" type="button">清除</button>
+</div>
+</div>
+<p class="admin-status" id="status"></p>
+</div>
+
+<div class="admin-grid">
+<section class="card">
+<h2>② 文章列表 <button id="btn-new" class="btn" type="button" style="float:right">＋ 新建</button></h2>
+<div id="admin-list"><p class="empty">加载中…</p></div>
+</section>
+
+<section class="card">
+<h2 id="editor-title">新建文章</h2>
+<label class="field"><span>标题</span><input id="f-title" type="text" placeholder="例如：我的第一篇推文"></label>
+<div class="row2">
+<label class="field"><span>网址片段 slug（英文小写，会成为 /posts/xxx/）</span><input id="f-slug" type="text" placeholder="my-first-post"></label>
+<label class="field"><span>日期</span><input id="f-date" type="date"></label>
+</div>
+<label class="field"><span>标签（逗号分隔）</span><input id="f-tags" type="text" placeholder="随笔, 建站"></label>
+<label class="field"><span>摘要（列表页和 RSS 显示）</span><input id="f-summary" type="text" placeholder="一句话概括这篇内容"></label>
+<label class="field"><span>正文（Markdown：## 标题 / - 列表 / **粗体** / `代码` / ```代码块```）</span>
+<textarea id="f-body" placeholder="在这里写正文…"></textarea></label>
+<div style="display:flex;gap:.5rem;flex-wrap:wrap">
+<button id="btn-save" class="btn btn-primary" type="button">保存并发布</button>
+<button id="btn-preview" class="btn" type="button">预览</button>
+<button id="btn-delete" class="btn" type="button" style="display:none;margin-left:auto">删除这篇</button>
+</div>
+<h2 style="margin-top:1.2rem">预览</h2>
+<div class="preview content" id="preview"></div>
+</section>
+</div>
+</main>
+<footer class="site-footer"><div class="wrap">© 2026 铃樱 · 管理后台只对持有令牌的人有效 · 页面与仓库均为公开内容</div></footer>
+<button id="to-top" type="button" aria-label="回到顶部">↑</button>
+<script src="/assets/app.js" defer></script>
+</body>
+</html>

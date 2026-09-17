@@ -22,33 +22,37 @@
 <article class="post">
 <header>
 <h1>用 GitHub Pages 挂个人站：能做与不能做</h1>
-<div class="meta"><span>2026-09-17</span><span>·</span><span>约 4 分钟</span>
+<div class="meta"><span>2026-09-17</span><span>·</span><span>约 2 分钟</span>
 <a class="tag" href="/tags/">#建站</a><a class="tag" href="/tags/">#教程</a>
 </div></header>
 <div class="toc" id="toc"><strong>目录</strong></div>
 <div class="content">
-<h2>两种挂法</h2>
+<h2 id="两种挂法">两种挂法</h2>
 <p><strong>个人站</strong>（推荐）：仓库名必须是 <code>&lt;用户名&gt;.github.io</code>，网址就是 <code>https://用户名.github.io</code>，每个账号只能有一个。</p>
 <p><strong>项目站</strong>：在任意仓库里用 <code>gh-pages</code> 分支或 <code>/docs</code> 目录当发布源，网址是 <code>https://用户名.github.io/仓库名/</code>。</p>
-<h2>三条必须先知道的红线</h2>
+<h2 id="三条必须先知道的红线">三条必须先知道的红线</h2>
 <ul>
 <li><strong>只能静态</strong>：HTML / CSS / JS / 图片。没有后端，不能跑 Python、PHP、数据库。</li>
 <li><strong>站点是公开的</strong>：免费账号下 Pages 只对公共仓库开放，页面里千万别写密钥。</li>
 <li><strong>有额度</strong>：站点 ≤ 1 GB、软带宽 100 GB/月、部署超 10 分钟会超时、每小时最多 10 次构建（用自定义 Actions 工作流部署不受这条限制）。</li>
 </ul>
-<h2>什么不能挂</h2>
+<h2 id="什么不能挂">什么不能挂</h2>
 <p>任何需要「服务器一直开着」的东西都不行。比如我那个机器人的管理后台就绝对不能挂——它既要读写本地数据库，又涉及密钥和管理员账号。</p>
-<h2>国内访问的小提醒</h2>
+<h2 id="那怎么在网页上发文章">那怎么在网页上发文章</h2>
+<p>静态站没有后端，但可以让浏览器直接调用 GitHub API 提交文件：令牌存在你自己的浏览器里，页面只负责把 Markdown 变成文章页，然后一次 commit 推上去。</p>
+<p>本站的「后台」就是这么做的，代码只有几百行，没有任何第三方服务。</p>
+<h2 id="国内访问的小提醒">国内访问的小提醒</h2>
 <p><code>*.github.io</code> 在国内不算稳定。要长期用，建议绑自己的域名再套一层 Cloudflare，会稳很多；GitHub Pages 支持自定义域并自动签发 HTTPS 证书。</p>
-<h2>多久生效</h2>
+<h2 id="多久生效">多久生效</h2>
 <p>开启 Pages 之后一般一两分钟就能访问。新账号第一次用偶尔会慢一点，等着就行，别反复改配置。</p>
 </div>
 </article>
-<div class="post-nav"><a href="/posts/zero-js-webui/">← 我为什么给机器人的后台加上「零 JavaScript」这条铁律</a><span></span></div>
+<div class="post-nav"><a href="/posts/zero-js-webui/">← 我为什么给机器人的后台加上「零 JavaScript」这条铁律</a><a href="/posts/flowerie-bot/">花璃：一个 DeepSeek 驱动的 QQ 群聊机器人 →</a></div>
 </main>
 <footer class="site-footer"><div class="wrap">© 2026 铃樱 · <a href="/atom.xml">RSS</a> · 
 <a href="https://github.com/lingcat521" target="_blank" rel="noopener">GitHub</a> · 托管于 GitHub Pages · 手写 HTML/CSS/JS，零依赖</div></footer>
 <button id="to-top" type="button" aria-label="回到顶部">↑</button>
 <script src="/assets/app.js" defer></script>
+
 </body>
 </html>

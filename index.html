@@ -15,7 +15,7 @@
 <header class="site-header"><div class="wrap header-inner">
 <a class="brand" href="/"><span class="brand-mark">❀</span> 铃樱の小站</a>
 <nav class="nav"><a href="/" aria-current="page">首页</a><a href="/archive/">归档</a><a href="/tags/">标签</a><a href="/about/">关于</a><a href="https://github.com/lingcat521" target="_blank" rel="noopener">GitHub</a></nav>
-<button id="theme-toggle" class="icon-btn" type="button" aria-label="切换主题" title="切换主题（跟随系统 / 浅色 / 深色）">🌗</button>
+<button id="theme-toggle" class="icon-btn" type="button" aria-label="切换主题" title="切换主题">🌗</button>
 </div></header>
 <main class="wrap fade-in">
 <section class="hero">
@@ -29,16 +29,21 @@
 </div></section>
 <div class="section-title">文章</div>
 <div class="toolbar"><input id="search" class="search" type="search" placeholder="搜索文章标题、摘要或标签…" aria-label="搜索文章"></div>
-<div class="tag-cloud"><a href="#" class="chip" data-filter="QQ机器人">#QQ机器人 <small>1</small></a><a href="#" class="chip" data-filter="建站">#建站 <small>3</small></a><a href="#" class="chip" data-filter="教程">#教程 <small>1</small></a><a href="#" class="chip" data-filter="随笔">#随笔 <small>2</small></a><a href="#" class="chip" data-filter="项目">#项目 <small>1</small></a></div>
-<ul class="post-list" id="post-list"><li class="post-card" data-search="开站：第三遍造轮子，这次造自己的 折腾过很多次博客，这次决定不再搬家——手写 HTML/CSS/JS，零依赖零构建，扔到 GitHub Pages 上就完事。 随笔 建站" data-tags="随笔,建站"><h3><a href="/posts/hello-world/">开站：第三遍造轮子，这次造自己的</a></h3><p>折腾过很多次博客，这次决定不再搬家——手写 HTML/CSS/JS，零依赖零构建，扔到 GitHub Pages 上就完事。</p><div class="meta"><span>2026-09-17</span><span>·</span><span>约 3 分钟</span><span class="tag">#随笔</span><span class="tag">#建站</span></div></li><li class="post-card" data-search="花璃：一个 DeepSeek 驱动的 QQ 群聊机器人 能聊天、识图、记记忆、被戳会回应，还能自定义人格、发表情包、用 MCP 上网查资料。双协议、零 JS 管理后台、13 种语言写插件。 项目 QQ机器人" data-tags="项目,QQ机器人"><h3><a href="/posts/flowerie-bot/">花璃：一个 DeepSeek 驱动的 QQ 群聊机器人</a></h3><p>能聊天、识图、记记忆、被戳会回应，还能自定义人格、发表情包、用 MCP 上网查资料。双协议、零 JS 管理后台、13 种语言写插件。</p><div class="meta"><span>2026-09-17</span><span>·</span><span>约 6 分钟</span><span class="tag">#项目</span><span class="tag">#QQ机器人</span></div></li><li class="post-card" data-search="我为什么给机器人的后台加上「零 JavaScript」这条铁律 不是反技术，是被现实教做人了：手机上打不开、白屏、脚本报错、旧浏览器不支持……服务端渲染全都解决了。 建站 随笔" data-tags="建站,随笔"><h3><a href="/posts/zero-js-webui/">我为什么给机器人的后台加上「零 JavaScript」这条铁律</a></h3><p>不是反技术，是被现实教做人了：手机上打不开、白屏、脚本报错、旧浏览器不支持……服务端渲染全都解决了。</p><div class="meta"><span>2026-09-16</span><span>·</span><span>约 5 分钟</span><span class="tag">#建站</span><span class="tag">#随笔</span></div></li><li class="post-card" data-search="用 GitHub Pages 挂个人站：能做与不能做 免费、自带 HTTPS、能绑自己的域名。但它只能跑静态文件——这一点决定了你什么能挂上去、什么不能。 建站 教程" data-tags="建站,教程"><h3><a href="/posts/github-pages/">用 GitHub Pages 挂个人站：能做与不能做</a></h3><p>免费、自带 HTTPS、能绑自己的域名。但它只能跑静态文件——这一点决定了你什么能挂上去、什么不能。</p><div class="meta"><span>2026-09-17</span><span>·</span><span>约 4 分钟</span><span class="tag">#建站</span><span class="tag">#教程</span></div></li></ul>
+<div class="tag-cloud" id="tag-cloud"></div>
+<ul class="post-list" id="post-list"></ul>
 <p class="empty" id="empty" style="display:none">没有匹配的文章，换个关键词试试？</p>
+<noscript>
+<div class="card" style="padding:1rem 1.1rem;border:1px solid var(--line);border-radius:12px">
+<p><strong>你的浏览器没有执行 JavaScript</strong>，所以文章列表需要手动点开：</p>
+<ul>
+<li><a href="/posts/hello-world/">开站：第三遍造轮子，这次造自己的</a> <span class="meta">2026-09-17</span></li><li><a href="/posts/flowerie-bot/">花璃：一个 DeepSeek 驱动的 QQ 群聊机器人</a> <span class="meta">2026-09-17</span></li><li><a href="/posts/zero-js-webui/">我为什么给机器人的后台加上「零 JavaScript」这条铁律</a> <span class="meta">2026-09-16</span></li><li><a href="/posts/github-pages/">用 GitHub Pages 挂个人站：能做与不能做</a> <span class="meta">2026-09-17</span></li>
+</ul></div>
+</noscript>
 </main>
-<footer class="site-footer"><div class="wrap">
-© 2026 铃樱 · <a href="/atom.xml">RSS</a> · 
-<a href="https://github.com/lingcat521" target="_blank" rel="noopener">GitHub</a> · 
-托管于 GitHub Pages · 手写 HTML/CSS/JS，零依赖
-</div></footer>
+<footer class="site-footer"><div class="wrap">© 2026 铃樱 · <a href="/atom.xml">RSS</a> · 
+<a href="https://github.com/lingcat521" target="_blank" rel="noopener">GitHub</a> · 托管于 GitHub Pages · 手写 HTML/CSS/JS，零依赖</div></footer>
 <button id="to-top" type="button" aria-label="回到顶部">↑</button>
+<script src="/assets/site.js" defer></script>
 <script src="/assets/app.js" defer></script>
 </body>
 </html>

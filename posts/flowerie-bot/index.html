@@ -22,13 +22,13 @@
 <article class="post">
 <header>
 <h1>花璃：一个 DeepSeek 驱动的 QQ 群聊机器人</h1>
-<div class="meta"><span>2026-09-17</span><span>·</span><span>约 6 分钟</span>
+<div class="meta"><span>2026-09-17</span><span>·</span><span>约 2 分钟</span>
 <a class="tag" href="/tags/">#项目</a><a class="tag" href="/tags/">#QQ机器人</a>
 </div></header>
 <div class="toc" id="toc"><strong>目录</strong></div>
 <div class="content">
 <p><strong>花璃</strong>是我写的一个 QQ 群聊机器人。目标是让她像一个真实的群友，而不是一个「关键词回复机」。</p>
-<h2>她都能做什么</h2>
+<h2 id="她都能做什么">她都能做什么</h2>
 <ul>
 <li>💬 <strong>聊天</strong>：@ 她、或者群里接话都行，人设是小恶魔系青梅竹马。</li>
 <li>👁️ <strong>识图</strong>：图片、表情包、合并转发里的图，先走视觉模型描述再自然回复。</li>
@@ -37,25 +37,26 @@
 <li>🎲 <strong>主动发言</strong>：概率化的上下文接话，以及定时主动聊天，全部可配置。</li>
 <li>🔧 <strong>MCP 工具</strong>：需要查资料时调用外部工具，带白名单、限额与独立熔断。</li>
 </ul>
-<h2>技术上我比较得意的三点</h2>
-<h3>双协议：OneBot v11 + Milky</h3>
+<h2 id="技术上我比较得意的三点">技术上我比较得意的三点</h2>
+<h3 id="双协议-OneBot-v11-Milky">双协议：OneBot v11 + Milky</h3>
 <p>最早只支持 OneBot v11，后来加了一层适配，把协议差异全部关在适配层里，业务代码不碰任何协议字段。换协议端不用改业务逻辑。</p>
-<h3>管理后台「零 JavaScript」</h3>
+<h3 id="管理后台-零-JavaScript">管理后台「零 JavaScript」</h3>
 <p>Web UI 全部由服务端渲染，纯 HTML + CSS，一行 JavaScript 都没有。理由很简单：我大多数时候是在手机上打开它，而无 JS 的页面在任何浏览器里表现一致，也不会因为一处脚本报错就白屏。</p>
-<h3>插件支持任意语言</h3>
+<h3 id="插件支持任意语言">插件支持任意语言</h3>
 <p>插件协议是 stdin/stdout 上的 JSON-Lines，所以和语言完全无关。仓库里有 13 种语言的最小可运行插件，CI 里会真的编译并启动它们：</p>
 <pre><code>C · C++ · Go · Rust · Java · C# · Kotlin
 PHP · Lua · Ruby · Perl · R · TypeScript</code></pre>
 <p>JVM、.NET 和 tsc 的产物不是可执行文件，所以用三行 shell 包一层；脚本语言加个 shebang 就行。</p>
-<h2>在哪</h2>
+<h2 id="在哪">在哪</h2>
 <p>开源在 <a href="https://github.com/lingcat521/Flowerie_bot" target="_blank" rel="noopener">lingcat521/Flowerie_bot</a>，MIT 协议。文档、插件开发指南、发布产物都在里面。</p>
 </div>
 </article>
-<div class="post-nav"><a href="/posts/hello-world/">← 开站：第三遍造轮子，这次造自己的</a><a href="/posts/zero-js-webui/">我为什么给机器人的后台加上「零 JavaScript」这条铁律 →</a></div>
+<div class="post-nav"><a href="/posts/github-pages/">← 用 GitHub Pages 挂个人站：能做与不能做</a><a href="/posts/hello-world/">开站：第三遍造轮子，这次造自己的 →</a></div>
 </main>
 <footer class="site-footer"><div class="wrap">© 2026 铃樱 · <a href="/atom.xml">RSS</a> · 
 <a href="https://github.com/lingcat521" target="_blank" rel="noopener">GitHub</a> · 托管于 GitHub Pages · 手写 HTML/CSS/JS，零依赖</div></footer>
 <button id="to-top" type="button" aria-label="回到顶部">↑</button>
 <script src="/assets/app.js" defer></script>
+
 </body>
 </html>

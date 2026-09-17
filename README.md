@@ -1,40 +1,64 @@
 # 铃樱の小站
 
-> 一些奇奇怪怪的项目和日常
-
-个人博客，托管在 GitHub Pages：<https://lingcat521.github.io/>
+> 一些奇奇怪怪的项目和日常 · <https://lingcat521.github.io/>
 
 ## 特点
 
 - **零依赖**：不引用任何 CDN / 字体 / 统计服务，断网也能打开
 - **零构建**：没有 npm、没有生成器，改完 push 就上线
 - **渐进增强**：JS 只负责主题切换、搜索、目录、进度条；关掉 JS 文章照样能读
+- **站内后台**：在网页上直接写、发、改、删文章（浏览器直连 GitHub API，无需服务器）
 
 ## 目录结构
 
 ```text
 ├── index.html              首页（文章列表 + 搜索 + 标签筛选）
-├── archive/index.html      归档
-├── tags/index.html         标签
-├── about/index.html        关于
-├── posts/<slug>/index.html 每篇文章一个文件夹
-├── assets/                 style.css / app.js / avatar.png / favicon.svg
-├── atom.xml                RSS 订阅
-└── 404.html
+├── archive/  tags/  about/ 归档 / 标签 / 关于
+├── admin/                  ⭐ 站内管理后台
+├── posts/<slug>/
+│   ├── post.md             正文源文件（Markdown）—— 后台编辑的就是它
+│   └── index.html          生成的文章页（不要手改，会被覆盖）
+├── posts.json              文章元数据（列表/归档/RSS 都读它）
+├── assets/                 style.css / app.js / site.js / md.js / admin.js …
+├── tools/build.js          本地批量重建（node tools/build.js）
+└── atom.xml                RSS
 ```
 
-## 怎么加一篇新文章
+## 怎么发文章（推荐：站内后台）
 
-1. 复制 `posts/hello-world/` 整个文件夹，重命名为新文章的 slug（英文，会成为网址的一部分）
-2. 改里面的标题、日期、正文
-3. 在 `index.html`、`archive/index.html`、`tags/index.html` 的文章列表里加一张卡片（复制一段 `<li class="post-card">` 改内容）
-4. `git add . && git commit -m "post: 新文章" && git push`
+打开 <https://lingcat521.github.io/admin/>，三步：
+
+1. **填令牌**：点「保存并校验」。令牌只存在**你这台设备的浏览器**里（localStorage），
+   页面直接请求 `api.github.com`，不经过任何第三方服务器。
+2. **写文章**：标题 / 网址片段 / 日期 / 标签 / 摘要 / 正文（Markdown），右侧可预览。
+3. **保存并发布**：一次 commit 同时写 `post.md`、`index.html`、`posts.json`、`atom.xml`，
+   约 1 分钟后线上生效。列表里的 ✏️ 编辑、🗑️ 删除同理。
+
+### 令牌怎么建（建议用 Fine-grained token）
+
+GitHub → Settings → Developer settings → **Personal access tokens → Fine-grained tokens** → Generate new token：
+
+- **Repository access**：`Only select repositories` → 只勾 `lingcat521.github.io`
+- **Permissions → Repository permissions → Contents**：`Read and write`（只给这一项就够）
+- **Expiration**：按需设置（建议 90 天，到期重新生成）
+
+> ⚠️ 安全须知：
+> - 令牌等价于「这个仓库的写权限」，**不要**发到聊天里、不要提交进仓库、不要在公共电脑上保存；
+> - 后台页面本身是公开的，但没有令牌的人打开它什么也做不了；
+> - 公共设备上用完后点「清除」按钮，或直接清浏览器数据；
+> - 一旦怀疑泄露，立刻去 GitHub 撤销该令牌（`Revoke`）。
+
+## 怎么发文章（备选：手动）
+
+1. 新建 `posts/<slug>/post.md` 写正文（Markdown），
+2. 在 `posts.json` 的 `posts` 数组里加一条元数据，
+3. 跑 `node tools/build.js` 生成文章页和 RSS，然后提交推送。
 
 ## 本地预览
 
 ```bash
 python3 -m http.server 8000
-# 然后浏览器打开 http://127.0.0.1:8000
+# 浏览器打开 http://127.0.0.1:8000
 ```
 
 ## 部署

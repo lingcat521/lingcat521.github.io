@@ -43,39 +43,6 @@
     })();
   }
 
-  /* ---------- 列表搜索 + 标签筛选 ---------- */
-  var search = document.getElementById("search");
-  var list = document.getElementById("post-list");
-  var chips = document.querySelectorAll("[data-filter]");
-  var activeTag = "";
-  function applyFilter() {
-    if (!list) return;
-    var q = (search && search.value || "").trim().toLowerCase();
-    var shown = 0;
-    Array.prototype.forEach.call(list.children, function (item) {
-      var hay = (item.getAttribute("data-search") || "").toLowerCase();
-      var tags = (item.getAttribute("data-tags") || "").split(",");
-      var okQ = !q || hay.indexOf(q) >= 0;
-      var okT = !activeTag || tags.indexOf(activeTag) >= 0;
-      var ok = okQ && okT;
-      item.style.display = ok ? "" : "none";
-      if (ok) shown++;
-    });
-    var empty = document.getElementById("empty");
-    if (empty) empty.style.display = shown ? "none" : "";
-  }
-  if (search) search.addEventListener("input", applyFilter);
-  Array.prototype.forEach.call(chips, function (c) {
-    c.addEventListener("click", function (ev) {
-      ev.preventDefault();
-      var t = c.getAttribute("data-filter");
-      activeTag = (activeTag === t) ? "" : t;
-      Array.prototype.forEach.call(chips, function (x) { x.classList.remove("chip-on"); });
-      if (activeTag) c.classList.add("chip-on");
-      applyFilter();
-    });
-  });
-
   /* ---------- 阅读进度 + 回到顶部 ---------- */
   var bar = document.getElementById("progress");
   var top = document.getElementById("to-top");
