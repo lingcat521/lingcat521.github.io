@@ -41,7 +41,8 @@
       "<h3>" + (p.pinned ? "<span class=\"pinned-mark\" title=\"置顶\">📌 </span>" : "") +
         "<a href=\"/posts/" + esc(p.slug) + "/\">" + title + "</a></h3>",
       body ? "<p>" + body + "</p>" : "",
-      "<div class=\"meta\"><span>" + esc(p.date) + "</span><span>·</span><span>约 " + (p.read || 1) + " 分钟</span>",
+      "<div class=\"meta\"><span>" + esc(p.date) + "</span><span>·</span><span>约 " + (p.read || 1) + " 分钟读完</span>",
+      p.chars ? "<span>·</span><span>" + p.chars + " 字</span>" : "",
       (p.tags || []).map(function (t) { return "<span class=\"tag\">#" + esc(t) + "</span>"; }).join(""),
       "</div></li>"
     ].join("");

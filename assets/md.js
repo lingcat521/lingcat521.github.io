@@ -115,12 +115,18 @@
       .trim();
   }
 
+  /* 阅读时长：中文 300 字/分钟、英文 180 词/分钟，向上取整（1.1 分钟记作 2 分钟） */
   function readMinutes(src) {
     var text = plain(src);
     var cjk = (text.match(/[\u4e00-\u9fa5]/g) || []).length;
     var words = text.replace(/[\u4e00-\u9fa5]/g, " ").split(/\s+/).filter(Boolean).length;
-    return Math.max(1, Math.round(cjk / 350 + words / 200));
+    return Math.max(1, Math.ceil(cjk / 300 + words / 180));
   }
 
-  window.FlowerieMD = { render: render, plain: plain, readMinutes: readMinutes };
+  /* 正文字数（去掉 Markdown 记号后的字符数），用于在时长旁标注 */
+  function charCount(src) {
+    return plain(src).replace(/\s+/g, "").length;
+  }
+
+  window.FlowerieMD = { render: render, plain: plain, readMinutes: readMinutes, charCount: charCount };
 })();

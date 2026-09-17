@@ -2,7 +2,7 @@
 (function () {
   "use strict";
   var SITE = { title: "铃樱の小站", author: "铃樱", gh: "https://github.com/lingcat521" };
-  var V = "5be1c314";   /* 资源版本号，后台/构建脚本会注入最新的 */
+  var V = "9c7e4b06";   /* 资源版本号，后台/构建脚本会注入最新的 */
 
   function head(title, desc, opts) {
     opts = opts || {};
@@ -70,7 +70,8 @@
       "<header>",
       badges,
       "<h1>" + meta.title + "</h1>",
-      "<div class=\"meta\"><span>" + meta.date + "</span><span>·</span><span>约 " + (meta.read || 1) + " 分钟</span>",
+      "<div class=\"meta\"><span>" + meta.date + "</span><span>·</span><span>约 " + (meta.read || 1) + " 分钟读完</span>",
+      meta.chars ? "<span>·</span><span>" + meta.chars + " 字</span>" : "",
       tagHtml,
       "</div>",
       "<div class=\"post-extras\" id=\"post-extras\"></div>",

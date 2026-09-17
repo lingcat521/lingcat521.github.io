@@ -199,7 +199,8 @@
 
     var prevRec = state.posts.filter(function (p) { return p.slug === d.slug; })[0] || {};
     var list = state.posts.filter(function (p) { return p.slug !== d.slug; });
-    list.push({ title: d.title, slug: d.slug, date: d.date, tags: d.tags, read: 1, summary: d.summary,
+    list.push({ title: d.title, slug: d.slug, date: d.date, tags: d.tags, read: 1,
+      chars: window.FlowerieMD.charCount(d.body), summary: d.summary,
       created: prevRec.created || Date.now(),
       pinned: !!d.pinned, private: !!d.private });
     list.sort(sortByDate);
@@ -215,6 +216,7 @@
           var src = sources[i];
           if (src == null) return;                       /* 没有源文件就不动它的页面 */
           p.read = window.FlowerieMD.readMinutes(src);
+          p.chars = window.FlowerieMD.charCount(src);
           files.push({
             path: "posts/" + p.slug + "/index.html",
             content: window.FloweriePost.postPage(p, window.FlowerieMD.render(src), list[i + 1] || null, list[i - 1] || null)

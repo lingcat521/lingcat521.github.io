@@ -27,10 +27,11 @@ posts.forEach(function (p, i) {
   if (!fs.existsSync(mdPath)) { console.log("  跳过（无 post.md）: " + p.slug); return; }
   const src = fs.readFileSync(mdPath, "utf8");
   const read = MD.readMinutes(src);
-  if (read !== p.read) { p.read = read; }
+  p.read = read;
+  p.chars = MD.charCount(src);
   const html = Post.postPage(
     { title: p.title, slug: p.slug, date: p.date, tags: p.tags || [], read: read, summary: p.summary || "",
-      pinned: !!p.pinned, private: !!p.private },
+      chars: p.chars, pinned: !!p.pinned, private: !!p.private },
     MD.render(src),
     posts[i + 1] || null,
     posts[i - 1] || null
