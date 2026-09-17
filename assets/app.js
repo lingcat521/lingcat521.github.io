@@ -50,11 +50,22 @@
     var h = document.documentElement;
     var max = h.scrollHeight - h.clientHeight;
     if (bar) bar.style.width = (max > 0 ? (h.scrollTop / max) * 100 : 0) + "%";
-    if (top) top.classList.toggle("show", h.scrollTop > 400);
+    if (top) top.classList.toggle("show", h.scrollTop > 240);
   }
   window.addEventListener("scroll", onScroll, { passive: true });
   onScroll();
-  if (top) top.addEventListener("click", function () { window.scrollTo({ top: 0, behavior: "smooth" }); });
+  if (top) {
+    top.addEventListener("click", function () {
+      try { window.scrollTo({ top: 0, behavior: "smooth" }); }
+      catch (e) { window.scrollTo(0, 0); }
+      /* 兜底：某些环境 smooth 不生效时，150ms 后确认是否真的滚动了 */
+      setTimeout(function () {
+        if ((document.documentElement.scrollTop || document.body.scrollTop) > 8) {
+          try { window.scrollTo({ top: 0, behavior: "auto" }); } catch (e2) { window.scrollTo(0, 0); }
+        }
+      }, 700);
+    });
+  }
 
   /* ---------- 自动目录 + 滚动高亮 ---------- */
   var content = document.querySelector(".content");
