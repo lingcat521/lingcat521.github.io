@@ -166,6 +166,17 @@
       pinned: $("f-pinned").checked, private: $("f-private").checked };
   }
 
+  /* 全文索引：已编辑那篇用编辑器里的正文，其余从仓库里的 post.md 取 */
+  function searchIndex(list, sources, edited) {
+    var items = list.map(function (p, i) {
+      var raw = null;
+      if (edited && p.slug === edited.slug) raw = edited.body;
+      else if (sources && sources[i] != null) raw = sources[i];
+      return { slug: p.slug, title: p.title, date: p.date, tags: p.tags || [], summary: p.summary || "",
+               text: raw == null ? "" : window.FlowerieMD.plain(raw) };
+    });
+    return JSON.stringify({ posts: items }) + "\n";
+  }
   function sortByDate(a, b) { return (b.date || "").localeCompare(a.date || ""); }
 
   /* 读取某篇的 Markdown 源（已在编辑器里的那篇直接用当前内容） */
@@ -204,6 +215,7 @@
         });
         files.push({ path: "posts.json", content: JSON.stringify({ posts: list }, null, 2) + "\n" });
         files.push({ path: "atom.xml", content: atom(list) });
+        files.push({ path: "search.json", content: searchIndex(list, sources, d) });
 
         say("正在提交 " + files.length + " 个文件到 GitHub…", "");
         return commitFiles(files, (state.editing ? "post: 更新《" + d.title + "》" : "post: 新增《" + d.title + "》") + "（站内后台）")
@@ -227,7 +239,8 @@
       { path: "posts/" + slug + "/index.html", content: null },
       { path: "posts/" + slug + "/post.md", content: null },
       { path: "posts.json", content: JSON.stringify({ posts: list }, null, 2) + "\n" },
-      { path: "atom.xml", content: atom(list) }
+      { path: "atom.xml", content: atom(list) },
+      { path: "search.json", content: searchIndex(list, null, null) }
     ];
     say("正在删除…", "");
     commitFiles(files, "post: 删除《" + p.title + "》（站内后台）")

@@ -206,6 +206,41 @@
     document.body.appendChild(box);
   }
 
+  /* ---------- 页脚统计：本站已运行 / 文章总数 / 总字数 / 最后更新 ---------- */
+  function mountStats() {
+    var box = document.getElementById("footer-stats");
+    if (!box) return;
+    function grab(url, fb) {
+      return fetch(url + "?v=" + Date.now()).then(function (r) { return r.ok ? r.json() : fb; }).catch(function () { return fb; });
+    }
+    Promise.all([grab("/posts.json", { posts: [] }), grab("/search.json", { posts: [] }), grab("/site.json", {})])
+      .then(function (res) {
+        var posts = (res[0].posts || []).filter(function (p) { return !p.private; });
+        var idx = res[1].posts || [];
+        var sc = res[2] || {};
+        var since = new Date((sc.since || "2026-09-17") + "T00:00:00+08:00");
+        var words = idx.reduce(function (n, p) { return n + (p.text ? p.text.length : 0); }, 0);
+        var last = posts.map(function (p) { return p.date || ""; }).sort().pop() || "—";
+        box.innerHTML =
+          "<div class=\"stat\"><b id=\"stat-uptime\">…</b><span>本站已运行</span></div>" +
+          "<div class=\"stat\"><b>" + posts.length + "</b><span>文章总数</span></div>" +
+          "<div class=\"stat\"><b>" + words.toLocaleString() + "</b><span>总字数</span></div>" +
+          "<div class=\"stat\"><b>" + last + "</b><span>最后更新</span></div>";
+        var up = document.getElementById("stat-uptime");
+        function pad(n) { return (n < 10 ? "0" : "") + n; }
+        function tick() {
+          var ms = Date.now() - since.getTime();
+          if (ms < 0) ms = 0;
+          var d = Math.floor(ms / 86400000);
+          var h = Math.floor(ms % 86400000 / 3600000);
+          var m = Math.floor(ms % 3600000 / 60000);
+          var s = Math.floor(ms % 60000 / 1000);
+          up.textContent = d + " 天 " + pad(h) + ":" + pad(m) + ":" + pad(s);
+        }
+        tick();
+        setInterval(tick, 1000);
+      });
+  }
   function boot() {
     var slug = document.documentElement.getAttribute("data-post-slug") || "";
     var meta = { title: (document.querySelector("article.post h1") || {}).textContent || document.title };
@@ -223,6 +258,7 @@
         }
         applyAppearance();
         mountPetals((cfg.features || {}).petals);
+        mountStats();
         var box = $("post-extras");
         if (box) {
           var f = cfg.features || {};

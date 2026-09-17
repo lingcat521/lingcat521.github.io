@@ -190,3 +190,16 @@ article.post h1{margin:.2rem 0 .6rem;font-size:1.6rem;line-height:1.35;letter-sp
   100%{transform:translate3d(calc(var(--drift,36px) * -.6),112vh,0) rotate(420deg) scale(.85);opacity:0}
 }
 @media (prefers-reduced-motion:reduce){.petal{display:none}}
+
+/* ---------- 全文搜索命中高亮 ---------- */
+mark{background:var(--accent-soft);color:inherit;padding:0 .15em;border-radius:4px}
+.post-card p mark{background:#ffd9e8}
+
+/* ---------- 页脚统计（填充底部留白）---------- */
+.footer-stats{display:flex;flex-wrap:wrap;justify-content:center;gap:.55rem;margin:0 0 1rem}
+.stat{min-width:7.2rem;padding:.6rem .9rem;border-radius:14px;background:var(--card-bg);
+  border:1px solid var(--glass-line);text-align:center;
+  -webkit-backdrop-filter:blur(var(--card-blur));backdrop-filter:blur(var(--card-blur))}
+.stat b{display:block;font-size:1.02rem;color:var(--accent);line-height:1.35;font-variant-numeric:tabular-nums}
+.stat span{font-size:.78rem;color:var(--muted)}
+@media (max-width:520px){.stat{min-width:0;flex:1 1 40%;padding:.5rem .6rem}.stat b{font-size:.95rem}}

@@ -40,6 +40,15 @@ posts.forEach(function (p, i) {
 
 fs.writeFileSync(dataPath, JSON.stringify({ posts: posts }, null, 2) + "\n");
 
+// 全文搜索索引：标题 / 摘要 / 标签 / 正文纯文本
+const searchIndex = posts.map(function (p) {
+  const mdPath = path.join(ROOT, "posts", p.slug, "post.md");
+  const raw = fs.existsSync(mdPath) ? fs.readFileSync(mdPath, "utf8") : "";
+  return { slug: p.slug, title: p.title, date: p.date, tags: p.tags || [], summary: p.summary || "", text: MD.plain(raw) };
+});
+fs.writeFileSync(path.join(ROOT, "search.json"), JSON.stringify({ posts: searchIndex }) + "\n");
+console.log("  重建 search.json（" + searchIndex.length + " 篇）");
+
 function esc(s) { return String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
 const SITE = Post.SITE;
 const lines = ["<?xml version=\"1.0\" encoding=\"utf-8\"?>",
