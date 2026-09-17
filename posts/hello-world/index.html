@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="auto">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>开站：第三遍造轮子，这次造自己的 · 铃樱の小站</title>
+<meta name="description" content="折腾过很多次博客，这次决定不再搬家——手写 HTML/CSS/JS，零依赖零构建，扔到 GitHub Pages 上就完事。">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/assets/style.css">
+<link rel="alternate" type="application/atom+xml" title="铃樱の小站" href="/atom.xml">
+<script>(function(){try{var t=localStorage.getItem("theme")||"auto";document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
+</head>
+<body>
+<div id="progress"></div>
+<header class="site-header"><div class="wrap header-inner">
+<a class="brand" href="/"><span class="brand-mark">❀</span> 铃樱の小站</a>
+<nav class="nav"><a href="/">首页</a><a href="/archive/">归档</a><a href="/tags/">标签</a><a href="/about/">关于</a>
+<a href="https://github.com/lingcat521" target="_blank" rel="noopener">GitHub</a></nav>
+<button id="theme-toggle" class="icon-btn" type="button" aria-label="切换主题" title="切换主题">🌗</button>
+</div></header>
+<main class="wrap fade-in">
+<article class="post">
+<header>
+<h1>开站：第三遍造轮子，这次造自己的</h1>
+<div class="meta"><span>2026-09-17</span><span>·</span><span>约 3 分钟</span>
+<a class="tag" href="/tags/">#随笔</a><a class="tag" href="/tags/">#建站</a>
+</div></header>
+<div class="toc" id="toc"><strong>目录</strong></div>
+<div class="content">
+<p>折腾博客这件事，我大概已经干过三回了。第一回用现成的博客程序，第二回换了静态生成器，每一回都死在同一个地方：<strong>主题改不动</strong>，或者改完之后一升级就全没了。</p>
+<h2>这次的决定</h2>
+<p>所以第三回我换了个思路：<strong>不装了</strong>。不要生成器、不要 npm、不要主题包，直接手写 HTML + CSS + JavaScript。</p>
+<ul>
+<li><strong>零依赖</strong>：没有 CDN、没有字体外链、没有第三方统计。断网也能打开，国内也不卡。</li>
+<li><strong>零构建</strong>：写完 push 就上线，不用等 CI 编译，手机上就能改。</li>
+<li><strong>可读</strong>：任何一个文件我都能从头读到尾，没有魔法。</li>
+</ul>
+<h2>代价是什么</h2>
+<p>代价是加文章要手写一个 HTML 文件。听起来很恐怖，其实一篇也就 60 行左右，而且可以直接复制上一篇改。</p>
+<pre><code>posts/
+└── hello-world/
+    └── index.html   ← 一篇文章就是一个文件夹里的 index.html</code></pre>
+<p>好处是网址干净（<code>/posts/hello-world/</code>），而且以后想迁到任何地方都是复制粘贴的事——没有构建产物，没有黑盒。</p>
+<h2>我得到了什么</h2>
+<ul>
+<li>打开速度：全部静态资源加起来不到 60 KB，没有一次外部请求。</li>
+<li>不会再有「升级主题把配置冲掉」这种事，因为我就是主题。</li>
+<li>想加功能就写几十行 JS，不用担心和别人的插件打架。</li>
+</ul>
+<blockquote><p>这个小站的每一行代码我都能解释清楚——折腾这么多年，这大概是我最想要的东西。</p></blockquote>
+</div>
+</article>
+<div class="post-nav"><span></span><a href="/posts/flowerie-bot/">花璃：一个 DeepSeek 驱动的 QQ 群聊机器人 →</a></div>
+</main>
+<footer class="site-footer"><div class="wrap">© 2026 铃樱 · <a href="/atom.xml">RSS</a> · 
+<a href="https://github.com/lingcat521" target="_blank" rel="noopener">GitHub</a> · 托管于 GitHub Pages · 手写 HTML/CSS/JS，零依赖</div></footer>
+<button id="to-top" type="button" aria-label="回到顶部">↑</button>
+<script src="/assets/app.js" defer></script>
+</body>
+</html>

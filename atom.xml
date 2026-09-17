@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>铃樱の小站</title>
+  <subtitle>一些奇奇怪怪的项目和日常</subtitle>
+  <link href="https://lingcat521.github.io/atom.xml" rel="self"/>
+  <link href="https://lingcat521.github.io/"/>
+  <updated>2026-09-17T12:00:00+08:00</updated>
+  <id>https://lingcat521.github.io/</id>
+  <author><name>铃樱</name></author>
+  <entry>
+    <title>开站：第三遍造轮子，这次造自己的</title>
+    <link href="https://lingcat521.github.io/posts/hello-world/"/>
+    <id>https://lingcat521.github.io/posts/hello-world/</id>
+    <updated>2026-09-17T12:00:00+08:00</updated>
+    <summary>折腾过很多次博客，这次决定不再搬家——手写 HTML/CSS/JS，零依赖零构建，扔到 GitHub Pages 上就完事。</summary>
+  </entry>
+  <entry>
+    <title>花璃：一个 DeepSeek 驱动的 QQ 群聊机器人</title>
+    <link href="https://lingcat521.github.io/posts/flowerie-bot/"/>
+    <id>https://lingcat521.github.io/posts/flowerie-bot/</id>
+    <updated>2026-09-17T12:00:00+08:00</updated>
+    <summary>能聊天、识图、记记忆、被戳会回应，还能自定义人格、发表情包、用 MCP 上网查资料。双协议、零 JS 管理后台、13 种语言写插件。</summary>
+  </entry>
+  <entry>
+    <title>我为什么给机器人的后台加上「零 JavaScript」这条铁律</title>
+    <link href="https://lingcat521.github.io/posts/zero-js-webui/"/>
+    <id>https://lingcat521.github.io/posts/zero-js-webui/</id>
+    <updated>2026-09-16T12:00:00+08:00</updated>
+    <summary>不是反技术，是被现实教做人了：手机上打不开、白屏、脚本报错、旧浏览器不支持……服务端渲染全都解决了。</summary>
+  </entry>
+  <entry>
+    <title>用 GitHub Pages 挂个人站：能做与不能做</title>
+    <link href="https://lingcat521.github.io/posts/github-pages/"/>
+    <id>https://lingcat521.github.io/posts/github-pages/</id>
+    <updated>2026-09-17T12:00:00+08:00</updated>
+    <summary>免费、自带 HTTPS、能绑自己的域名。但它只能跑静态文件——这一点决定了你什么能挂上去、什么不能。</summary>
+  </entry>
+</feed>
