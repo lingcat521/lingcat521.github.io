@@ -1,7 +1,7 @@
 {
   "appearance": {
     "cardAlpha": 0.5,
-    "bgImageOpacity": 0.5,
+    "bgImageOpacity": 0.9,
     "cardBlur": "12px"
   },
   "views": {
