@@ -2,14 +2,14 @@
   --bg:#fdfbfd; --bg-rgb:253,251,253; --bg-soft:#f6f1f6; --card:#ffffff; --text:#2b2b33; --muted:#7a7482;
   /* 可调外观（后台可改）：卡片不透明度 / 背景图不透明度 / 模糊 */
   --card-rgb:255,255,255; --card-alpha:.82; --bg-image-opacity-set:.75; --bg-image-opacity:var(--bg-image-opacity-set); --card-blur:14px; --glass-line:rgba(255,255,255,.55);
-  --card-bg:rgba(255,255,255,.82);
+  --card-bg:rgba(255,255,255,.82); --text-halo:0 1px 3px rgba(255,255,255,.9);
   --accent:#e0568c; --accent-soft:#ffe3ee; --line:#ece6ee; --code-bg:#f7f3f8;
   --shadow:0 1px 2px rgba(43,43,51,.05),0 8px 24px rgba(43,43,51,.06);
   --radius:16px; --maxw:44rem;
 }
 :root[data-theme="dark"]{
   --bg:#16141a; --bg-rgb:22,20,26; --bg-soft:#1c1922; --card:#1f1c26; --text:#e9e6ef; --muted:#9d97a8;
-  --card-rgb:31,28,38; --card-alpha:.85; --card-bg:rgba(31,28,38,.85); --glass-line:rgba(255,255,255,.14);
+  --card-rgb:31,28,38; --card-alpha:.85; --card-bg:rgba(31,28,38,.85); --text-halo:0 1px 3px rgba(0,0,0,.75); --glass-line:rgba(255,255,255,.14);
   --bg-image-opacity-set:.75; --bg-image-opacity:calc(var(--bg-image-opacity-set) * .6);
   --accent:#ff9dc6; --accent-soft:#33202c; --line:#2c2833; --code-bg:#221f2b;
   --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 30px rgba(0,0,0,.35);
@@ -17,7 +17,7 @@
 @media (prefers-color-scheme:dark){
   :root[data-theme="auto"]{
     --bg:#16141a; --bg-rgb:22,20,26; --bg-soft:#1c1922; --card:#1f1c26; --text:#e9e6ef; --muted:#9d97a8;
-    --card-rgb:31,28,38; --card-alpha:.85; --card-bg:rgba(31,28,38,.85); --glass-line:rgba(255,255,255,.14);
+    --card-rgb:31,28,38; --card-alpha:.85; --card-bg:rgba(31,28,38,.85); --text-halo:0 1px 3px rgba(0,0,0,.75); --glass-line:rgba(255,255,255,.14);
     --bg-image-opacity-set:.75; --bg-image-opacity:calc(var(--bg-image-opacity-set) * .6);
   --bg-image-opacity-set:.75; --bg-image-opacity:calc(var(--bg-image-opacity-set) * .6);
     --accent:#ff9dc6; --accent-soft:#33202c; --line:#2c2833; --code-bg:#221f2b;
@@ -79,10 +79,10 @@ main{padding:2rem 0 3rem}
 .hero{text-align:center;padding:1.6rem 0 2.2rem}
 .avatar{width:96px;height:96px;border-radius:50%;object-fit:cover;border:3px solid var(--card);
   box-shadow:0 0 0 2px var(--accent-soft),var(--shadow)}
-.hero h1{margin:.9rem 0 .2rem;font-size:1.75rem;letter-spacing:-.02em}
+.hero h1{text-shadow:var(--text-halo);margin:.9rem 0 .2rem;font-size:1.75rem;letter-spacing:-.02em}
 .hero h1 .grad{background:linear-gradient(100deg,var(--accent),#8f7bf0 55%,#4aa8d8);
   -webkit-background-clip:text;background-clip:text;color:transparent}
-.typed{color:var(--muted);min-height:1.75em;margin:.2rem 0 1rem}
+.typed{text-shadow:var(--text-halo);color:var(--muted);min-height:1.75em;margin:.2rem 0 1rem}
 .typed .cursor{display:inline-block;width:.5ch;background:var(--accent);color:transparent;
   animation:blink 1s steps(1) infinite;border-radius:1px}
 @keyframes blink{50%{opacity:0}}
@@ -90,7 +90,7 @@ main{padding:2rem 0 3rem}
 .chip{display:inline-block;padding:.28rem .7rem;border-radius:999px;background:var(--accent-soft);
   color:var(--accent);font-size:.86rem;border:1px solid transparent}
 .chip:hover{text-decoration:none;border-color:var(--accent)}
-.section-title{display:flex;align-items:center;gap:.6rem;margin:2.4rem 0 1rem;font-size:1.05rem;color:var(--muted)}
+.section-title{text-shadow:var(--text-halo);display:flex;align-items:center;gap:.6rem;margin:2.4rem 0 1rem;font-size:1.05rem;color:var(--muted)}
 .section-title:after{content:"";flex:1;height:1px;background:var(--line)}
 .toolbar{display:flex;gap:.5rem;flex-wrap:wrap;align-items:center;margin-bottom:1rem}
 .search{flex:1;min-width:11rem;padding:.6rem .85rem;border-radius:12px;border:1px solid var(--line);
@@ -144,7 +144,7 @@ article.post h1{margin:.2rem 0 .6rem;font-size:1.6rem;line-height:1.35;letter-sp
   border:1px solid var(--line);background:var(--card);color:var(--accent);cursor:pointer;
   box-shadow:var(--shadow);opacity:0;pointer-events:none;transition:opacity .2s;font-size:1.1rem}
 #to-top.show{opacity:1;pointer-events:auto}
-.site-footer{border-top:1px solid var(--line);padding:1.5rem 0 2.5rem;color:var(--muted);font-size:.88rem;text-align:center}
+.site-footer{text-shadow:var(--text-halo);border-top:1px solid var(--line);padding:1.5rem 0 2.5rem;color:var(--muted);font-size:.88rem;text-align:center}
 .fade-in{animation:fade .45s ease both}
 @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 @media (max-width:640px){
