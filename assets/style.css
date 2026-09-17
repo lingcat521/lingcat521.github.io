@@ -2,14 +2,14 @@
   --bg:#fdfbfd; --bg-rgb:253,251,253; --bg-soft:#f6f1f6; --card:#ffffff; --text:#2b2b33; --muted:#7a7482;
   /* 可调外观（后台可改）：卡片不透明度 / 背景图不透明度 / 模糊 */
   --card-rgb:255,255,255; --card-alpha:.82; --bg-image-opacity-set:.75; --bg-image-opacity:var(--bg-image-opacity-set); --card-blur:14px; --glass-line:rgba(255,255,255,.55);
-  --card-bg:rgba(255,255,255,.82); --text-halo:0 1px 3px rgba(255,255,255,.9); --bg-top:rgba(255,255,255,.35); --bg-bottom:rgba(255,231,242,.85);
+  --card-bg:rgba(255,255,255,.82); --text-halo:0 1px 0 rgba(255,255,255,.85); --bg-top:rgba(255,255,255,.35); --bg-bottom:rgba(255,231,242,.85);
   --accent:#e0568c; --accent-soft:#ffe3ee; --line:#ece6ee; --code-bg:#f7f3f8;
   --shadow:0 1px 2px rgba(43,43,51,.05),0 8px 24px rgba(43,43,51,.06);
   --radius:16px; --maxw:44rem;
 }
 :root[data-theme="dark"]{
   --bg:#16141a; --bg-rgb:22,20,26; --bg-soft:#1c1922; --card:#1f1c26; --text:#e9e6ef; --muted:#9d97a8;
-  --card-rgb:31,28,38; --card-alpha:.85; --card-bg:rgba(31,28,38,.85); --text-halo:0 1px 3px rgba(0,0,0,.75); --bg-top:rgba(22,20,26,.55); --bg-bottom:rgba(50,25,40,.85); --glass-line:rgba(255,255,255,.14);
+  --card-rgb:31,28,38; --card-alpha:.85; --card-bg:rgba(31,28,38,.85); --text-halo:0 1px 0 rgba(0,0,0,.7); --bg-top:rgba(22,20,26,.55); --bg-bottom:rgba(50,25,40,.85); --glass-line:rgba(255,255,255,.14);
   --bg-image-opacity-set:.75; --bg-image-opacity:calc(var(--bg-image-opacity-set) * .6);
   --accent:#ff9dc6; --accent-soft:#33202c; --line:#2c2833; --code-bg:#221f2b;
   --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 30px rgba(0,0,0,.35);
@@ -36,7 +36,7 @@ html::before,html::after{content:"";position:fixed;inset:0;pointer-events:none;z
 html::before{background:url("/assets/bg.jpg") center/cover no-repeat;
   filter:blur(28px) saturate(1.12) brightness(.96);transform:scale(1.18)}
 html::after{background:url("/assets/bg.jpg") center/contain no-repeat;
-  opacity:var(--bg-image-opacity);will-change:opacity}
+  opacity:var(--bg-image-opacity)}
 :root[data-theme="dark"]::before{filter:blur(28px) saturate(1.05) brightness(.5)}
 @media (prefers-color-scheme:dark){:root[data-theme="auto"]::before{filter:blur(28px) saturate(1.05) brightness(.5)}}
 /* ③ 轻度蒙版：夹在背景与内容之间。浅色主题提亮、深色主题压暗，两边都让文字更好读 */
@@ -60,14 +60,14 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
 }
 body{margin:0;background:transparent;color:var(--text);line-height:1.75;
   font-family:system-ui,-apple-system,"PingFang SC","Noto Sans CJK SC","Microsoft YaHei",sans-serif;
-  -webkit-font-smoothing:antialiased;font-size:16px}
+  font-size:16px}
 a{color:var(--accent);text-decoration:none}
 a:hover{text-decoration:underline}
 .wrap{max-width:var(--maxw);margin:0 auto;padding:0 1.15rem}
 #progress{position:fixed;top:0;left:0;height:3px;width:0;background:var(--accent);z-index:50;transition:width .1s}
-.site-header{position:sticky;top:0;z-index:40;
-  -webkit-backdrop-filter:blur(14px) saturate(1.2);backdrop-filter:blur(14px) saturate(1.2);
-  background:var(--card-bg);border-bottom:1px solid var(--line)}
+.site-header{position:sticky;top:0;z-index:40;background:transparent;border-bottom:1px solid var(--line)}
+.site-header::before{content:"";position:absolute;inset:0;z-index:-1;background:var(--card-bg);
+  -webkit-backdrop-filter:blur(14px) saturate(1.2);backdrop-filter:blur(14px) saturate(1.2)}
 .header-inner{display:flex;align-items:center;gap:.75rem;min-height:56px}
 .brand{font-weight:700;color:var(--text);font-size:1.02rem;white-space:nowrap}
 .brand:hover{text-decoration:none;color:var(--accent)}
@@ -100,11 +100,13 @@ main{padding:2rem 0 3rem}
   background:var(--card);color:var(--text);font-size:.95rem;font-family:inherit}
 .search:focus{outline:none;border-color:var(--accent)}
 .post-list{display:grid;gap:.85rem;padding:0;margin:0;list-style:none}
-.post-card{background:var(--card-bg);border:1px solid var(--glass-line);border-radius:var(--radius);
+.post-card{position:relative;isolation:isolate;background:transparent;
+  border:1px solid var(--glass-line);border-radius:var(--radius);
   padding:1.05rem 1.15rem;box-shadow:var(--shadow);
-  -webkit-backdrop-filter:blur(var(--card-blur)) saturate(1.15);backdrop-filter:blur(var(--card-blur)) saturate(1.15);
   transition:transform .25s ease,opacity .25s ease,border-color .25s ease,box-shadow .25s ease;
-  animation:cardIn .5s ease both}
+  animation:cardIn .5s ease}
+.post-card::before{content:"";position:absolute;inset:0;z-index:-1;border-radius:inherit;background:var(--card-bg);
+  -webkit-backdrop-filter:blur(var(--card-blur)) saturate(1.15);backdrop-filter:blur(var(--card-blur)) saturate(1.15)}
 @keyframes cardIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
 .post-card:hover{transform:translateY(-2px);border-color:var(--accent)}
 .post-card h3{margin:0 0 .35rem;font-size:1.08rem;line-height:1.45}
@@ -114,10 +116,12 @@ main{padding:2rem 0 3rem}
 .meta{display:flex;gap:.75rem;flex-wrap:wrap;color:var(--muted);font-size:.85rem;align-items:center}
 .meta .tag{color:var(--accent)}
 .empty{color:var(--muted);padding:1rem 0}
-article.post{background:var(--card-bg);border:1px solid var(--glass-line);border-radius:var(--radius);
+article.post{position:relative;isolation:isolate;background:transparent;
+  border:1px solid var(--glass-line);border-radius:var(--radius);
   padding:1.6rem 1.4rem;box-shadow:var(--shadow);
-  -webkit-backdrop-filter:blur(var(--card-blur)) saturate(1.15);backdrop-filter:blur(var(--card-blur)) saturate(1.15);
-  animation:cardIn .55s ease both}
+  animation:cardIn .55s ease}
+article.post::before{content:"";position:absolute;inset:0;z-index:-1;border-radius:inherit;background:var(--card-bg);
+  -webkit-backdrop-filter:blur(var(--card-blur)) saturate(1.15);backdrop-filter:blur(var(--card-blur)) saturate(1.15)}
 article.post>header{border-bottom:1px solid var(--line);padding-bottom:1rem;margin-bottom:1.4rem}
 article.post h1{margin:.2rem 0 .6rem;font-size:1.6rem;line-height:1.35;letter-spacing:-.01em}
 .content h2{font-size:1.2rem;margin:2rem 0 .7rem;padding-left:.6rem;border-left:3px solid var(--accent)}
@@ -135,7 +139,9 @@ article.post h1{margin:.2rem 0 .6rem;font-size:1.6rem;line-height:1.35;letter-sp
 .copy-btn{position:absolute;top:.5rem;right:.5rem;border:1px solid var(--line);background:var(--card);
   color:var(--muted);border-radius:8px;padding:.15rem .5rem;font-size:.75rem;cursor:pointer;opacity:0;transition:opacity .15s}
 .content pre:hover .copy-btn{opacity:1}
-.toc{background:var(--card-bg);border:1px solid var(--line);border-radius:12px;padding:.85rem 1rem;margin:0 0 1.4rem;
+.toc{position:relative;isolation:isolate;background:transparent;border:1px solid var(--line);border-radius:12px;
+  padding:.85rem 1rem;margin:0 0 1.4rem}
+.toc::before{content:"";position:absolute;inset:0;z-index:-1;border-radius:inherit;background:var(--card-bg);
   -webkit-backdrop-filter:blur(var(--card-blur));backdrop-filter:blur(var(--card-blur))}
 .toc strong{display:block;margin-bottom:.35rem;font-size:.9rem;color:var(--muted)}
 .toc ol{margin:0;padding-left:1.2rem;font-size:.92rem}
@@ -148,7 +154,7 @@ article.post h1{margin:.2rem 0 .6rem;font-size:1.6rem;line-height:1.35;letter-sp
   box-shadow:var(--shadow);opacity:0;pointer-events:none;transition:opacity .2s;font-size:1.1rem}
 #to-top.show{opacity:1;pointer-events:auto}
 .site-footer{text-shadow:var(--text-halo);border-top:1px solid var(--line);padding:1.5rem 0 2.5rem;color:var(--muted);font-size:.88rem;text-align:center}
-.fade-in{animation:fade .45s ease both}
+.fade-in{animation:fade .45s ease}
 @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 @media (max-width:640px){
   body{font-size:15.5px}
@@ -169,8 +175,9 @@ article.post h1{margin:.2rem 0 .6rem;font-size:1.6rem;line-height:1.35;letter-sp
 .badge{display:inline-block;padding:.15rem .55rem;border-radius:999px;font-size:.78rem;
   background:var(--accent-soft);color:var(--accent);margin-bottom:.45rem;margin-right:.35rem}
 .badge-private{background:rgba(120,120,140,.18);color:var(--muted)}
-.comments{margin-top:1.4rem;background:var(--card-bg);border:1px solid var(--line);border-radius:var(--radius);
-  padding:1.1rem 1.2rem;box-shadow:var(--shadow);
+.comments{position:relative;isolation:isolate;margin-top:1.4rem;background:transparent;border:1px solid var(--line);
+  border-radius:var(--radius);padding:1.1rem 1.2rem;box-shadow:var(--shadow)}
+.comments::before{content:"";position:absolute;inset:0;z-index:-1;border-radius:inherit;background:var(--card-bg);
   -webkit-backdrop-filter:blur(var(--card-blur));backdrop-filter:blur(var(--card-blur))}
 .comments h2{margin:.1rem 0 .5rem;font-size:1.05rem}
 .giscus-host{margin-top:.7rem}
