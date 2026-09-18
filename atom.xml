@@ -3,7 +3,7 @@
   <title>铃樱の小站</title>
   <link href="https://lingcat521.github.io/atom.xml" rel="self"/>
   <link href="https://lingcat521.github.io/"/>
-  <updated>2026-09-17T19:25:00.495Z</updated>
+  <updated>2026-09-18T17:35:15.390Z</updated>
   <id>https://lingcat521.github.io/</id>
   <author><name>铃樱</name></author>
   <entry>
@@ -26,13 +26,6 @@
     <id>https://lingcat521.github.io/posts/flowerie-bot/</id>
     <updated>2026-09-17T12:00:00+08:00</updated>
     <summary>能聊天、识图、记记忆、被戳会回应，还能自定义人格、发表情包、用 MCP 上网查资料。</summary>
-  </entry>
-  <entry>
-    <title>开站：第三遍造轮子，这次造自己的</title>
-    <link href="https://lingcat521.github.io/posts/" + encodeURIComponent(p.slug) + "/"/>
-    <id>https://lingcat521.github.io/posts/hello-world/</id>
-    <updated>2026-09-17T12:00:00+08:00</updated>
-    <summary>折腾过很多次博客，这次决定不再搬家——手写 HTML/CSS/JS，零依赖零构建，扔到 GitHub Pages 上就完事。</summary>
   </entry>
   <entry>
     <title>我为什么给机器人的后台加上「零 JavaScript」这条铁律</title>

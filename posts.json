@@ -41,19 +41,6 @@
       "chars": 636
     },
     {
-      "slug": "hello-world",
-      "title": "开站：第三遍造轮子，这次造自己的",
-      "date": "2026-09-17",
-      "tags": [
-        "随笔",
-        "建站"
-      ],
-      "read": 2,
-      "summary": "折腾过很多次博客，这次决定不再搬家——手写 HTML/CSS/JS，零依赖零构建，扔到 GitHub Pages 上就完事。",
-      "created": 1789610400000,
-      "chars": 494
-    },
-    {
       "slug": "zero-js-webui",
       "title": "我为什么给机器人的后台加上「零 JavaScript」这条铁律",
       "date": "2026-09-16",
