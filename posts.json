@@ -15,19 +15,6 @@
       "chars": 13
     },
     {
-      "slug": "flowerie-bot",
-      "title": "花璃：一个 DeepSeek 驱动的 QQ 群聊机器人",
-      "date": "2026-09-17",
-      "tags": [
-        "项目",
-        "QQ机器人"
-      ],
-      "read": 2,
-      "summary": "能聊天、识图、记记忆、被戳会回应，还能自定义人格、发表情包、用 MCP 上网查资料。",
-      "created": 1789614000000,
-      "chars": 636
-    },
-    {
       "slug": "zero-js-webui",
       "title": "我为什么给机器人的后台加上「零 JavaScript」这条铁律",
       "date": "2026-09-16",
