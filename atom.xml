@@ -3,7 +3,7 @@
   <title>铃樱の小站</title>
   <link href="https://lingcat521.github.io/atom.xml" rel="self"/>
   <link href="https://lingcat521.github.io/"/>
-  <updated>2026-09-18T17:35:15.390Z</updated>
+  <updated>2026-09-18T17:36:38.769Z</updated>
   <id>https://lingcat521.github.io/</id>
   <author><name>铃樱</name></author>
   <entry>
@@ -12,13 +12,6 @@
     <id>https://lingcat521.github.io/posts/post-mu5upy6g/</id>
     <updated>2026-09-17T12:00:00+08:00</updated>
     <summary>咱也不知道这是什么（</summary>
-  </entry>
-  <entry>
-    <title>用 GitHub Pages 挂个人站：能做与不能做</title>
-    <link href="https://lingcat521.github.io/posts/" + encodeURIComponent(p.slug) + "/"/>
-    <id>https://lingcat521.github.io/posts/github-pages/</id>
-    <updated>2026-09-17T12:00:00+08:00</updated>
-    <summary>免费、自带 HTTPS、能绑自己的域名。但它只能跑静态文件——这一点决定了什么能挂上去、什么不能。</summary>
   </entry>
   <entry>
     <title>花璃：一个 DeepSeek 驱动的 QQ 群聊机器人</title>
