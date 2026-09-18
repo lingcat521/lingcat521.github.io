@@ -3,9 +3,16 @@
   <title>铃樱の小站</title>
   <link href="https://lingcat521.github.io/atom.xml" rel="self"/>
   <link href="https://lingcat521.github.io/"/>
-  <updated>2026-09-18T17:40:24.325Z</updated>
+  <updated>2026-09-18T17:49:21.169Z</updated>
   <id>https://lingcat521.github.io/</id>
   <author><name>铃樱</name></author>
+  <entry>
+    <title>自我介绍——</title>
+    <link href="https://lingcat521.github.io/posts/" + encodeURIComponent(p.slug) + "/"/>
+    <id>https://lingcat521.github.io/posts/introduce/</id>
+    <updated>2026-09-18T12:00:00+08:00</updated>
+    <summary>你好w，这里是铃酱——</summary>
+  </entry>
   <entry>
     <title>随便写写…</title>
     <link href="https://lingcat521.github.io/posts/" + encodeURIComponent(p.slug) + "/"/>

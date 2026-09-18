@@ -1,6 +1,20 @@
 {
   "posts": [
     {
+      "title": "自我介绍——",
+      "slug": "introduce",
+      "date": "2026-09-18",
+      "tags": [
+        "随笔"
+      ],
+      "read": 4,
+      "chars": 1024,
+      "summary": "你好w，这里是铃酱——",
+      "created": 1789753759802,
+      "pinned": false,
+      "private": false
+    },
+    {
       "title": "随便写写…",
       "slug": "post-mu5upy6g",
       "date": "2026-09-17",
