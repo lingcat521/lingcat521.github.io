@@ -1,6 +1,6 @@
 {
   "appearance": {
-    "cardAlpha": 0.82,
+    "cardAlpha": 0.8,
     "bgImageOpacity": 0.75,
     "cardBlur": "12px"
   },
@@ -9,20 +9,17 @@
     "endpoint": ""
   },
   "comments": {
-    "provider": "none",
-    "repo": "",
-    "repoId": "",
-    "category": "",
-    "categoryId": "",
+    "provider": "giscus",
+    "repo": "lingcat521/lingcat521.github.io",
+    "repoId": "R_kgDOUfIMGg",
+    "category": "Announcements",
+    "categoryId": "DIC_kwDOUfIMGs4DF9Sn",
     "reactions": true,
     "inputPosition": "top"
   },
   "features": {
     "device": true,
     "share": true,
-    "like": true,
-    "petals": true
-  },
-  "assetVersion": "9c7e4b06",
-  "since": "2026-09-17"
+    "like": true
+  }
 }
