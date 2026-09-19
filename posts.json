@@ -1,6 +1,20 @@
 {
   "posts": [
     {
+      "title": "花璃 v2.2.2222 更新公告",
+      "slug": "flowerie-bot",
+      "date": "2026-09-19",
+      "tags": [
+        "bot"
+      ],
+      "read": 7,
+      "chars": 2226,
+      "summary": "是的——这是一次维护性更新uwu",
+      "created": 1789830018177,
+      "pinned": false,
+      "private": false
+    },
+    {
       "title": "自我介绍——",
       "slug": "introduce",
       "date": "2026-09-18",
