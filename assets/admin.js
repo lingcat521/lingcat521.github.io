@@ -42,22 +42,52 @@
   }
 
   /* ---------- 一次提交多个文件（Git Data API）---------- */
-  function commitFiles(files, message) {
+  /* 串行化：短时间内连点删除/保存时，绝不并发提交（并发会让第 2 个 PATCH 被拒 → 幽灵文章） */
+  var commitChain = Promise.resolve();
+  function queueCommit(fn) {
+    var run = commitChain.then(fn, fn);
+    commitChain = run.catch(function () {});
+    return run;
+  }
+
+  /* 提交一批文件；**遇到 ref 冲突自动重试**（重新取 base 再建 tree/commit）。 */
+  function commitOnce(files, message) {
     var baseCommit, baseTree;
     return api("GET", "/repos/" + OWNER + "/" + REPO + "/git/ref/heads/" + BRANCH)
       .then(function (ref) { return api("GET", "/repos/" + OWNER + "/" + REPO + "/git/commits/" + ref.object.sha); })
       .then(function (c) {
         baseCommit = c.sha; baseTree = c.tree.sha;
-        var jobs = files.map(function (f) {
-          if (f.content === null) return Promise.resolve({ path: f.path, mode: "100644", type: "blob", sha: null });
+        return Promise.all(files.map(function (f) {
+          if (f.content === null) return { path: f.path, mode: "100644", type: "blob", sha: null };
           return api("POST", "/repos/" + OWNER + "/" + REPO + "/git/blobs", { content: f.content, encoding: "utf-8" })
             .then(function (b) { return { path: f.path, mode: "100644", type: "blob", sha: b.sha }; });
-        });
-        return Promise.all(jobs);
+        }));
       })
       .then(function (tree) { return api("POST", "/repos/" + OWNER + "/" + REPO + "/git/trees", { base_tree: baseTree, tree: tree }); })
       .then(function (t) { return api("POST", "/repos/" + OWNER + "/" + REPO + "/git/commits", { message: message, tree: t.sha, parents: [baseCommit] }); })
-      .then(function (c) { return api("PATCH", "/repos/" + OWNER + "/" + REPO + "/git/refs/heads/" + BRANCH, { sha: c.sha }).then(function () { return c; }); });
+      .then(function (c) {
+        return api("PATCH", "/repos/" + OWNER + "/" + REPO + "/git/refs/heads/" + BRANCH, { sha: c.sha })
+          .then(function () { return c; });
+      });
+  }
+
+  function commitFiles(files, message) {
+    return queueCommit(function () {
+      var tries = 0;
+      function attempt() {
+        tries += 1;
+        return commitOnce(files, message).catch(function (e) {
+          var msg = String((e && e.message) || e);
+          // 422 / not a fast forward = 期间有人（自己或后台另一处）提交过 → 取新 base 重试
+          if (tries < 4 && (msg.indexOf("422") >= 0 || /fast forward/i.test(msg) || /conflict/i.test(msg))) {
+            say("检测到并发提交，正在自动重试（第 " + tries + " 次）…");
+            return new Promise(function (r) { setTimeout(r, 400 * tries); }).then(attempt);
+          }
+          throw e;
+        });
+      }
+      return attempt();
+    });
   }
 
   function loadPosts() {
