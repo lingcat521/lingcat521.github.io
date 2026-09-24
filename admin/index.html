@@ -6,7 +6,7 @@
 <title>管理后台 · 铃樱の小站</title>
 <meta name="robots" content="noindex,nofollow">
 <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="/assets/style.css?v=9c7e4b06">
+<link rel="stylesheet" href="/assets/style.css?v=f1dfccbb">
 <style>
 .admin-grid{display:grid;grid-template-columns:1fr;gap:1rem}
 @media (min-width:900px){.admin-grid{grid-template-columns:minmax(0,1fr) minmax(0,1.2fr)}}
@@ -37,9 +37,9 @@
 .check input{width:auto}
 input[type=range]{width:100%;padding:0}
 </style>
-<script src="/assets/md.js?v=9c7e4b06" defer></script>
-<script src="/assets/post-template.js?v=9c7e4b06" defer></script>
-<script src="/assets/admin.js?v=9c7e4b06" defer></script>
+<script src="/assets/md.js?v=f1dfccbb" defer></script>
+<script src="/assets/post-template.js?v=f1dfccbb" defer></script>
+<script src="/assets/admin.js?v=f1dfccbb" defer></script>
 </head>
 <body>
 <header class="site-header"><div class="wrap header-inner">
@@ -134,9 +134,27 @@ input[type=range]{width:100%;padding:0}
 </div>
 <p class="admin-status" id="site-status"></p>
 </section>
+
+  <section class="card" style="margin-top:1rem">
+  <h2>⑤ 图片上传</h2>
+  <p class="hint">图片会提交到仓库 <code>assets/uploads/</code>（自动压缩：默认最长边 1600px、质量 0.82），
+  上传完成后可一键复制 Markdown 插进文章。仓库有 1GB 软上限，压缩正是为了避免越用越大。</p>
+  <div id="up-drop" class="up-drop">
+    <input id="up-file" type="file" accept="image/*" multiple style="display:none">
+    <button id="up-pick" class="btn btn-primary" type="button">选择图片…</button>
+    <span class="hint">也可以直接把图片拖到这里</span>
+  </div>
+  <div class="up-opts">
+    <label>最长边 <input id="up-max" type="number" value="1600" min="320" step="80" class="up-num"></label>
+    <label>质量 <input id="up-q" type="number" value="0.82" min="0.3" max="1" step="0.02" class="up-num"></label>
+    <label>格式 <select id="up-fmt"><option value="image/jpeg">JPEG（兼容最好）</option><option value="image/webp">WebP（更小）</option></select></label>
+  </div>
+  <div id="up-list" class="up-grid"></div>
+  <p class="admin-status" id="up-status"></p>
+  </section>
 </main>
 <footer class="site-footer"><div class="wrap">© 2026 铃樱 · 管理后台只对持有令牌的人有效 · 页面与仓库均为公开内容</div></footer>
 <button id="to-top" type="button" aria-label="回到顶部">↑</button>
-<script src="/assets/app.js?v=9c7e4b06" defer></script>
+<script src="/assets/app.js?v=f1dfccbb" defer></script>
 </body>
 </html>

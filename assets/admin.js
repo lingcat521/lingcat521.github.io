@@ -363,4 +363,159 @@
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
   else boot();
+
+    /* ---------- ⑤ 图片上传（提交到 assets/uploads/） ---------- */
+    var UPLOAD_DIR = "assets/uploads";
+
+    function upSay(msg, kind) {
+      var el = $("up-status");
+      if (!el) return;
+      el.textContent = msg;
+      el.className = "admin-status" + (kind ? " " + kind : "");
+    }
+    function upStamp() {
+      var d = new Date();
+      function p(n) { return (n < 10 ? "0" : "") + n; }
+      return d.getFullYear() + p(d.getMonth() + 1) + p(d.getDate()) + "-" + p(d.getHours()) + p(d.getMinutes()) + p(d.getSeconds());
+    }
+    function upSlug(name) {
+      return String(name || "image").replace(/\.[^.]+$/, "").toLowerCase()
+        .replace(/[^a-z0-9\u4e00-\u9fa5]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 40) || "image";
+    }
+    function upBlobToB64(blob) {
+      return new Promise(function (res, rej) {
+        var fr = new FileReader();
+        fr.onload = function () { res(String(fr.result).split(",")[1] || ""); };
+        fr.onerror = rej;
+        fr.readAsDataURL(blob);
+      });
+    }
+    function upCompress(file, maxEdge, quality, mime) {
+      return new Promise(function (res, rej) {
+        var url = URL.createObjectURL(file);
+        var img = new Image();
+        img.onload = function () {
+          var w = img.naturalWidth, h = img.naturalHeight;
+          var scale = Math.min(1, maxEdge / Math.max(w, h));
+          var cw = Math.max(1, Math.round(w * scale)), ch = Math.max(1, Math.round(h * scale));
+          var cv = document.createElement("canvas");
+          cv.width = cw; cv.height = ch;
+          var cx = cv.getContext("2d");
+          if (mime === "image/jpeg") { cx.fillStyle = "#fff"; cx.fillRect(0, 0, cw, ch); }
+          cx.drawImage(img, 0, 0, cw, ch);
+          URL.revokeObjectURL(url);
+          cv.toBlob(function (blob) {
+            blob ? res({ blob: blob, w: cw, h: ch, from: w + "x" + h }) : rej(new Error("压缩失败"));
+          }, mime, quality);
+        };
+        img.onerror = function () { URL.revokeObjectURL(url); rej(new Error("不是可识别的图片")); };
+        img.src = url;
+      });
+    }
+    function upUpload(blob, path, label) {
+      return upBlobToB64(blob).then(function (b64) {
+        return api("PUT", "/repos/" + OWNER + "/" + REPO + "/contents/" + path, {
+          message: "assets: 上传图片 " + label + "（站内后台）",
+          content: b64,
+          branch: BRANCH
+        });
+      });
+    }
+    function upCopy(text) {
+      if (navigator.clipboard) return navigator.clipboard.writeText(text);
+      var ta = document.createElement("textarea");
+      ta.value = text; document.body.appendChild(ta); ta.select();
+      document.execCommand("copy"); document.body.removeChild(ta);
+      return Promise.resolve();
+    }
+    function upRender(items) {
+      var box = $("up-list");
+      if (!box) return;
+      if (!items.length) { box.innerHTML = "<p class=\"hint\">还没有上传过图片。</p>"; return; }
+      box.innerHTML = items.sort(function (a, b) { return b.name.localeCompare(a.name); }).map(function (it) {
+        var url = "/" + UPLOAD_DIR + "/" + it.name;
+        var md = "![" + it.name.replace(/\.[^.]+$/, "") + "](" + url + ")";
+        return "<figure class=\"up-item\">" +
+          "<img src=\"" + esc(url) + "?v=" + esc((it.sha || "").slice(0, 6)) + "\" alt=\"" + esc(it.name) + "\" loading=\"lazy\">" +
+          "<figcaption><span class=\"up-name\">" + esc(it.name) + "</span>" +
+          "<button class=\"btn up-mini\" type=\"button\" data-copy=\"" + esc(md) + "\">复制 Markdown</button>" +
+          "<button class=\"btn up-mini\" type=\"button\" data-del=\"" + esc(it.path) + "\" data-sha=\"" + esc(it.sha) + "\" data-name=\"" + esc(it.name) + "\">删除</button>" +
+          "</figcaption></figure>";
+      }).join("");
+    }
+    function upLoad() {
+      if (!tok()) { upSay("先在上面保存令牌", "err"); return Promise.resolve(); }
+      return api("GET", "/repos/" + OWNER + "/" + REPO + "/contents/" + UPLOAD_DIR + "?ref=" + BRANCH)
+        .then(function (r) { return r.ok ? r.json() : []; })
+        .then(function (list) {
+          upRender((list || []).filter(function (x) { return x.type === "file" && /\.(png|jpe?g|webp|gif|svg|avif)$/i.test(x.name); })
+            .map(function (x) { return { name: x.name, path: x.path, sha: x.sha }; }));
+        })
+        .catch(function () { upRender([]); });
+    }
+    function upHandleFiles(files) {
+      if (!files || !files.length) return;
+      if (!tok()) { upSay("先在上面保存令牌", "err"); return; }
+      var maxEdge = parseInt($("up-max").value, 10) || 1600;
+      var q = parseFloat($("up-q").value) || 0.82;
+      var mime = $("up-fmt").value;
+      var ext = mime === "image/webp" ? ".webp" : ".jpg";
+      var names = [];
+      var chain = Promise.resolve();
+      Array.prototype.forEach.call(files, function (file, i) {
+        chain = chain.then(function () {
+          upSay("正在压缩 " + (i + 1) + "/" + files.length + "：" + file.name + " …");
+          return upCompress(file, maxEdge, q, mime);
+        }).then(function (out) {
+          var name = upStamp() + "-" + upSlug(file.name) + ext;
+          upSay("正在上传 " + (i + 1) + "/" + files.length + "：" + name + "（" + Math.round(out.blob.size / 1024) + " KB，" + out.from + " → " + out.w + "x" + out.h + "）");
+          return upUpload(out.blob, UPLOAD_DIR + "/" + name, name).then(function () { names.push(name); });
+        });
+      });
+      chain.then(function () {
+        upSay("上传完成：" + names.length + " 张，约 1 分钟后 Pages 生效。" + names.join(" / "), "ok");
+        return upLoad();
+      }).catch(function (e) {
+        upSay("失败：" + (e && e.message ? e.message : e), "err");
+      });
+    }
+    function upInit() {
+      var pick = $("up-pick"), input = $("up-file"), drop = $("up-drop"), list = $("up-list");
+      if (!pick || !input) return;
+      pick.addEventListener("click", function () { input.click(); });
+      input.addEventListener("change", function () { upHandleFiles(input.files); input.value = ""; });
+      if (drop) {
+        ["dragenter", "dragover"].forEach(function (ev) {
+          drop.addEventListener(ev, function (e) { e.preventDefault(); drop.classList.add("over"); });
+        });
+        ["dragleave", "drop"].forEach(function (ev) {
+          drop.addEventListener(ev, function (e) { e.preventDefault(); drop.classList.remove("over"); });
+        });
+        drop.addEventListener("drop", function (e) {
+          if (e.dataTransfer && e.dataTransfer.files) upHandleFiles(e.dataTransfer.files);
+        });
+      }
+      if (list) {
+        list.addEventListener("click", function (e) {
+          var t = e.target;
+          if (!t || !t.getAttribute) return;
+          var copy = t.getAttribute("data-copy");
+          if (copy) { upCopy(copy).then(function () { upSay("已复制 Markdown，可直接粘进文章", "ok"); }); return; }
+          var del = t.getAttribute("data-del");
+          if (del) {
+            if (!confirm("删除图片 " + t.getAttribute("data-name") + "？\n（引用它的文章会变成破图）")) return;
+            api("DELETE", "/repos/" + OWNER + "/" + REPO + "/contents/" + del, {
+              message: "assets: 删除图片 " + t.getAttribute("data-name") + "（站内后台）",
+              sha: t.getAttribute("data-sha"),
+              branch: BRANCH
+            }).then(function () { upSay("已删除", "ok"); return upLoad(); })
+              .catch(function (err) { upSay("删除失败：" + (err && err.message ? err.message : err), "err"); });
+          }
+        });
+      }
+      upLoad();
+    }
+
+    upInit();
+
 })();

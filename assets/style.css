@@ -224,3 +224,16 @@ mark{background:var(--accent-soft);color:inherit;padding:0 .15em;border-radius:4
 .footer-stats-inline{white-space:nowrap}
 .footer-stats-inline b{color:var(--accent);font-weight:600;font-variant-numeric:tabular-nums}
 @media (max-width:520px){.footer-stats-inline{white-space:normal}}
+
+/* ---------- 后台：图片上传 ---------- */
+.up-drop{border:2px dashed var(--line);border-radius:12px;padding:1rem;display:flex;align-items:center;gap:.75rem;flex-wrap:wrap;transition:border-color .2s,background .2s}
+.up-drop.over{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 8%,transparent)}
+.up-opts{display:flex;gap:1rem;flex-wrap:wrap;align-items:center;margin:.8rem 0;font-size:.9rem;color:var(--muted)}
+.up-num{width:5.5rem;margin-left:.3rem;background:var(--card);border:1px solid var(--line);border-radius:8px;padding:.25rem .5rem;color:var(--text);font-family:inherit}
+.up-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:.75rem;margin-top:.6rem}
+.up-item{margin:0;background:var(--card-bg);border:1px solid var(--line);border-radius:12px;overflow:hidden;display:flex;flex-direction:column}
+.up-item img{width:100%;height:110px;object-fit:cover;display:block;background:color-mix(in srgb,var(--text) 6%,transparent)}
+.up-item figcaption{padding:.4rem .5rem;display:flex;flex-direction:column;gap:.3rem}
+.up-name{font-size:.75rem;color:var(--muted);word-break:break-all;line-height:1.3}
+.up-mini{font-size:.72rem;padding:.15rem .4rem;border-radius:7px;line-height:1.2}
+@media (max-width:520px){.up-grid{grid-template-columns:repeat(auto-fill,minmax(120px,1fr))}.up-item img{height:92px}}
