@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="auto" data-post-slug="flowerie-bot-v2-3-0">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>花璃 v2.3.0 更新公告 · 铃酱の小站</title>
+<meta name="description" content="跨语言插件平台正式成型：五套官方 SDK、插件间通信、Plugin WebUI，还有版本号终于规范了 uwu">
+<meta property="og:title" content="花璃 v2.3.0 更新公告 · 铃酱の小站">
+<meta property="og:description" content="跨语言插件平台正式成型：五套官方 SDK、插件间通信、Plugin WebUI，还有版本号终于规范了 uwu">
+<meta property="og:type" content="article">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/assets/style.css?v=1f8ac709">
+<link rel="alternate" type="application/atom+xml" title="铃酱の小站" href="/atom.xml">
+<script>(function(){try{var t=localStorage.getItem("theme")||"auto";document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
+</head>
+<body>
+<div id="progress"></div>
+<header class="site-header"><div class="wrap header-inner">
+<a class="brand" href="/"><span class="brand-mark">❀</span> 铃酱の小站</a>
+<nav class="nav"><a href="/">首页</a><a href="/archive/">归档</a><a href="/tags/">标签</a><a href="/about/">关于</a>
+<a href="https://github.com/lingcat521" target="_blank" rel="noopener">GitHub</a></nav>
+<button id="theme-toggle" class="icon-btn" type="button" aria-label="切换主题" title="切换主题">🌗</button>
+</div></header>
+<main class="wrap fade-in">
+<article class="post">
+<header>
+
+<h1>花璃 v2.3.0 更新公告</h1>
+<div class="meta"><span>2026-09-26</span><span>·</span><span>约 8 分钟读完</span>
+<span>·</span><span>2967 字</span>
+<a class="tag" href="/tags/?tag=bot">#bot</a>
+</div>
+<div class="post-extras" id="post-extras"></div>
+</header>
+<div class="toc" id="toc"><strong>目录</strong></div>
+<div class="content">
+<h2 id="花璃-v2-3-0-更新公告">🌸 花璃 v2.3.0 更新公告</h2>
+<p>诶嘿w，这次不是维护性更新啦——花璃迎来了一个<strong>功能版本</strong>，而且是一个有点不一样的版本喵。</p>
+<p>从这一版开始，花璃的定位会写得更清楚一点：<strong>它是一个以 QQ Bot 为原生场景的跨语言插件平台</strong>。 QQ 群聊机器人是它最顺手的用法，但它的本体其实是"插件平台"：一套语言无关的插件协议、五套官方 SDK、 插件之间可以互相调用、插件可以自带管理页面。</p>
+<p>（所以这次的公告会比上次长一点点……毕竟攒了好几个大件uwu）</p>
+<hr>
+<h2 id="一-五套官方-SDK-插件不再只有-Python">🧰 一、五套官方 SDK：插件不再只有 Python</h2>
+<p>以前写插件基本只能用 Python（或者自己照协议手搓）。现在仓库里有<strong>五套官方 SDK</strong>：</p>
+<ul>
+<li><strong>Python</strong>（内置 runner，写完即跑）</li>
+<li><strong>TypeScript / Go / Rust / Java</strong>（各自独立，<strong>零第三方依赖</strong>：TS 不要 npm 包、Go 只用标准库、Rust 不用 crate、Java 只用 JDK）</li>
+</ul>
+<p>五套 SDK 的能力是<strong>对齐</strong>的：上下文、配置、权限查询、存储、事件、WebUI、插件间通信，一共 14 项能力， 不是"某个语言有、别的语言没有"。</p>
+<p>而且这次不是"代码写好了"就算数——每种语言都真写了一个最小插件，在 CI 里<strong>真编译、真启动、真调用、真关闭</strong>：</p>
+<ul>
+<li>最小插件测试：<strong>46 条</strong>，五种语言全部真跑（不是 skip、不是 mock）</li>
+<li>覆盖 Build / Load / Ready / Ping / Info / Echo / Event / Call / Error / Permission / Shutdown 十一行</li>
+<li>跨语言链路实测：Python→Go、TS→Java、TS→TS、Python→TS、Go→Rust、Rust→Java</li>
+</ul>
+<p>（想抄骨架的话直接看 <code>examples/multilang-sdk/</code>，五个语言各一份，能跑）</p>
+<hr>
+<h2 id="二-插件之间可以互相调用了">🔗 二、插件之间可以互相调用了</h2>
+<p>这是这一版最大的新能力：插件不再只能跟 Core 说话，还能<strong>调用别的插件</strong>。</p>
+<ul>
+<li>统一抽象：<code>plugin.call(target, method, params)</code> / <code>plugin.emit(name, payload)</code> / <code>plugin.on(name, handler)</code></li>
+<li>五种语言写法不同，<strong>语义完全一致</strong>（Python/TS/Go/Rust/Java 都有）</li>
+<li>跨语言请求<strong>一律经 Core Router</strong>（插件之间不能私自开 TCP/HTTP 绕过权限）</li>
+<li>权限沿用原有系统：<code>plugin.call.&lt;目标&gt;</code> 或更细的 <code>plugin.call.&lt;目标&gt;.&lt;方法&gt;</code>，管理员批准才生效</li>
+<li>超时、取消、事件广播、错误码（12 个，跨语言原样保留）</li>
+<li>调用链带 <code>trace_id</code> / <code>call_id</code> / <code>hop_count</code>：A→B→A→B 这种回环会被环保护拦住，不会打到天荒地老</li>
+<li>目标可以是"某个插件的任意健康实例"，也可以是 <code>plugin.a#instance1</code> 这样指定实例</li>
+</ul>
+<p>（简单说：以后可以让"翻译插件"调用"词典插件"，让"统计插件"调用"抽卡插件"，语言不同也没关系喵）</p>
+<hr>
+<h2 id="三-插件可以自带管理页面了-Plugin-WebUI">🖥️ 三、插件可以自带管理页面了（Plugin WebUI）</h2>
+<p>插件现在能提供自己的网页：<code>webui.page / webui.action / webui.asset</code> 三个协议方法， 页面、动作、静态资源都由插件决定，路由、权限、净化、隔离由引擎负责。</p>
+<ul>
+<li><strong>零 JavaScript</strong>：和花璃主站一样，页面只有 HTML + CSS + 表单，关掉 JS 照样能用</li>
+<li>六项 <code>webui.*</code> 权限：页面、动作、配置读写、存储读写，分开批准</li>
+<li>静态资源（<code>webui/static/</code>）与插件动态资源（<code>webui.asset</code>）两条通道</li>
+<li>文件上传 / 下载走插件自己的空间，<code>webui.files</code> 权限单独把关</li>
+</ul>
+<p>这一版还补上了<strong>真浏览器端到端测试</strong>：CI 里装真 Chromium，真的打开页面、真的点提交， 断言 <code>document.title</code> / 插件名 / 状态 / 设置表单 / 跨插件调用面板 —— 21 条全过。</p>
+<p>（所以"插件页面能打开"这件事，现在是浏览器自己说的，不是我们说的 uwu）</p>
+<hr>
+<h2 id="四-安全与隔离-这次的测试比较狠">🔒 四、安全与隔离（这次的测试比较狠）</h2>
+<p>给插件 WebUI 补了一批"打自己"的测试，全部真服务器 + 真插件进程：</p>
+<ul>
+<li>路径穿越：<code>../</code>、<code>../../</code>、<code>/etc/passwd</code>、编码、双重编码、反斜杠、绝对路径、符号链接 —— 全部拒绝</li>
+<li>跨插件隔离：A 的页面 / CSS / 配置 / 上传 / 下载 / 会话，B 和 C 都拿不到</li>
+<li>Secret 泄漏：HTML / CSS / JSON / 错误响应里扫描哨兵值，0 命中</li>
+<li>XSS / HTML 注入 / 模板注入：按零 JS 策略转义或拒绝</li>
+<li>结构化错误：目标不存在、方法不存在、超时、插件内部报错、权限被拒，页面显示的是</li>
+</ul>
+<p><code>Status: Failed</code> + <code>Code: &lt;错误码&gt;</code>，不是 500，也不会把堆栈和路径吐出来</p>
+<hr>
+<h2 id="五-版本号终于规范了">🔢 五、版本号终于规范了</h2>
+<p>之前 2.2.2 之后的版本号是 2.2.22 / 2.2.222 / 2.2.2222 / 2.2.22222（当时随手加 2 加的……）， 不符合语义化版本。这次按 SemVer 重编：</p>
+<ul>
+<li>2.2.22 → <strong>2.2.3</strong>、2.2.222 → <strong>2.2.4</strong>、2.2.2222 → <strong>2.2.5</strong>、2.2.22222 → <strong>2.2.6</strong></li>
+<li>GitHub Release 的 tag 与标题同步更名（<strong>资产内容不变</strong>，之前下载的包还是同一个包）</li>
+<li>本版是 <strong>2.3.0</strong>（新增功能 → MINOR 版本）</li>
+</ul>
+<p>（以后不会再出现"后面越长越多 2"这种事了，我保证.jpg）</p>
+<hr>
+<h2 id="六-文档重写-不看源码也能写插件">📚 六、文档重写：不看源码也能写插件</h2>
+<p>顺手把文档整个过了一遍：</p>
+<ul>
+<li>改掉过时的徽章、测试数、版本号、功能清单；删掉重复和失效的内容</li>
+<li><strong>插件开发指南重写</strong>：manifest 全字段、五语言 API 对照、权限全表、存储与配置、</li>
+</ul>
+<p>Plugin WebUI、插件间通信、错误码与调试、打包与安装、13 种语言最小实现清单</p>
+<ul>
+<li>目标很明确：<strong>让写插件的人不用看源码，照着文档就能把插件写出来</strong></li>
+</ul>
+<hr>
+<h2 id="七-下载与升级">📦 七、下载与升级</h2>
+<ul>
+<li>各平台资产（Windows / Linux / macOS，x64 与 arm64）在</li>
+</ul>
+<p><a href="https://github.com/lingcat521/Flowerie_bot/releases/tag/v2.3.0" target="_blank" rel="noopener">Release 页面</a> 下载</p>
+<ul>
+<li>安装说明：<a href="https://github.com/lingcat521/Flowerie_bot/blob/main/docs/install-release-windows.md" target="_blank" rel="noopener">Windows</a> ·</li>
+</ul>
+<p><a href="https://github.com/lingcat521/Flowerie_bot/blob/main/docs/install-release-guide.md" target="_blank" rel="noopener">Linux/macOS/Termux</a> · <a href="https://github.com/lingcat521/Flowerie_bot/blob/main/docs/install-termux.md" target="_blank" rel="noopener">Termux 专用</a></p>
+<ul>
+<li>升级：替换程序文件即可，插件与数据目录（<code>plugins/</code>、<code>data/</code>）保持不动</li>
+</ul>
+<p>（升级前记得备份 <code>.env</code> 和 <code>data/</code> 哈）</p>
+<hr>
+<h2 id="八-已知问题-诚实版">🐛 八、已知问题（诚实版）</h2>
+<ul>
+<li><strong>QQ / P2P 实机链路</strong>：当前开发环境没有真实 QQ / NapCat / OneBot 实机，</li>
+</ul>
+<p>这部分一直是 <strong>BLOCKED</strong>（不是"通过"，也不是"看起来能用"），实机用例在 CI 里 skip 并打印缺失条件</p>
+<ul>
+<li><strong>插件页面还没有 <code>&lt;title&gt;</code></strong>：插件页是面板壳的片段，浏览器标签页标题目前由页面内的大标题承担</li>
+<li><strong>模板变量不能放在标签属性位置</strong>：<code>&lt;input ... {{ x_checked }}&gt;</code> 这种写法会被净化器丢掉（已知限制，插件改用 class 表达状态）</li>
+<li><strong>取消是"尽可能停止"</strong>：同步阻塞中的 handler 没法被强制打断，CANCEL 会在它返回后生效</li>
+</ul>
+<p>（这些都在文档里写清楚了，不藏着）</p>
+<hr>
+<h2 id="最后总结">🌸 最后总结</h2>
+<p>这次的 v2.3.0 是把"插件平台"这件事真正立起来的一版：</p>
+<ul>
+<li>插件可以用五种语言写，且有官方 SDK 与真跑测试</li>
+<li>插件之间可以互相调用（跨语言经 Core Router，权限和安全一个都没少）</li>
+<li>插件可以自带管理页面（零 JS，真浏览器测过）</li>
+<li>版本号规范化、文档重写、仓库定位改成了"以 QQ Bot 为原生场景的跨语言插件平台"</li>
+</ul>
+<p>QQ 机器人的部分也没落下：人设对话、识图、记忆、人格、表情包、MCP、主动聊天都照旧， 只是从这一版开始，花璃不只是一个 bot，也是一个<strong>可以被你写插件改造的平台</strong>。</p>
+<p>感谢一直以来使用花璃、写插件、提问题和看公告的大家！</p>
+<p>—— 花璃 v2.3.0 🌸</p>
+</div>
+</article>
+<div id="post-below"></div>
+<div class="post-nav"><a href="/posts/poem/">← Song of Myself (Excerpt from Section 1)</a><span></span></div>
+</main>
+<footer class="site-footer"><div class="wrap">© 2026 铃酱 · <a href="/atom.xml">RSS</a> · 
+<a href="https://github.com/lingcat521" target="_blank" rel="noopener">GitHub</a> · 托管于 GitHub Pages · 手写 HTML/CSS/JS，零依赖</div></footer>
+<button id="to-top" type="button" aria-label="回到顶部">↑</button>
+<script src="/assets/app.js?v=1f8ac709" defer></script>
+<script src="/assets/extras.js?v=1f8ac709" defer></script>
+
+</body>
+</html>

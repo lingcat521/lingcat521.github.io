@@ -1,6 +1,20 @@
 {
   "posts": [
     {
+      "title": "花璃 v2.3.0 更新公告",
+      "slug": "flowerie-bot-v2-3-0",
+      "date": "2026-09-26",
+      "tags": [
+        "bot"
+      ],
+      "summary": "跨语言插件平台正式成型：五套官方 SDK、插件间通信、Plugin WebUI，还有版本号终于规范了 uwu",
+      "created": 1790363595621,
+      "pinned": false,
+      "private": false,
+      "read": 8,
+      "chars": 2967
+    },
+    {
       "title": "Song of Myself (Excerpt from Section 1)",
       "slug": "poem",
       "date": "2026-09-25",
