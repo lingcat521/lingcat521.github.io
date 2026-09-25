@@ -62,7 +62,7 @@ const lines = ["<?xml version=\"1.0\" encoding=\"utf-8\"?>",
   "  <link href=\"https://lingcat521.github.io/\"/>",
   "  <updated>" + new Date().toISOString() + "</updated>",
   "  <id>https://lingcat521.github.io/</id>",
-  "  <author><name>铃樱</name></author>"];
+  "  <author><name>铃酱</name></author>"];
 posts.forEach(function (p) {
   lines.push("  <entry>",
     "    <title>" + esc(p.title) + "</title>",

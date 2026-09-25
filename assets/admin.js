@@ -114,7 +114,7 @@
   }
 
   function atom(posts) {
-    var SITE = (window.FloweriePost && window.FloweriePost.SITE) || { title: "铃樱の小站" };
+    var SITE = (window.FloweriePost && window.FloweriePost.SITE) || { title: "铃酱の小站" };
     var head = ["<?xml version=\"1.0\" encoding=\"utf-8\"?>",
       "<feed xmlns=\"http://www.w3.org/2005/Atom\">",
       "  <title>" + SITE.title + "</title>",
@@ -122,7 +122,7 @@
       "  <link href=\"https://lingcat521.github.io/\"/>",
       "  <updated>" + new Date().toISOString() + "</updated>",
       "  <id>https://lingcat521.github.io/</id>",
-      "  <author><name>铃樱</name></author>"];
+      "  <author><name>铃酱</name></author>"];
     var items = posts.slice().sort(function (a, b) { return (b.date || "").localeCompare(a.date || ""); }).map(function (p) {
       return ["  <entry>",
         "    <title>" + esc(p.title) + "</title>",

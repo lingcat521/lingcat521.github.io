@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
-  <title>铃樱の小站</title>
+  <title>铃酱の小站</title>
   <link href="https://lingcat521.github.io/atom.xml" rel="self"/>
   <link href="https://lingcat521.github.io/"/>
   <updated>2026-09-19T15:00:20.050Z</updated>
   <id>https://lingcat521.github.io/</id>
-  <author><name>铃樱</name></author>
+  <author><name>铃酱</name></author>
   <entry>
     <title>花璃 v2.2.2222 更新公告</title>
     <link href="https://lingcat521.github.io/posts/" + encodeURIComponent(p.slug) + "/"/>

@@ -1,8 +1,8 @@
 /* 文章页模板：后台生成静态文章页时复用（保证和站点风格一致） */
 (function () {
   "use strict";
-  var SITE = { title: "铃樱の小站", author: "铃樱", gh: "https://github.com/lingcat521" };
-  var V = "d43ed146";   /* 资源版本号，后台/构建脚本会注入最新的 */
+  var SITE = { title: "铃酱の小站", author: "铃酱", gh: "https://github.com/lingcat521" };
+  var V = "c962cece";   /* 资源版本号，后台/构建脚本会注入最新的 */
 
   function head(title, desc, opts) {
     opts = opts || {};

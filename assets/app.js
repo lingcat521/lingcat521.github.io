@@ -1,4 +1,4 @@
-/* 铃樱の小站 —— 零依赖前端脚本（无框架、无 CDN） */
+/* 铃酱の小站 —— 零依赖前端脚本（无框架、无 CDN） */
 (function () {
   "use strict";
   var root = document.documentElement;
