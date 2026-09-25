@@ -168,6 +168,7 @@
     $("editor-title").textContent = p ? "编辑文章：" + p.title : "新建文章";
     $("btn-delete").style.display = p ? "" : "none";
     updatePreview();
+    if (window.__pfRefresh) window.__pfRefresh();   /* 4 文章图片：切换文章时刷新 */
   }
 
   function updatePreview() {
@@ -548,4 +549,228 @@
 
     upInit();
 
+
+  /* ---------- ④ 文章图片：把图片绑定到"当前编辑的这篇文章" ---------- */
+  /* 与⑤的分工：⑤是全局图片池（只管上传/复制/删除文件）；④按文章组织：
+     上传即插入本文、池中点选插入、列出本文引用的图片、删除前告知还有哪些文章在用。 */
+  var PF_DIR = "assets/uploads";
+
+  function pfSay(msg, kind) {
+    var el = $("pf-status");
+    if (!el) return;
+    el.textContent = msg;
+    el.className = "admin-status" + (kind ? " " + kind : "");
+  }
+  function pfBody() { return $("f-body"); }
+  function pfMd(name) { return "![" + name.replace(/\.[^.]+$/, "") + "](/" + PF_DIR + "/" + name + ")"; }
+
+  function pfUsedNames() {
+    var ta = pfBody();
+    if (!ta) return [];
+    var re = new RegExp(PF_DIR + "/([^)\"\s]+)", "g");
+    var out = [], m;
+    while ((m = re.exec(ta.value))) { if (out.indexOf(m[1]) < 0) out.push(m[1]); }
+    return out;
+  }
+
+  function pfInsert(md, silent) {
+    var ta = pfBody();
+    if (!ta) return;
+    var s = ta.selectionStart == null ? ta.value.length : ta.selectionStart;
+    var e = ta.selectionEnd == null ? s : ta.selectionEnd;
+    var before = ta.value.slice(0, s), after = ta.value.slice(e);
+    var pad = (before && !/\n$/.test(before)) ? "\n" : "";
+    var block = pad + md + "\n";
+    ta.value = before + block + after;
+    var pos = (before + block).length;
+    try { ta.setSelectionRange(pos, pos); } catch (err) {}
+    updatePreview();
+    if (!silent) pfRender();
+  }
+
+  function pfSources() {
+    if (state.pfSources) return Promise.resolve(state.pfSources);
+    var list = state.posts || [];
+    return Promise.all(list.map(function (p) {
+      return fetch(RAW + "posts/" + p.slug + "/post.md?v=" + Date.now())
+        .then(function (r) { return r.ok ? r.text() : ""; })
+        .catch(function () { return ""; })
+        .then(function (t) { return { slug: p.slug, text: t }; });
+    })).then(function (rows) {
+      var map = {};
+      rows.forEach(function (r) { map[r.slug] = r.text; });
+      state.pfSources = map;
+      return map;
+    });
+  }
+  function pfRefsOf(name) {
+    var ta = pfBody();
+    var curTxt = ta ? ta.value : "";
+    return pfSources().then(function (map) {
+      var hits = [];
+      if (state.editing && curTxt.indexOf(name) >= 0) hits.push(state.editing);
+      Object.keys(map).forEach(function (slug) {
+        if (slug === state.editing) return;
+        if (map[slug] && map[slug].indexOf(name) >= 0) hits.push(slug);
+      });
+      return hits;
+    });
+  }
+
+  function pfLoadPool() {
+    if (state.pfPool) return Promise.resolve(state.pfPool);
+    return api("GET", "/repos/" + OWNER + "/" + REPO + "/contents/" + PF_DIR + "?ref=" + BRANCH)
+      .then(function (list) {
+        state.pfPool = (list || []).filter(function (x) {
+          return x.type === "file" && /\.(png|jpe?g|webp|gif|svg|avif)$/i.test(x.name);
+        }).map(function (x) { return { name: x.name, path: x.path, sha: x.sha }; });
+        return state.pfPool;
+      })
+      .catch(function () { state.pfPool = []; return []; });
+  }
+
+  function pfRender() {
+    var used = $("pf-used"), pool = $("pf-pool");
+    if (!used || !pool) return Promise.resolve();
+    var names = pfUsedNames();
+    if (!names.length) {
+      used.innerHTML = "<p class=\"hint\">" + (state.editing
+        ? "这篇文章还没有引用图片 —— 用下面的上传，或在图片池点「插入本文」。"
+        : "还没有打开文章 —— 先在上方「② 文章列表」点一篇，或「＋ 新建」。" ) + "</p>";
+    } else {
+      used.innerHTML = names.map(function (n) {
+        var url = "/" + PF_DIR + "/" + n;
+        return "<figure class=\"up-item\">" +
+          "<img src=\"" + esc(url) + "\" alt=\"" + esc(n) + "\" loading=\"lazy\">" +
+          "<figcaption><span class=\"up-name\">" + esc(n) + "</span>" +
+          "<button class=\"btn up-mini\" type=\"button\" data-pf-copy=\"" + esc(pfMd(n)) + "\">复制 Markdown</button>" +
+          "<button class=\"btn up-mini\" type=\"button\" data-pf-unlink=\"" + esc(n) + "\">从本文移除</button>" +
+          "<button class=\"btn up-mini\" type=\"button\" data-pf-del=\"" + esc(n) + "\">删除文件</button>" +
+          "</figcaption></figure>";
+      }).join("");
+    }
+    return pfLoadPool().then(function (items) {
+      if (!items.length) { pool.innerHTML = "<p class=\"hint\">仓库里还没有图片，先上传一张。</p>"; return; }
+      pool.innerHTML = items.map(function (it) {
+        var url = "/" + PF_DIR + "/" + it.name;
+        var mark = names.indexOf(it.name) >= 0 ? " ✅ 本文已用" : "";
+        return "<figure class=\"up-item\">" +
+          "<img src=\"" + esc(url) + "?v=" + esc((it.sha || "").slice(0, 6)) + "\" alt=\"" + esc(it.name) + "\" loading=\"lazy\">" +
+          "<figcaption><span class=\"up-name\">" + esc(it.name) + mark + "</span>" +
+          "<button class=\"btn up-mini btn-primary\" type=\"button\" data-pf-ins=\"" + esc(pfMd(it.name)) + "\">插入本文</button>" +
+          "<button class=\"btn up-mini\" type=\"button\" data-pf-del=\"" + esc(it.name) + "\" data-pf-sha=\"" + esc(it.sha || "") + "\">删除</button>" +
+          "</figcaption></figure>";
+      }).join("");
+    });
+  }
+
+  function pfUnlink(name) {
+    var ta = pfBody();
+    if (!ta) return;
+    var needle = PF_DIR + "/" + name;
+    var kept = ta.value.split("\n").filter(function (line) { return line.indexOf(needle) < 0; });
+    ta.value = kept.join("\n");
+    updatePreview();
+    pfRender();
+    pfSay("已从本文移除 " + name + "（记得点「保存并发布」）", "ok");
+  }
+
+  function pfResolveSha(name, sha) {
+    if (sha) return Promise.resolve(sha);
+    return api("GET", "/repos/" + OWNER + "/" + REPO + "/contents/" + PF_DIR + "/" + name + "?ref=" + BRANCH)
+      .then(function (f) { return f.sha; });
+  }
+
+  function pfDelete(name, sha) {
+    if (!tok()) { pfSay("先在上面保存令牌", "err"); return; }
+    pfRefsOf(name).then(function (refs) {
+      var others = refs.filter(function (s) { return s !== state.editing; });
+      var msg = "删除图片 " + name + "？";
+      if (refs.length) msg += "\n\n引用它的文章：" + refs.join("、");
+      if (others.length) msg += "\n⚠️ 还有其它文章在用，删掉后那些文章会变破图。";
+      if (!confirm(msg)) return;
+      return pfResolveSha(name, sha).then(function (s) {
+        return api("DELETE", "/repos/" + OWNER + "/" + REPO + "/contents/" + PF_DIR + "/" + name, {
+          message: "assets: 删除图片 " + name + "（站内后台）", sha: s, branch: BRANCH
+        });
+      }).then(function () {
+        state.pfPool = null;
+        state.pfSources = null;
+        pfSay("已删除 " + name, "ok");
+        return pfRender();
+      });
+    }).catch(function (e) { pfSay("删除失败：" + (e && e.message ? e.message : e), "err"); });
+  }
+
+  function pfUpload(files) {
+    if (!files || !files.length) return;
+    if (!tok()) { pfSay("先在上面保存令牌", "err"); return; }
+    var maxEdge = parseInt($("up-max") && $("up-max").value, 10) || 1600;
+    var q = parseFloat($("up-q") && $("up-q").value) || 0.82;
+    var mime = ($("up-fmt") && $("up-fmt").value) || "image/jpeg";
+    var ext = mime === "image/webp" ? ".webp" : ".jpg";
+    var names = [];
+    var chain = Promise.resolve();
+    Array.prototype.forEach.call(files, function (file, i) {
+      chain = chain.then(function () {
+        pfSay("正在压缩 " + (i + 1) + "/" + files.length + "：" + file.name + " …");
+        return upCompress(file, maxEdge, q, mime);
+      }).then(function (out) {
+        var name = upStamp() + "-" + upSlug(file.name) + ext;
+        pfSay("正在上传 " + (i + 1) + "/" + files.length + "：" + name +
+              "（" + Math.round(out.blob.size / 1024) + " KB）");
+        return upUpload(out.blob, PF_DIR + "/" + name, name).then(function () { names.push(name); });
+      });
+    });
+    chain.then(function () {
+      names.forEach(function (n) { pfInsert(pfMd(n), true); });
+      state.pfPool = null;
+      state.pfSources = null;
+      pfSay("已上传并插入本文 " + names.length + " 张：点「保存并发布」后正文才生效", "ok");
+      return pfRender();
+    }).catch(function (e) { pfSay("失败：" + (e && e.message ? e.message : e), "err"); });
+  }
+
+  function pfInit() {
+    var pick = $("pf-pick"), input = $("pf-file"), drop = $("pf-drop");
+    var used = $("pf-used"), pool = $("pf-pool");
+    if (!pick || !input) return;
+    pick.addEventListener("click", function () { input.click(); });
+    input.addEventListener("change", function () { pfUpload(input.files); input.value = ""; });
+    if (drop) {
+      ["dragenter", "dragover"].forEach(function (ev) {
+        drop.addEventListener(ev, function (e) { e.preventDefault(); drop.classList.add("over"); });
+      });
+      ["dragleave", "drop"].forEach(function (ev) {
+        drop.addEventListener(ev, function (e) { e.preventDefault(); drop.classList.remove("over"); });
+      });
+      drop.addEventListener("drop", function (e) {
+        if (e.dataTransfer && e.dataTransfer.files) pfUpload(e.dataTransfer.files);
+      });
+    }
+    function pfClick(ev) {
+      var t = ev.target;
+      if (!t || !t.getAttribute) return;
+      var ins = t.getAttribute("data-pf-ins");
+      if (ins) { pfInsert(ins); pfSay("已插入到光标处", "ok"); return; }
+      var cp = t.getAttribute("data-pf-copy");
+      if (cp) { upCopy(cp).then(function () { pfSay("已复制 Markdown", "ok"); }); return; }
+      var un = t.getAttribute("data-pf-unlink");
+      if (un) { pfUnlink(un); return; }
+      var del = t.getAttribute("data-pf-del");
+      if (del) { pfDelete(del, t.getAttribute("data-pf-sha") || ""); return; }
+    }
+    if (used) used.addEventListener("click", pfClick);
+    if (pool) pool.addEventListener("click", pfClick);
+    var ta = pfBody();
+    if (ta) {
+      ta.addEventListener("input", function () {
+        clearTimeout(window.__pf);
+        window.__pf = setTimeout(function () { pfRender(); }, 400);
+      });
+    }
+    window.__pfRefresh = function () { state.pfSources = null; pfRender(); };
+    pfRender();
+  }
+  pfInit();
 })();

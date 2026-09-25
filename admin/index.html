@@ -6,7 +6,7 @@
 <title>管理后台 · 铃樱の小站</title>
 <meta name="robots" content="noindex,nofollow">
 <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="/assets/style.css?v=e40a4366">
+<link rel="stylesheet" href="/assets/style.css?v=d43ed146">
 <style>
 .admin-grid{display:grid;grid-template-columns:1fr;gap:1rem}
 @media (min-width:900px){.admin-grid{grid-template-columns:minmax(0,1fr) minmax(0,1.2fr)}}
@@ -37,9 +37,9 @@
 .check input{width:auto}
 input[type=range]{width:100%;padding:0}
 </style>
-<script src="/assets/md.js?v=e40a4366" defer></script>
-<script src="/assets/post-template.js?v=e40a4366" defer></script>
-<script src="/assets/admin.js?v=e40a4366" defer></script>
+<script src="/assets/md.js?v=d43ed146" defer></script>
+<script src="/assets/post-template.js?v=d43ed146" defer></script>
+<script src="/assets/admin.js?v=d43ed146" defer></script>
 </head>
 <body>
 <header class="site-header"><div class="wrap header-inner">
@@ -99,6 +99,21 @@ input[type=range]{width:100%;padding:0}
 </section>
 </div>
 <section class="card" style="margin-top:1rem">
+<h2>④ 文章图片 <span class="hint" style="font-weight:400">（图片绑定到当前编辑的这篇文章）</span></h2>
+<p class="hint">先在上方「② 文章列表」点开一篇（或「＋ 新建」），然后：<b>传图</b>会自动把引用插到正文光标处；
+也可以在<b>图片池</b>里点「插入本文」。删除图片前会显示还有哪些文章在用它。</p>
+<div id="pf-drop" class="up-drop">
+<input id="pf-file" type="file" accept="image/*" multiple style="display:none">
+<button id="pf-pick" class="btn btn-primary" type="button">给本文传图…</button>
+<span class="hint">也可以把图片拖到这里（压缩参数沿用⑤，上传后自动插入正文）</span>
+</div>
+<p class="admin-status" id="pf-status"></p>
+<h3 style="margin:.9rem 0 .3rem;font-size:1rem">本文引用 <span class="hint" style="font-weight:400">（从当前正文里自动识别）</span></h3>
+<div id="pf-used" class="up-grid"></div>
+<h3 style="margin:.9rem 0 .3rem;font-size:1rem">图片池 <span class="hint" style="font-weight:400">（点「插入本文」放到光标处）</span></h3>
+<div id="pf-pool" class="up-grid"></div>
+</section>
+<section class="card" style="margin-top:1rem">
 <h2>③ 站点设置 <span class="hint" style="font-weight:400">（保存到 site.json，刷新即生效）</span></h2>
 <div class="row2">
 <label class="field"><span>卡片不透明度：<b id="v-card">50%</b></span>
@@ -155,6 +170,6 @@ input[type=range]{width:100%;padding:0}
 </main>
 <footer class="site-footer"><div class="wrap">© 2026 铃樱 · 管理后台只对持有令牌的人有效 · 页面与仓库均为公开内容</div></footer>
 <button id="to-top" type="button" aria-label="回到顶部">↑</button>
-<script src="/assets/app.js?v=e40a4366" defer></script>
+<script src="/assets/app.js?v=d43ed146" defer></script>
 </body>
 </html>
