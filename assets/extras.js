@@ -256,6 +256,9 @@
       .then(function (r) { return r.ok ? r.json() : null; })
       .catch(function () { return null; })
       .then(function (d) {
+        if (!d) {
+        	console.warn("[site] site.json 读取失败：评论 / 阅读量 / 外观已回落为默认（provider=none）");
+        }
         if (d) {
           cfg = {
             appearance: d.appearance || DEFAULTS.appearance,

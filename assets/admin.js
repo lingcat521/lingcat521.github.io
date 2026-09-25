@@ -316,38 +316,54 @@
   }
 
   function loadSite() {
+    /* 读取失败时不再用默认值填表：否则面板会显示成「阅读量/评论 = 关闭」，看起来像配置被删；
+       此时若点保存，反而会真的把 site.json 覆盖成默认值。 */
     return fetch(RAW + "site.json?v=" + Date.now())
-      .then(function (r) { return r.ok ? r.json() : {}; })
-      .then(function (d) { fillSite(d); return d; })
-      .catch(function () { fillSite({}); });
+      .then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
+      .then(function (d) {
+        state.siteCfg = d || {};
+        state.siteLoaded = true;
+        fillSite(state.siteCfg);
+        siteStatus("已载入站点设置", "ok");
+        return d;
+      })
+      .catch(function (e) {
+        state.siteLoaded = false;
+        siteStatus("站点设置读取失败：" + (e && e.message ? e.message : e) +
+          " —— 已阻止保存，避免覆盖你原有的 giscus / 阅读量配置；点「重新载入」重试", "err");
+      });
   }
-
   function saveSite() {
     if (!tok()) { siteStatus("请先填 GitHub 令牌", "err"); return; }
-    var cfg = {
-      appearance: {
+    if (!state.siteLoaded) {
+      siteStatus("还没成功读到 site.json，已阻止保存（否则会覆盖你原有的 giscus / 阅读量配置）。点「重新载入」后再试", "err");
+      return;
+    }
+    var base = state.siteCfg || {};
+    /* 以读到的配置为底再覆盖表单字段：未在表单里管理的键（petals / reactions / inputPosition / assetVersion 等）原样保留 */
+    var cfg = Object.assign({}, base, {
+      appearance: Object.assign({}, base.appearance, {
         cardAlpha: Number($("s-card").value) / 100,
         bgImageOpacity: Number($("s-bg").value) / 100,
         cardBlur: $("s-blur").value.trim() || "12px"
-      },
-      views: { provider: $("s-views").value, endpoint: $("s-views-endpoint").value.trim() },
-      comments: {
+      }),
+      views: Object.assign({}, base.views, {
+        provider: $("s-views").value,
+        endpoint: $("s-views-endpoint").value.trim()
+      }),
+      comments: Object.assign({}, base.comments, {
         provider: $("s-comments").value,
         repo: $("s-c-repo").value.trim(),
         repoId: $("s-c-repoid").value.trim(),
-        category: "Announcements",
-        categoryId: $("s-c-catid").value.trim(),
-        reactions: true,
-        inputPosition: "top"
-      },
-      features: { device: true, share: true, like: true }
-    };
+        categoryId: $("s-c-catid").value.trim()
+      }),
+      features: base.features || { device: true, share: true, like: true }
+    });
     siteStatus("正在保存…", "");
     commitFiles([{ path: "site.json", content: JSON.stringify(cfg, null, 2) + "\n" }], "chore: 更新站点设置（站内后台）")
       .then(function (c) { siteStatus("✅ 已保存 " + c.sha.slice(0, 7) + "，刷新页面即生效", "ok"); })
       .catch(function (e) { siteStatus("保存失败：" + e.message, "err"); });
   }
-
   function bindSite() {
     if (!$("btn-save-site")) return;
     $("btn-save-site").addEventListener("click", saveSite);
