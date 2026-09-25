@@ -1,6 +1,20 @@
 {
   "posts": [
     {
+      "title": "Song of Myself (Excerpt from Section 1)",
+      "slug": "poem",
+      "date": "2026-09-25",
+      "tags": [
+        "摘抄"
+      ],
+      "summary": "摘自《Leaves of Grass》 By Walt Whitman",
+      "created": 1790321917226,
+      "pinned": false,
+      "private": false,
+      "read": 2,
+      "chars": 834
+    },
+    {
       "title": "花璃 v2.2.2222 更新公告",
       "slug": "flowerie-bot",
       "date": "2026-09-19",

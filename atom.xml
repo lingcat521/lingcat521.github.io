@@ -3,9 +3,16 @@
   <title>铃酱の小站</title>
   <link href="https://lingcat521.github.io/atom.xml" rel="self"/>
   <link href="https://lingcat521.github.io/"/>
-  <updated>2026-09-19T15:00:20.050Z</updated>
+  <updated>2026-09-25T07:38:37.750Z</updated>
   <id>https://lingcat521.github.io/</id>
   <author><name>铃酱</name></author>
+  <entry>
+    <title>Song of Myself (Excerpt from Section 1)</title>
+    <link href="https://lingcat521.github.io/posts/" + encodeURIComponent(p.slug) + "/"/>
+    <id>https://lingcat521.github.io/posts/poem/</id>
+    <updated>2026-09-25T12:00:00+08:00</updated>
+    <summary>摘自《Leaves of Grass》 By Walt Whitman</summary>
+  </entry>
   <entry>
     <title>花璃 v2.2.2222 更新公告</title>
     <link href="https://lingcat521.github.io/posts/" + encodeURIComponent(p.slug) + "/"/>
