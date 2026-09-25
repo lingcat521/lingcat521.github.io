@@ -633,6 +633,8 @@
     var used = $("pf-used"), pool = $("pf-pool");
     if (!used || !pool) return Promise.resolve();
     var names = pfUsedNames();
+    var cnt = $("pf-used-count");
+    if (cnt) cnt.textContent = names.length;
     if (!names.length) {
       used.innerHTML = "<p class=\"hint\">" + (state.editing
         ? "这篇文章还没有引用图片 —— 用下面的上传，或在图片池点「插入本文」。"
