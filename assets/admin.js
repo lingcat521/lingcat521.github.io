@@ -554,6 +554,14 @@
   /* 与⑤的分工：⑤是全局图片池（只管上传/复制/删除文件）；④按文章组织：
      上传即插入本文、池中点选插入、列出本文引用的图片、删除前告知还有哪些文章在用。 */
   var PF_DIR = "assets/uploads";
+  /* 记住正文里最后一次光标位置：插入图片时用它；从未点过则追加到文末（避免插到开头） */
+  var pfCaret = { s: null, e: null };
+  function pfRememberCaret() {
+    var ta = pfBody();
+    if (!ta || ta.selectionStart == null) return;
+    pfCaret.s = ta.selectionStart;
+    pfCaret.e = ta.selectionEnd == null ? ta.selectionStart : ta.selectionEnd;
+  }
 
   function pfSay(msg, kind) {
     var el = $("pf-status");
@@ -576,14 +584,16 @@
   function pfInsert(md, silent) {
     var ta = pfBody();
     if (!ta) return;
-    var s = ta.selectionStart == null ? ta.value.length : ta.selectionStart;
-    var e = ta.selectionEnd == null ? s : ta.selectionEnd;
+    var hasCaret = pfCaret.s != null && pfCaret.s <= ta.value.length;
+    var s = hasCaret ? pfCaret.s : ta.value.length;
+    var e = hasCaret ? Math.min(pfCaret.e == null ? s : pfCaret.e, ta.value.length) : s;
     var before = ta.value.slice(0, s), after = ta.value.slice(e);
     var pad = (before && !/\n$/.test(before)) ? "\n" : "";
     var block = pad + md + "\n";
     ta.value = before + block + after;
     var pos = (before + block).length;
     try { ta.setSelectionRange(pos, pos); } catch (err) {}
+    pfCaret.s = pos; pfCaret.e = pos;
     updatePreview();
     if (!silent) pfRender();
   }
@@ -648,6 +658,9 @@
           "<button class=\"btn up-mini\" type=\"button\" data-pf-copy=\"" + esc(pfMd(n)) + "\">复制 Markdown</button>" +
           "<button class=\"btn up-mini\" type=\"button\" data-pf-unlink=\"" + esc(n) + "\">从本文移除</button>" +
           "<button class=\"btn up-mini\" type=\"button\" data-pf-del=\"" + esc(n) + "\">删除文件</button>" +
+          "<button class=\"btn up-mini\" type=\"button\" data-pf-up=\"" + esc(n) + "\">↑ 上移</button>" +
+          "<button class=\"btn up-mini\" type=\"button\" data-pf-down=\"" + esc(n) + "\">↓ 下移</button>" +
+          "<button class=\"btn up-mini\" type=\"button\" data-pf-last=\"" + esc(n) + "\">移到末尾</button>" +
           "</figcaption></figure>";
       }).join("");
     }
@@ -675,6 +688,41 @@
     updatePreview();
     pfRender();
     pfSay("已从本文移除 " + name + "（记得点「保存并发布」）", "ok");
+  }
+
+  /* 按整行移动图片引用：跳过空行，让图片能在段落之间顺利上下走 */
+  function pfMoveLine(name, dir) {
+    var ta = pfBody();
+    if (!ta) return;
+    var needle = PF_DIR + "/" + name;
+    var lines = ta.value.split("\n");
+    var idx = -1;
+    for (var i = 0; i < lines.length; i++) { if (lines[i].indexOf(needle) >= 0) { idx = i; break; } }
+    if (idx < 0) { pfSay("没在正文里找到这张图", "err"); return; }
+    var k = idx + dir;
+    while (k >= 0 && k < lines.length && !lines[k].trim()) k += dir;
+    if (k < 0 || k >= lines.length) { pfSay(dir < 0 ? "已经在最前面了" : "已经在最后面了", ""); return; }
+    var tmp = lines[idx]; lines[idx] = lines[k]; lines[k] = tmp;
+    ta.value = lines.join("\n");
+    updatePreview();
+    pfRender();
+    pfSay("已" + (dir < 0 ? "上移" : "下移") + "：" + name + "（记得点保存）", "ok");
+  }
+
+  /* 把这张图的引用行挪到正文最后 */
+  function pfMoveToEnd(name) {
+    var ta = pfBody();
+    if (!ta) return;
+    var needle = PF_DIR + "/" + name;
+    var lines = ta.value.split("\n");
+    var hit = [], rest = [];
+    lines.forEach(function (l) { (l.indexOf(needle) >= 0 ? hit : rest).push(l); });
+    if (!hit.length) { pfSay("没在正文里找到这张图", "err"); return; }
+    while (rest.length && !rest[rest.length - 1].trim()) rest.pop();
+    ta.value = rest.concat(hit).join("\n") + "\n";
+    updatePreview();
+    pfRender();
+    pfSay("已把 " + name + " 移到末尾（记得点保存）", "ok");
   }
 
   function pfResolveSha(name, sha) {
@@ -757,6 +805,12 @@
       if (ins) { pfInsert(ins); pfSay("已插入到光标处", "ok"); return; }
       var cp = t.getAttribute("data-pf-copy");
       if (cp) { upCopy(cp).then(function () { pfSay("已复制 Markdown", "ok"); }); return; }
+      var up = t.getAttribute("data-pf-up");
+      if (up) { pfMoveLine(up, -1); return; }
+      var dn = t.getAttribute("data-pf-down");
+      if (dn) { pfMoveLine(dn, 1); return; }
+      var last = t.getAttribute("data-pf-last");
+      if (last) { pfMoveToEnd(last); return; }
       var un = t.getAttribute("data-pf-unlink");
       if (un) { pfUnlink(un); return; }
       var del = t.getAttribute("data-pf-del");
@@ -766,6 +820,9 @@
     if (pool) pool.addEventListener("click", pfClick);
     var ta = pfBody();
     if (ta) {
+      ["click", "keyup", "select", "focus", "blur"].forEach(function (ev) {
+        ta.addEventListener(ev, pfRememberCaret);
+      });
       ta.addEventListener("input", function () {
         clearTimeout(window.__pf);
         window.__pf = setTimeout(function () { pfRender(); }, 400);
