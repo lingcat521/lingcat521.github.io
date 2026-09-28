@@ -1,6 +1,20 @@
 {
   "posts": [
     {
+      "title": "花璃 v2.4.0 更新公告",
+      "slug": "flowerie-bot-v2-4-0",
+      "date": "2026-09-29",
+      "tags": [
+        "bot"
+      ],
+      "summary": "没有新玩法，但把里外翻修了一遍：拆开最胖的类、给旧插件通道补上环保护与可配超时、消息主路径提速（备份 407ms → 0），还有几个终于生效的老功能 uwu",
+      "created": 1790614143860,
+      "pinned": false,
+      "private": false,
+      "read": 9,
+      "chars": 3073
+    },
+    {
       "title": "花璃 v2.3.0 更新公告",
       "slug": "flowerie-bot-v2-3-0",
       "date": "2026-09-26",

@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="auto" data-post-slug="flowerie-bot-v2-4-0">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>花璃 v2.4.0 更新公告 · 铃酱の小站</title>
+<meta name="description" content="没有新玩法，但把里外翻修了一遍：拆开最胖的类、给旧插件通道补上环保护与可配超时、消息主路径提速（备份 407ms → 0），还有几个终于生效的老功能 uwu">
+<meta property="og:title" content="花璃 v2.4.0 更新公告 · 铃酱の小站">
+<meta property="og:description" content="没有新玩法，但把里外翻修了一遍：拆开最胖的类、给旧插件通道补上环保护与可配超时、消息主路径提速（备份 407ms → 0），还有几个终于生效的老功能 uwu">
+<meta property="og:type" content="article">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/assets/style.css?v=1f8ac709">
+<link rel="alternate" type="application/atom+xml" title="铃酱の小站" href="/atom.xml">
+<script>(function(){try{var t=localStorage.getItem("theme")||"auto";document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
+</head>
+<body>
+<div id="progress"></div>
+<header class="site-header"><div class="wrap header-inner">
+<a class="brand" href="/"><span class="brand-mark">❀</span> 铃酱の小站</a>
+<nav class="nav"><a href="/">首页</a><a href="/archive/">归档</a><a href="/tags/">标签</a><a href="/about/">关于</a>
+<a href="https://github.com/lingcat521" target="_blank" rel="noopener">GitHub</a></nav>
+<button id="theme-toggle" class="icon-btn" type="button" aria-label="切换主题" title="切换主题">🌗</button>
+</div></header>
+<main class="wrap fade-in">
+<article class="post">
+<header>
+
+<h1>花璃 v2.4.0 更新公告</h1>
+<div class="meta"><span>2026-09-29</span><span>·</span><span>约 9 分钟读完</span>
+<span>·</span><span>3073 字</span>
+<a class="tag" href="/tags/?tag=bot">#bot</a>
+</div>
+<div class="post-extras" id="post-extras"></div>
+</header>
+<div class="toc" id="toc"><strong>目录</strong></div>
+<div class="content">
+<h2 id="花璃-v2-4-0-更新公告">🌸 花璃 v2.4.0 更新公告</h2>
+<p>诶嘿w，这一版有点特别——<strong>没有新玩法</strong>，但花璃里里外外被翻修了一遍喵。</p>
+<p>距离 v2.3.0 过去没几天。上一版把"插件平台"立了起来，东西一多，代码就开始长歪：几个类越滚越大、 有些代码写完从来没被调用过、消息主路径上还藏着几处会卡住整个程序的同步文件操作。</p>
+<p>所以这一版的主题是<strong>工程质量</strong>：把结构拆顺、把隐患堵上、把热路径提速， 顺便修掉一批"功能其实没生效"的老 bug。</p>
+<p>（全都是你平时感觉不到的改动，但它们每天都在真跑uwu 公告会比上次短一点点）</p>
+<hr>
+<h2 id="一-把最胖的几个类拆开了">🧱 一、把最胖的几个类拆开了</h2>
+<p>花璃的 <code>PluginManager</code> 一度是个两千多行的"什么都管"的类。这一版把几块职责搬了出去：</p>
+<ul>
+<li><strong>WebUI 宿主</strong> → <code>src/plugins/webui_host.py</code>（540 行）：插件页面、文件空间、静态资源、受控 context</li>
+<li><strong>定时任务</strong> → <code>src/plugins/scheduler.py</code>（139 行）：注册 / 取消 / 循环 / 派发</li>
+<li><strong>上下文崩溃备份</strong> → <code>src/core/context_backup.py</code>：<code>context_manager.py</code> 从 307 行瘦到 <strong>154 行</strong></li>
+<li><strong>回复解析</strong> → <code>src/services/reply_parser.py</code>；<strong>隐私存档</strong> → <code>src/services/privacy_archive.py</code></li>
+</ul>
+<p>拆的时候留了<strong>同名委托</strong>，所以插件、WebUI 路由、测试的调用方式一个都没变（这条是硬要求喵）。</p>
+<p>顺手删掉了拆分前遗留的旧单体 <code>old_ai_tmp.py</code>（762 行）和一批零引用代码 —— 删之前逐条查过引用链， 不是"看着像没人用"就删。</p>
+<p>（等价性也留了证据：比如引战关键词表外提时拿 557 个样本跑新旧两版实现做对照，差异 0）</p>
+<hr>
+<h2 id="二-旧插件通道补上了防护">🛡️ 二、旧插件通道补上了防护</h2>
+<p>这条<strong>插件作者要留意</strong>喵。</p>
+<p>花璃有两条插件间通信通道：新的 <code>plugin.call / plugin.emit</code>（有权限判定、环保护、超时协商、统计） 和旧的 <code>plugin_call / plugin_event / plugin_service</code>（从早期版本就有的 SDK 方法）。 旧通道之前只有"不能调用自己"这一层防护，超时写死 3 秒：</p>
+<ul>
+<li><strong>环保护</strong>：现在复用新通道<strong>同一套</strong> hop 机制（<code>MAX_HOP_COUNT=8</code>），</li>
+</ul>
+<p>A→B→A→B 这种回环会被拦下，不会一路递归到超时</p>
+<ul>
+<li><strong>超时可配置</strong>：新增 <code>PLUGIN_LEGACY_CALL_TIMEOUT</code>（默认 <strong>3</strong>，和以前一样）、</li>
+</ul>
+<p><code>PLUGIN_LEGACY_CALL_TIMEOUT_MAX</code>（默认 30），插件也能在 payload 里自己请求</p>
+<ul>
+<li><strong>可观测</strong>：多了 <code>plugin_legacy_calls_total</code> 指标和 loop / timeout / error 日志（只记插件名和动作，不记内容）</li>
+</ul>
+<p>旧 action 的名字、参数、返回结构都没动，权限表也没动 —— 只是把防护补上了。</p>
+<hr>
+<h2 id="三-消息主路径快了几处-每条都有实测数字">⚡ 三、消息主路径快了几处（每条都有实测数字）</h2>
+<ul>
+<li><strong>上下文备份不再卡住整个程序</strong>：以前每 60 秒一次的全表重写是同步的，</li>
+</ul>
+<p>200 个群的规模要 <strong>407.5 ms</strong>，这段时间整个事件循环都在等它 → 现在挪到线程池，<strong>阻塞 0 ms</strong></p>
+<ul>
+<li><strong>预算被拒的请求不再白干活</strong>：以前被预算/限速拦下之前，已经查过一次上下文、一次表情包 →</li>
+</ul>
+<p>现在变成 <strong>0 次</strong></p>
+<ul>
+<li><strong>人格解析一次请求只做一次</strong>：以前一次对话里最多解析 2 轮、每轮最多 4 次数据库查询 → 现在 <strong>1 轮</strong></li>
+<li><strong>HTTP 连接复用</strong>：以前每次调 AI 都重新握手 → 现在连上就留着（20 次连续请求 412.8 ms → <strong>125.5 ms</strong>）</li>
+<li>引战检测的关键词表、插件 manifest 的缓存命中路径也顺手去掉了重复计算（42.9 µs / 16.82 µs → 0）</li>
+</ul>
+<p>（最后一项 keepalive 其实上一轮被我否掉过——因为第一次测出来"更慢"。 后来发现那次测的是"服务端没开 TCP_NODELAY"的特例，真实 API 服务基本都开着，重测才决定启用喵）</p>
+<hr>
+<h2 id="四-修好了几个-看起来有-其实没生效-的功能">🩹 四、修好了几个"看起来有、其实没生效"的功能</h2>
+<p>这几个是<strong>你会真实感觉到</strong>的：</p>
+<ul>
+<li><strong>群特色昵称 / 群专属发言规则</strong>：以前判断条件取错了参数，导致两处判断恒不成立 ——</li>
+</ul>
+<p>也就是说这两个功能<strong>从来没生效过</strong>，现在修好了</p>
+<ul>
+<li><strong>WebUI 四条断链</strong>：<code>/panel/nicknames</code>、<code>/panel/knowledge/config</code> 两个表单提交一直 404，</li>
+</ul>
+<p>插件 DSL 的默认按钮指向了不存在的路由 —— 都补上了</p>
+<ul>
+<li><strong>两个面板接口没有鉴权</strong>：没登录也能提交表单，现在会拦下（顺手修的）</li>
+<li><strong>监控指标丢维度</strong>：<code>received_messages_total</code> 被重复注册，<code>post_type</code> 标签一直被静默丢掉</li>
+<li><strong>关闭时的 <code>Task was destroyed but it is pending!</code></strong> 警告：插件关停时的任务现在会被登记并回收</li>
+<li>花语记忆的"每日计数"以前只增不减（群数 × 天数），现在跨天会清</li>
+</ul>
+<hr>
+<h2 id="五-新增了三个配置项-默认值-老行为">⚙️ 五、新增了三个配置项（默认值 = 老行为）</h2>
+<ul>
+<li><strong><code>AUDIT_LOG_MAX_MB</code></strong>（默认 <code>0</code>）：审计日志轮转上限；<strong>0 = 不轮转</strong>（跟以前完全一样），设成正数才会 <code>audit.log → .1 → .2</code> 滚动</li>
+<li><strong><code>PLUGIN_LEGACY_CALL_TIMEOUT</code></strong>（默认 <code>3</code>）：旧插件通道单次投递超时（秒）</li>
+<li><strong><code>PLUGIN_LEGACY_CALL_TIMEOUT_MAX</code></strong>（默认 <code>30</code>）：上面那个的上限</li>
+</ul>
+<p>不填就是老样子，配置面板里能直接改。</p>
+<hr>
+<h2 id="六-文档搬家了">📚 六、文档搬家了</h2>
+<p><code>docs/</code> 根目录以前堆着 47 个 md（协议、SDK、安装、报告混在一起），现在按主题分了目录：</p>
+<ul>
+<li><code>guides/</code> 上手与运维 · <code>reference/</code> 协议与接口 · <code>plugins/</code> 插件开发</li>
+<li><code>features/</code> 子系统说明 · <code>reports/</code> 验收报告 · <code>architecture/</code> 架构审计 · <code>archive/</code> 历史</li>
+</ul>
+<p>所有文档之间的相对链接（264 处）、代码里引用的文档路径（44 个文件）都一起改了，坏链 0。 搬完之后 WebUI 的文档渲染器一时找不到文件，也一起修好了（受控语义没变，路径穿越照样不行喵）。</p>
+<hr>
+<h2 id="七-下载与升级">📦 七、下载与升级</h2>
+<ul>
+<li>各平台资产（Windows / Linux / macOS，x64 与 arm64）在</li>
+</ul>
+<p><a href="https://github.com/lingcat521/Flowerie_bot/releases/tag/v2.4.0" target="_blank" rel="noopener">Release 页面</a> 下载</p>
+<ul>
+<li>安装说明：<a href="https://github.com/lingcat521/Flowerie_bot/blob/main/docs/guides/install-release-windows.md" target="_blank" rel="noopener">Windows</a> ·</li>
+</ul>
+<p><a href="https://github.com/lingcat521/Flowerie_bot/blob/main/docs/guides/install-release-guide.md" target="_blank" rel="noopener">Linux/macOS/Termux</a> · <a href="https://github.com/lingcat521/Flowerie_bot/blob/main/docs/guides/install-termux.md" target="_blank" rel="noopener">Termux 专用</a></p>
+<ul>
+<li>升级：替换程序文件即可，插件与数据目录（<code>plugins/</code>、<code>data/</code>）保持不动</li>
+<li>完整变更：<a href="https://github.com/lingcat521/Flowerie_bot/blob/main/CHANGELOG.md" target="_blank" rel="noopener">CHANGELOG</a>；</li>
+</ul>
+<p>两份技术报告在 <a href="https://github.com/lingcat521/Flowerie_bot/blob/main/docs/architecture/refactor-final-report.md" target="_blank" rel="noopener">重构报告</a> 与 <a href="https://github.com/lingcat521/Flowerie_bot/blob/main/docs/architecture/hardening-performance-report.md" target="_blank" rel="noopener">加固报告</a></p>
+<p>（升级前记得备份 <code>.env</code> 和 <code>data/</code> 哈）</p>
+<hr>
+<h2 id="八-已知问题-诚实版">🐛 八、已知问题（诚实版）</h2>
+<ul>
+<li><strong>QQ / P2P 实机链路</strong>：开发环境一直没有真机，这部分仍然 <strong>BLOCKED</strong>（不是"通过"），</li>
+</ul>
+<p>实机用例在 CI 里 skip 并打印缺失条件</p>
+<ul>
+<li><strong>连接复用取决于服务端</strong>：如果哪天 AI 接口那边把 TCP_NODELAY 关了，</li>
+</ul>
+<p>keepalive 反而会慢一点点 —— 真遇到的话把 <code>HTTP_KEEPALIVE_CONNECTIONS</code> 改回 0 就行（单行）</p>
+<ul>
+<li><strong>旧插件通道的权限粒度还没收敛</strong>：它现在用的是粗粒度的 <code>plugin_admin</code>，</li>
+</ul>
+<p>不像新通道能细到 <code>plugin.call.&lt;目标&gt;.&lt;方法&gt;</code>。这一版只补了防护，没动权限模型 （动它会让已授权插件的能力发生变化，得单独评估喵）</p>
+<ul>
+<li><strong><code>message_router.py</code> 顶到 650 行了</strong>：这个文件有硬性行数上限（防止再长出上帝类），</li>
+</ul>
+<p>现在正好压线，之后的改动得先腾地方</p>
+<p>（都写进文档了，不藏着）</p>
+<hr>
+<h2 id="最后总结">🌸 最后总结</h2>
+<p>这一版没有新功能，但花璃变得更结实了一点：</p>
+<ul>
+<li>最胖的几个类拆开了，且调用方式一个没变</li>
+<li>旧插件通道补上了环保护、可配超时和指标</li>
+<li>消息主路径的几处阻塞与白干活被清掉（备份 407.5 ms → 0）</li>
+<li>几个"其实一直没生效"的功能真的生效了</li>
+<li>文档按主题分了目录，找东西不用再翻 47 个文件</li>
+</ul>
+<p>QQ 机器人的部分照旧：人设对话、识图、记忆、人格、表情包、MCP、主动聊天都没动， 插件协议、权限语义、AI 预算与重试也都保持原样。</p>
+<p>感谢一直在用花璃、写插件、提问题和看公告的大家！</p>
+<p>花璃还在运行，项目也还在慢慢变好喵。</p>
+<p>—— 花璃 v2.4.0 🌸</p>
+</div>
+</article>
+<div id="post-below"></div>
+<div class="post-nav"><a href="/posts/flowerie-bot-v2-3-0/">← 花璃 v2.3.0 更新公告</a><span></span></div>
+</main>
+<footer class="site-footer"><div class="wrap">© 2026 铃酱 · <a href="/atom.xml">RSS</a> · 
+<a href="https://github.com/lingcat521" target="_blank" rel="noopener">GitHub</a> · 托管于 GitHub Pages · 手写 HTML/CSS/JS，零依赖</div></footer>
+<button id="to-top" type="button" aria-label="回到顶部">↑</button>
+<script src="/assets/app.js?v=1f8ac709" defer></script>
+<script src="/assets/extras.js?v=1f8ac709" defer></script>
+
+</body>
+</html>

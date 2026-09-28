@@ -3,9 +3,16 @@
   <title>铃酱の小站</title>
   <link href="https://lingcat521.github.io/atom.xml" rel="self"/>
   <link href="https://lingcat521.github.io/"/>
-  <updated>2026-09-25T19:32:36.896Z</updated>
+  <updated>2026-09-28T16:51:17.863Z</updated>
   <id>https://lingcat521.github.io/</id>
   <author><name>铃酱</name></author>
+  <entry>
+    <title>花璃 v2.4.0 更新公告</title>
+    <link href="https://lingcat521.github.io/posts/" + encodeURIComponent(p.slug) + "/"/>
+    <id>https://lingcat521.github.io/posts/flowerie-bot-v2-4-0/</id>
+    <updated>2026-09-29T12:00:00+08:00</updated>
+    <summary>没有新玩法，但把里外翻修了一遍：拆开最胖的类、给旧插件通道补上环保护与可配超时、消息主路径提速（备份 407ms → 0），还有几个终于生效的老功能 uwu</summary>
+  </entry>
   <entry>
     <title>花璃 v2.3.0 更新公告</title>
     <link href="https://lingcat521.github.io/posts/" + encodeURIComponent(p.slug) + "/"/>
