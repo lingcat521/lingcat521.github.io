@@ -1,6 +1,20 @@
 {
   "posts": [
     {
+      "title": "花璃 v2.5.0 更新公告",
+      "slug": "flowerie-bot-v2-5-0",
+      "date": "2026-09-30",
+      "tags": [
+        "bot"
+      ],
+      "summary": "MCP 终于能连需要认证的服务器了：五种认证方式、密钥全程不外露、五语言 SDK 同步跟上；顺带接上两条一直没接上的生产线路",
+      "created": "1790711509243",
+      "pinned": false,
+      "private": false,
+      "read": 7,
+      "chars": 2563
+    },
+    {
       "title": "花璃 v2.4.0 更新公告",
       "slug": "flowerie-bot-v2-4-0",
       "date": "2026-09-29",

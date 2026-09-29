@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="auto" data-post-slug="flowerie-bot-v2-5-0">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>花璃 v2.5.0 更新公告 · 铃酱の小站</title>
+<meta name="description" content="MCP 终于能连需要认证的服务器了：五种认证方式、密钥全程不外露、五语言 SDK 同步跟上；顺带接上两条一直没接上的生产线路">
+<meta property="og:title" content="花璃 v2.5.0 更新公告 · 铃酱の小站">
+<meta property="og:description" content="MCP 终于能连需要认证的服务器了：五种认证方式、密钥全程不外露、五语言 SDK 同步跟上；顺带接上两条一直没接上的生产线路">
+<meta property="og:type" content="article">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/assets/style.css?v=1f8ac709">
+<link rel="alternate" type="application/atom+xml" title="铃酱の小站" href="/atom.xml">
+<script>(function(){try{var t=localStorage.getItem("theme")||"auto";document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
+</head>
+<body>
+<div id="progress"></div>
+<header class="site-header"><div class="wrap header-inner">
+<a class="brand" href="/"><span class="brand-mark">❀</span> 铃酱の小站</a>
+<nav class="nav"><a href="/">首页</a><a href="/archive/">归档</a><a href="/tags/">标签</a><a href="/about/">关于</a>
+<a href="https://github.com/lingcat521" target="_blank" rel="noopener">GitHub</a></nav>
+<button id="theme-toggle" class="icon-btn" type="button" aria-label="切换主题" title="切换主题">🌗</button>
+</div></header>
+<main class="wrap fade-in">
+<article class="post">
+<header>
+
+<h1>花璃 v2.5.0 更新公告</h1>
+<div class="meta"><span>2026-09-30</span><span>·</span><span>约 7 分钟读完</span>
+<span>·</span><span>2563 字</span>
+<a class="tag" href="/tags/?tag=bot">#bot</a>
+</div>
+<div class="post-extras" id="post-extras"></div>
+</header>
+<div class="toc" id="toc"><strong>目录</strong></div>
+<div class="content">
+<h2 id="花璃-v2-5-0-更新公告">🌸 花璃 v2.5.0 更新公告</h2>
+<p>诶嘿w，这次是<strong>功能版</strong>——花璃终于学会"带钥匙敲门"了喵。</p>
+<p>之前花璃连 MCP 服务器只会一种姿势：<strong>没有认证的那种</strong>。稍微正经一点的外部工具服务 （要 token、要 API Key、要 Basic 认证的）一律连不上。这一版把这条路补齐了：五种认证方式、 密钥全程不外露、五语言 SDK 同步跟上；另外顺手把两条"代码早就写好、就是一直没接上"的生产线路接上了。</p>
+<p>（上一版是工程质量，这一版终于有新东西可以玩，公告会长一点点 uwu）</p>
+<hr>
+<h2 id="一-MCP-支持五种认证了">🔐 一、MCP 支持五种认证了</h2>
+<p>配置写在每个 server 的 <code>auth</code> 里，不写 = 和以前完全一样（老配置<strong>零迁移</strong>喵）：</p>
+<pre><code>MCP_SERVERS=[
+  {"name":"search","url":"https://mcp.example.com/mcp","auth":{"type":"bearer","token":"sk-xxx"}},
+  {"name":"local","url":"http://192.168.1.10:9000/mcp","auth":{"type":"api_key","header":"X-API-Key","token":"sk-xxx"}},
+  {"name":"custom","url":"https://mcp.example.com/mcp","auth":{"type":"header","name":"X-Custom-Auth","value":"sk-xxx"}},
+  {"name":"legacy","url":"https://mcp.example.com/mcp","auth":{"type":"basic","username":"u","password":"p"}},
+  {"name":"open","url":"https://mcp.example.com/mcp"}
+]</code></pre>
+<ul>
+<li><code>bearer</code> → <code>Authorization: Bearer &lt;token&gt;</code></li>
+<li><code>api_key</code> → 自定义头名（不填就是 <code>X-API-Key</code>）</li>
+<li><code>header</code> → 名字和值都你自己定</li>
+<li><code>basic</code> → <code>Authorization: Basic base64(user:pass)</code></li>
+<li><strong>每个 server 各自独立</strong>：A 用 Bearer、B 用 API Key、C 不用认证，互不影响</li>
+</ul>
+<p>写错了也不会"默默当没认证"：未知 type、少字段、header 名不合法、值里塞换行（想搞 Header 注入） —— 一律<strong>启动就报错</strong>，还会告诉你哪个 server 的哪个字段不对。</p>
+<hr>
+<h2 id="二-密钥自始至终不外露">🧪 二、密钥自始至终不外露</h2>
+<p>这条是这版花心思最多的地方喵：</p>
+<ul>
+<li><strong>只出现在请求头</strong>：不进 URL、不进日志、不进错误信息，也不进插件能看到的任何返回值；</li>
+<li><strong>WebUI 里不回显</strong>：已有密钥显示成 <code>******<strong></code>，编辑时</strong>留空 = 保持原值**（想删就勾"清除认证"）；</li>
+<li><strong>改普通字段不误伤</strong>：改 URL、超时、白名单，密钥原样保留；</li>
+<li><strong>插件拿不到</strong>：插件只能看到认证<strong>状态</strong>（<code>none</code> / <code>configured</code> / <code>error</code>），永远看不到值。</li>
+</ul>
+<p>（顺带一提：SSRF 防护和权限校验一个都没关——本地回环还是要 <code>MCP_ALLOWED_HOSTS</code> 白名单， <code>mcp_*</code> 动作还是要 <code>http_request</code> 权限。测试里专门盯着这两条，谁也别想偷偷绕过去w）</p>
+<hr>
+<h2 id="三-插件侧-五语言同一套写法">🔌 三、插件侧：五语言同一套写法</h2>
+<p>Python / TypeScript / Go / Rust / Java 都新增了 MCP facade，语义完全一致：</p>
+<p>| 语言 | 入口 | | :--- | :--- | | Python | <code>bot.mcp</code> | | TypeScript | <code>ctx.mcp</code> | | Go | <code>ctx.MCP()</code> | | Rust | <code>ctx.mcp()</code> | | Java | <code>ctx.mcp()</code> |</p>
+<p>方法都是 <code>servers / tools / call / status / auth</code>。老方法（<code>bot.mcp_call</code> 之类）一个没动， 老插件照旧跑。</p>
+<p>（为了让"五语言真能用"不是嘴上说说，验收测试是<strong>真起五个插件进程</strong>、真连一个假 MCP 服务器， 断言服务端<strong>实际收到</strong>的 <code>Authorization: Bearer test-token</code> —— 写的时候还因此抓出两个 SDK 的真 bug， 比如 TS 的 <code>ctx.mcp</code> 之前压根不存在喵）</p>
+<hr>
+<h2 id="四-顺手接上两条-一直没接上-的线">🔧 四、顺手接上两条"一直没接上"的线</h2>
+<p>这两条属于"代码写好了、测试也过了、就是没人调用"：</p>
+<ul>
+<li><strong>花语记忆的 PostgreSQL 后端</strong>：以前哪怕配了 <code>STORAGE_BACKEND=postgres</code>，花语记忆还是偷偷</li>
+</ul>
+<p>建了个 SQLite 文件（配置压根影响不到它）→ 现在真的走 PostgreSQL 了；连不上库会<strong>明确启动失败</strong>， 不会假装没事退回 SQLite</p>
+<ul>
+<li><strong>多实例适配器装配层</strong>：<code>InstanceRegistry</code> 早就在仓库里，只是生产启动路径从来没碰过它 →</li>
+</ul>
+<p>现在组合根持有注册表并管理生命周期，以后想挂第二个协议实例不用再动核心</p>
+<p>另外补了一处<strong>未来的坑</strong>：传输层参考实现里写死了 <code>extra_headers</code>，而现在的 websockets （14+，本机实测 17.1）只认 <code>additional_headers</code> —— 真用起来就是直接报错。现在两种参数都兼容。</p>
+<hr>
+<h2 id="五-新增-5-个配置项-不填-老行为">⚙️ 五、新增 5 个配置项（不填 = 老行为）</h2>
+<ul>
+<li><strong><code>MCP_AUTH_TYPE</code></strong>：单 server 场景的认证方式（<code>none</code>/<code>bearer</code>/<code>api_key</code>/<code>header</code>/<code>basic</code>）</li>
+<li><strong><code>MCP_AUTH_TOKEN</code></strong> / <strong><code>MCP_AUTH_HEADER</code></strong>：token 与自定义头名</li>
+<li><strong><code>MCP_AUTH_USERNAME</code></strong> / <strong><code>MCP_AUTH_PASSWORD</code></strong>：Basic 认证用</li>
+</ul>
+<p>（只在 <code>MCP_SERVERS</code> 为空、也就是老的单 server 写法下生效；两个都配就以 <code>MCP_SERVERS</code> 为准，不打架）</p>
+<hr>
+<h2 id="六-文档和徽章也刷新了">📚 六、文档和徽章也刷新了</h2>
+<ul>
+<li><code>docs/features/mcp.md</code> 多了「认证」整章（五种方式表 + 多 server 混合示例 + 安全规则）；</li>
+<li>十份文档的"当前版本"从 2.4.0 更新到 2.5.0，README 的测试徽章换成 CI 的真实数字；</li>
+<li>三份新报告：<a href="https://github.com/lingcat521/Flowerie_bot/blob/main/docs/reports/mcp-auth-final-report.md" target="_blank" rel="noopener">MCP 认证最终报告</a> ·</li>
+</ul>
+<p><a href="https://github.com/lingcat521/Flowerie_bot/blob/main/docs/architecture/production-wiring-report.md" target="_blank" rel="noopener">生产链路报告</a> · <a href="https://github.com/lingcat521/Flowerie_bot/blob/main/docs/architecture/production-wiring-audit.md" target="_blank" rel="noopener">接线审计</a>。</p>
+<p>（这一版新增 130 条认证用例 + 14 条接线用例，本机全量 2353 passed，数字都写进报告里了）</p>
+<hr>
+<h2 id="七-下载与升级">📦 七、下载与升级</h2>
+<ul>
+<li>各平台资产（Windows / Linux / macOS，x64 与 arm64）在</li>
+</ul>
+<p><a href="https://github.com/lingcat521/Flowerie_bot/releases/tag/v2.5.0" target="_blank" rel="noopener">Release 页面</a> 下载</p>
+<ul>
+<li>安装说明：<a href="https://github.com/lingcat521/Flowerie_bot/blob/main/docs/guides/install-release-windows.md" target="_blank" rel="noopener">Windows</a> ·</li>
+</ul>
+<p><a href="https://github.com/lingcat521/Flowerie_bot/blob/main/docs/guides/install-release-guide.md" target="_blank" rel="noopener">Linux/macOS/Termux</a> · <a href="https://github.com/lingcat521/Flowerie_bot/blob/main/docs/guides/install-termux.md" target="_blank" rel="noopener">Termux 专用</a></p>
+<ul>
+<li>升级：替换程序文件即可，插件与数据目录（<code>plugins/</code>、<code>data/</code>）保持不动</li>
+<li>完整变更：<a href="https://github.com/lingcat521/Flowerie_bot/blob/main/CHANGELOG.md" target="_blank" rel="noopener">CHANGELOG</a></li>
+</ul>
+<p>（升级前记得备份 <code>.env</code> 和 <code>data/</code> 哈）</p>
+<hr>
+<h2 id="八-已知问题-诚实版">🐛 八、已知问题（诚实版）</h2>
+<ul>
+<li><strong>OAuth 还没做</strong>：认证类型里没有它，写了会直接报错 —— 不做半成品，等真要用的时候再评估喵；</li>
+<li><strong>插件面的 <code>mcp_status</code> / <code>mcp_call</code> 不走 <code>McpClient</code></strong>：它直接读配置发请求（认证头照样带），</li>
+</ul>
+<p>所以没有 DNS 二次校验；URL 来自管理员配置，插件指定不了；</p>
+<ul>
+<li><strong>QQ / P2P 实机链路</strong>：开发环境仍无真机，这部分依旧 <strong>BLOCKED</strong>（不是"通过"）；</li>
+<li><strong>Go / Rust / Java 只能在 CI 验</strong>：本机没有这三套工具链，本地跑会 skip 并打印原因（绝不当作通过）。</li>
+</ul>
+<hr>
+<h2 id="最后总结">🌸 最后总结</h2>
+<p>这一版的核心是<strong>让花璃能连上正经的 MCP 服务</strong>：</p>
+<ul>
+<li>五种认证方式，每个 server 独立配置，老配置零迁移</li>
+<li>密钥只在请求头出现，WebUI 掩码，日志与错误信息里都找不到它</li>
+<li>五语言 SDK 同步跟上，插件只能看到"配没配"，看不到值</li>
+<li>顺手接上两条生产断链（花语记忆的 PostgreSQL、多实例装配层）</li>
+</ul>
+<p>QQ 机器人的部分照旧：人设对话、识图、记忆、人格、表情包、主动聊天都没动， 插件协议、权限语义、AI 预算与重试也都保持原样。</p>
+<p>感谢一直在用花璃、写插件、提问题和看公告的大家！</p>
+<p>花璃还在运行，项目也还在慢慢变好喵。</p>
+<p>—— 花璃 v2.5.0 🌸</p>
+</div>
+</article>
+<div id="post-below"></div>
+<div class="post-nav"><a href="/posts/flowerie-bot-v2-4-0/">← 花璃 v2.4.0 更新公告</a><span></span></div>
+</main>
+<footer class="site-footer"><div class="wrap">© 2026 铃酱 · <a href="/atom.xml">RSS</a> · 
+<a href="https://github.com/lingcat521" target="_blank" rel="noopener">GitHub</a> · 托管于 GitHub Pages · 手写 HTML/CSS/JS，零依赖</div></footer>
+<button id="to-top" type="button" aria-label="回到顶部">↑</button>
+<script src="/assets/app.js?v=1f8ac709" defer></script>
+<script src="/assets/extras.js?v=1f8ac709" defer></script>
+
+</body>
+</html>
