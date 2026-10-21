@@ -1,60 +1,88 @@
 {
-  "posts": [
-    {
-      "title": "Song of Myself (Excerpt from Section 1)",
-      "slug": "poem",
-      "date": "2026-09-25",
-      "tags": [
-        "摘抄"
-      ],
-      "summary": "摘自《Leaves of Grass》 By Walt Whitman",
-      "created": 1790321917226,
-      "pinned": false,
-      "private": false,
-      "read": 2,
-      "chars": 832
-    },
-    {
-      "title": "花璃 v2.2.2222 更新公告",
-      "slug": "flowerie-bot",
-      "date": "2026-09-19",
-      "tags": [
-        "bot"
-      ],
-      "read": 7,
-      "chars": 2226,
-      "summary": "是的——这是一次维护性更新uwu",
-      "created": 1789830018177,
-      "pinned": false,
-      "private": false
-    },
-    {
-      "title": "自我介绍——",
-      "slug": "introduce",
-      "date": "2026-09-18",
-      "tags": [
-        "随笔"
-      ],
-      "read": 4,
-      "chars": 1024,
-      "summary": "你好w，这里是铃酱——",
-      "created": 1789753759802,
-      "pinned": false,
-      "private": false
-    },
-    {
-      "title": "随便写写…",
-      "slug": "post-mu5upy6g",
-      "date": "2026-09-17",
-      "tags": [
-        "随笔"
-      ],
-      "read": 1,
-      "summary": "咱也不知道这是什么（",
-      "pinned": false,
-      "private": false,
-      "created": 1789669152000,
-      "chars": 13
-    }
-  ]
+ "posts": [
+  {
+   "title": "花璃 v2.7.0 更新公告",
+   "slug": "flowerie-bot-2.7.0",
+   "date": "2026-10-24",
+   "tags": [
+    "bot"
+   ],
+   "summary": "把 v2.6.0 的 17 个审计项全部修掉，外加本机自建模型免 Key 接入",
+   "created": 1792604314966,
+   "pinned": false,
+   "private": false,
+   "read": 0,
+   "chars": 1863
+  },
+  {
+   "title": "花璃 v2.6.0 更新公告",
+   "slug": "flowerie-bot-2.6.0",
+   "date": "2026-10-20",
+   "tags": [
+    "bot"
+   ],
+   "summary": "花璃终于可以把话说完了——长回复边界切分 + 流式分句，全部默认关闭",
+   "created": 1792604314966,
+   "pinned": false,
+   "private": false,
+   "read": 0,
+   "chars": 1327
+  },
+  {
+   "title": "Song of Myself (Excerpt from Section 1)",
+   "slug": "poem",
+   "date": "2026-09-25",
+   "tags": [
+    "摘抄"
+   ],
+   "summary": "摘自《Leaves of Grass》 By Walt Whitman",
+   "created": 1790321917226,
+   "pinned": false,
+   "private": false,
+   "read": 2,
+   "chars": 832
+  },
+  {
+   "title": "花璃 v2.2.2222 更新公告",
+   "slug": "flowerie-bot",
+   "date": "2026-09-19",
+   "tags": [
+    "bot"
+   ],
+   "read": 7,
+   "chars": 2226,
+   "summary": "是的——这是一次维护性更新uwu",
+   "created": 1789830018177,
+   "pinned": false,
+   "private": false
+  },
+  {
+   "title": "自我介绍——",
+   "slug": "introduce",
+   "date": "2026-09-18",
+   "tags": [
+    "随笔"
+   ],
+   "read": 4,
+   "chars": 1024,
+   "summary": "你好w，这里是铃酱——",
+   "created": 1789753759802,
+   "pinned": false,
+   "private": false
+  },
+  {
+   "title": "随便写写…",
+   "slug": "post-mu5upy6g",
+   "date": "2026-09-17",
+   "tags": [
+    "随笔"
+   ],
+   "read": 1,
+   "summary": "咱也不知道这是什么（",
+   "pinned": false,
+   "private": false,
+   "created": 1789669152000,
+   "chars": 13
+  }
+ ]
 }

@@ -3,9 +3,23 @@
   <title>铃酱の小站</title>
   <link href="https://lingcat521.github.io/atom.xml" rel="self"/>
   <link href="https://lingcat521.github.io/"/>
-  <updated>2026-09-25T07:42:08.370Z</updated>
+  <updated>2026-10-24T12:00:00.000Z</updated>
   <id>https://lingcat521.github.io/</id>
   <author><name>铃酱</name></author>
+  <entry>
+    <title>花璃 v2.7.0 更新公告</title>
+    <link href="https://lingcat521.github.io/posts/" + encodeURIComponent(p.slug) + "/"/>
+    <id>https://lingcat521.github.io/posts/flowerie-bot-2.7.0/</id>
+    <updated>2026-10-24T12:00:00+08:00</updated>
+    <summary>把 v2.6.0 的 17 个审计项全部修掉，外加本机自建模型免 Key 接入</summary>
+  </entry>
+  <entry>
+    <title>花璃 v2.6.0 更新公告</title>
+    <link href="https://lingcat521.github.io/posts/" + encodeURIComponent(p.slug) + "/"/>
+    <id>https://lingcat521.github.io/posts/flowerie-bot-2.6.0/</id>
+    <updated>2026-10-20T12:00:00+08:00</updated>
+    <summary>花璃终于可以把话说完了——长回复边界切分 + 流式分句，全部默认关闭</summary>
+  </entry>
   <entry>
     <title>Song of Myself (Excerpt from Section 1)</title>
     <link href="https://lingcat521.github.io/posts/" + encodeURIComponent(p.slug) + "/"/>
