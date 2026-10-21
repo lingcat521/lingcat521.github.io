@@ -29,6 +29,48 @@
    "chars": 1327
   },
   {
+   "title": "花璃 v2.5.0 更新公告",
+   "slug": "flowerie-bot-v2-5-0",
+   "date": "2026-09-30",
+   "tags": [
+    "bot"
+   ],
+   "summary": "MCP 终于能连需要认证的服务器了：五种认证方式、密钥全程不外露、五语言 SDK 同步跟上；顺带接上两条一直没接上的生产线路",
+   "created": "1790711509243",
+   "pinned": false,
+   "private": false,
+   "read": 7,
+   "chars": 2563
+  },
+  {
+   "title": "花璃 v2.4.0 更新公告",
+   "slug": "flowerie-bot-v2-4-0",
+   "date": "2026-09-29",
+   "tags": [
+    "bot"
+   ],
+   "summary": "没有新玩法，但把里外翻修了一遍：拆开最胖的类、给旧插件通道补上环保护与可配超时、消息主路径提速（备份 407ms → 0），还有几个终于生效的老功能 uwu",
+   "created": 1790614143860,
+   "pinned": false,
+   "private": false,
+   "read": 9,
+   "chars": 3073
+  },
+  {
+   "title": "花璃 v2.3.0 更新公告",
+   "slug": "flowerie-bot-v2-3-0",
+   "date": "2026-09-26",
+   "tags": [
+    "bot"
+   ],
+   "summary": "跨语言插件平台正式成型：五套官方 SDK、插件间通信、Plugin WebUI，还有版本号终于规范了 uwu",
+   "created": 1790363595621,
+   "pinned": false,
+   "private": false,
+   "read": 8,
+   "chars": 2967
+  },
+  {
    "title": "Song of Myself (Excerpt from Section 1)",
    "slug": "poem",
    "date": "2026-09-25",
