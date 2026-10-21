@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="auto" data-post-slug="flowerie-bot-2.7.0">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>花璃 v2.7.0 更新公告 · 铃酱の小站</title>
+<meta name="description" content="把 v2.6.0 的 17 个审计项全部修掉（吞消息/记忆泄漏/流式没人设），外加本机自建模型免 Key 接入">
+<meta property="og:title" content="花璃 v2.7.0 更新公告 · 铃酱の小站">
+<meta property="og:description" content="把 v2.6.0 的 17 个审计项全部修掉（吞消息/记忆泄漏/流式没人设），外加本机自建模型免 Key 接入">
+<meta property="og:type" content="article">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/assets/style.css?v=1f8ac709">
+<link rel="alternate" type="application/atom+xml" title="铃酱の小站" href="/atom.xml">
+<script>(function(){try{var t=localStorage.getItem("theme")||"auto";document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
+</head>
+<body>
+<div id="progress"></div>
+<header class="site-header"><div class="wrap header-inner">
+<a class="brand" href="/"><span class="brand-mark">❀</span> 铃酱の小站</a>
+<nav class="nav"><a href="/">首页</a><a href="/archive/">归档</a><a href="/tags/">标签</a><a href="/about/">关于</a>
+<a href="https://github.com/lingcat521" target="_blank" rel="noopener">GitHub</a></nav>
+<button id="theme-toggle" class="icon-btn" type="button" aria-label="切换主题" title="切换主题">🌗</button>
+</div></header>
+<main class="wrap fade-in">
+<article class="post">
+<header>
+
+<h1>花璃 v2.7.0 更新公告</h1>
+<div class="meta"><span>2026-10-24</span><span>·</span><span>约 4 分钟读完</span>
+<span>·</span><span>1799 字</span>
+<a class="tag" href="/tags/?tag=bot">#bot</a>
+</div>
+<div class="post-extras" id="post-extras"></div>
+</header>
+<div class="toc" id="toc"><strong>目录</strong></div>
+<div class="content">
+<h2 id="花璃-v2.7.0-更新公告">🌸 花璃 v2.7.0 更新公告</h2>
+
+<p>呜……这次是一封<strong>道歉信</strong>（划掉）修复公告。</p>
+
+<p>v2.6.0 加了「长回复切分」和「流式回复」，听起来很美好——</p>
+
+<p>但花璃自己复盘的时候发现，这两个功能<strong>埋了一堆坑</strong>。</p>
+
+<p>于是就有了 v2.7.0：把 v2.6.0 的两份审计（8 个语义冲突 + 9 个链路断联）全部修掉，</p>
+<p>外加一个新能力——<strong>本机自建模型也可以接进来啦</strong>。</p>
+
+<hr>
+
+<h2 id="一、修掉的离谱-Bug（挑严重的说）">🐛 一、修掉的离谱 Bug（挑严重的说）</h2>
+
+<p><strong>「分段回复」会把群聊静默 60 秒</strong></p>
+
+<p>以前花璃发分段消息时，每发一段就被记一次「连续回复」。</p>
+<p>连发 3 段后——群被强制冷却 60 秒，<strong>你发的下一句话直接被吞掉</strong>。</p>
+
+<p>（对，就是那种「花璃说完话你发消息没反应」的灵异事件，找到原因了.jpg）</p>
+
+<p>现在一轮分段只计一次，不会再吞消息了。</p>
+
+<p><strong>「记忆指令」会被直接发到群里</strong></p>
+
+<p>花璃有个内部机制：模型输出的 <code>MEMORY_JSON:</code> 行本来是要被剥掉、存进记忆库的。</p>
+<p>但流式模式绕过了这道处理——</p>
+<p>结果就是记忆指令<strong>原样发到群里</strong>，而且长期记忆也跟着失效。</p>
+
+<p>（想象一下你偷偷写日记结果日记本被当众念出来……现在修好了）</p>
+
+<p><strong>流式模式的花璃「没有人设」</strong></p>
+
+<p>流式路径悄悄绕过了人格注入——流式模式下的花璃收到的 prompt 里：</p>
+<p>没有人设、没有群梗、没有花语记忆、没有群昵称，连熔断器都没有。</p>
+
+<p>（简单说就是开了流式之后花璃会「失忆 + 变成另一个人」）</p>
+
+<p>现在流式和整轮走的是<strong>同一套注入链</strong>，人格、群梗、花语、熔断全部对齐。</p>
+
+<p><strong>「流式」其实根本不是流式</strong></p>
+
+<p>v2.6.0 的流式实现是：等全部生成完，再分段发出去。</p>
+<p>省下来的「首句早到时间」被完全浪费掉了，和普通模式没有区别。</p>
+
+<p>现在是真的边生成边发，段到了就先发。</p>
+<p>半路失败也只会补记账，不会把整段重新发一遍（避免刷屏）。</p>
+
+<hr>
+
+<h2 id="二、其它修复（快进模式）">🔧 二、其它修复（快进模式）</h2>
+
+<ul>
+<li><strong>段长默认从 40 提到 200</strong>：以前 40 字上限和人设的「15～20 字短句」叠加，切分功能基本永远不触发</li>
+<li><strong>上限串线修复</strong>：切分和 AI 多条回复的上限以前会互相串线，现在各归各</li>
+<li><strong>分段立即发送</strong>：以前分段还要等 1.5～4 秒随机间隔，8 段话要等半分钟</li>
+<li><strong>表情包标记只看第一段</strong>：<code>[STICKER:]</code> 出现在第 2 段会被当正文发出去，现在逐段识别</li>
+<li><strong>流式空产出不再重发</strong>：以前流式返回空还会再跑一整轮请求（双倍预算）</li>
+<li><strong>流式失败双扣预算</strong>：新增预算回退</li>
+</ul>
+
+<hr>
+
+<h2 id="三、新能力：接入本机自建模型">🏠 三、新能力：接入本机自建模型</h2>
+
+<p>如果你在本机跑 Ollama / llama.cpp / vLLM 之类的模型服务，现在可以<strong>不填 API Key</strong>直接接入。</p>
+
+<p>规则很简单：</p>
+
+<ul>
+<li>地址指向 <code>127.0.0.1</code> / <code>localhost</code> / <code>::1</code> → Key 可以留空</li>
+<li>地址指向第三方厂商或局域网 → 照样要填 Key</li>
+</ul>
+
+<p>（局域网不放行是因为局域网服务通常有密码，花璃不想自作主张）</p>
+
+<p>开通后：</p>
+
+<ul>
+<li>请求<strong>不会</strong>发送 <code>Authorization</code> 头（以前空 Key 会发出一个非法的「Bearer …」，看着就难受）</li>
+<li>Web UI 状态页会显示「本机回环 · 免密钥」，不会再误报「未配置 Key」</li>
+<li>聊天、流式、识图、引战检测<strong>全部覆盖</strong></li>
+</ul>
+
+<p>开关 <code>AI_ALLOW_LOOPBACK_NO_KEY=true</code>（默认开），设 <code>false</code> 可以恢复严格模式。</p>
+
+<hr>
+
+<h2 id="四、怎么验证的">🧪 四、怎么验证的</h2>
+
+<ul>
+<li>CI 三档全绿（Python 3.9 / 3.12 + PostgreSQL + 37 项验收）</li>
+<li>ruff 全绿</li>
+<li>本地全量 <strong>2494 个测试通过</strong>（0 失败）</li>
+<li>行数护栏：<code>message_router.py</code> 650 行上限仍然守住了</li>
+</ul>
+
+<p>（修复一共碰了 40 多个文件，但默认行为只放宽不收紧——升级不会改变现有配置的效果）</p>
+
+<hr>
+
+<h2 id="最后总结">🌸 最后总结</h2>
+
+<p>v2.7.0 做的事情：</p>
+
+<p>1. <strong>把 v2.6.0 的坑填平</strong>（17 个审计项全部修复）</p>
+<p>2. <strong>让花璃能接本机模型</strong>（免 Key）</p>
+
+<p>如果 v2.6.0 让你体验到了什么奇怪行为（吞消息 / 记忆泄漏 / 流式没人设），</p>
+<p>升级到 v2.7.0 就好啦。</p>
+
+<p>新能力默认就是开的（回环地址才生效，局域网不放心），</p>
+<p>不想用设 <code>AI_ALLOW_LOOPBACK_NO_KEY=false</code> 就回到严格模式。</p>
+
+<p>QQ 机器人的部分照旧：人设对话、识图、记忆、人格、表情包、主动聊天都没动，</p>
+<p>插件协议、权限语义、AI 预算与重试也都保持原样。</p>
+
+<p>感谢一直在用花璃、写插件、提问题和看公告的大家！</p>
+
+<p>花璃还在运行，项目也还在慢慢变好喵。</p>
+
+<p>—— 花璃 v2.7.0 🌸</p>
+
+</article>
+<div id="post-below"></div>
+<div class="post-nav"><a href="/posts/flowerie-bot-2.6.0/">← 花璃 v2.6.0 更新公告</a><span></span></div>
+</main>
+<footer class="site-footer"><div class="wrap">© 2026 铃酱 · <a href="/atom.xml">RSS</a> · 
+<a href="https://github.com/lingcat521" target="_blank" rel="noopener">GitHub</a> · 托管于 GitHub Pages · 手写 HTML/CSS/JS，零依赖</div></footer>
+<button id="to-top" type="button" aria-label="回到顶部">↑</button>
+<script src="/assets/app.js?v=1f8ac709" defer></script>
+<script src="/assets/extras.js?v=1f8ac709" defer></script>
+
+</body>
+</html>
