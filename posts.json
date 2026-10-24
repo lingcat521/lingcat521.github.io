@@ -1,144 +1,158 @@
 {
- "posts": [
-  {
-   "title": "花璃 v2.8.0 更新公告",
-   "slug": "flowerie-bot-2.8.0",
-   "date": "2026-10-23",
-   "tags": [
-    "bot"
-   ],
-   "summary": "花璃挂起来不重启了——每日凌晨滚动摘要，让花璃记住跨周跨月的群聊",
-   "created": 1792773163566,
-   "pinned": false,
-   "private": false,
-   "read": 0,
-   "chars": 1345
-  },
-  {
-   "title": "花璃 v2.7.0 更新公告",
-   "slug": "flowerie-bot-2.7.0",
-   "date": "2026-10-24",
-   "tags": [
-    "bot"
-   ],
-   "summary": "把 v2.6.0 的 17 个审计项全部修掉，外加本机自建模型免 Key 接入",
-   "created": 1792604314966,
-   "pinned": false,
-   "private": false,
-   "read": 0,
-   "chars": 1863
-  },
-  {
-   "title": "花璃 v2.6.0 更新公告",
-   "slug": "flowerie-bot-2.6.0",
-   "date": "2026-10-20",
-   "tags": [
-    "bot"
-   ],
-   "summary": "花璃终于可以把话说完了——长回复边界切分 + 流式分句，全部默认关闭",
-   "created": 1792604314966,
-   "pinned": false,
-   "private": false,
-   "read": 0,
-   "chars": 1327
-  },
-  {
-   "title": "花璃 v2.5.0 更新公告",
-   "slug": "flowerie-bot-v2-5-0",
-   "date": "2026-09-30",
-   "tags": [
-    "bot"
-   ],
-   "summary": "MCP 终于能连需要认证的服务器了：五种认证方式、密钥全程不外露、五语言 SDK 同步跟上；顺带接上两条一直没接上的生产线路",
-   "created": "1790711509243",
-   "pinned": false,
-   "private": false,
-   "read": 7,
-   "chars": 2563
-  },
-  {
-   "title": "花璃 v2.4.0 更新公告",
-   "slug": "flowerie-bot-v2-4-0",
-   "date": "2026-09-29",
-   "tags": [
-    "bot"
-   ],
-   "summary": "没有新玩法，但把里外翻修了一遍：拆开最胖的类、给旧插件通道补上环保护与可配超时、消息主路径提速（备份 407ms → 0），还有几个终于生效的老功能 uwu",
-   "created": 1790614143860,
-   "pinned": false,
-   "private": false,
-   "read": 9,
-   "chars": 3073
-  },
-  {
-   "title": "花璃 v2.3.0 更新公告",
-   "slug": "flowerie-bot-v2-3-0",
-   "date": "2026-09-26",
-   "tags": [
-    "bot"
-   ],
-   "summary": "跨语言插件平台正式成型：五套官方 SDK、插件间通信、Plugin WebUI，还有版本号终于规范了 uwu",
-   "created": 1790363595621,
-   "pinned": false,
-   "private": false,
-   "read": 8,
-   "chars": 2967
-  },
-  {
-   "title": "Song of Myself (Excerpt from Section 1)",
-   "slug": "poem",
-   "date": "2026-09-25",
-   "tags": [
-    "摘抄"
-   ],
-   "summary": "摘自《Leaves of Grass》 By Walt Whitman",
-   "created": 1790321917226,
-   "pinned": false,
-   "private": false,
-   "read": 2,
-   "chars": 832
-  },
-  {
-   "title": "花璃 v2.2.2222 更新公告",
-   "slug": "flowerie-bot",
-   "date": "2026-09-19",
-   "tags": [
-    "bot"
-   ],
-   "read": 7,
-   "chars": 2226,
-   "summary": "是的——这是一次维护性更新uwu",
-   "created": 1789830018177,
-   "pinned": false,
-   "private": false
-  },
-  {
-   "title": "自我介绍——",
-   "slug": "introduce",
-   "date": "2026-09-18",
-   "tags": [
-    "随笔"
-   ],
-   "read": 4,
-   "chars": 1024,
-   "summary": "你好w，这里是铃酱——",
-   "created": 1789753759802,
-   "pinned": false,
-   "private": false
-  },
-  {
-   "title": "随便写写…",
-   "slug": "post-mu5upy6g",
-   "date": "2026-09-17",
-   "tags": [
-    "随笔"
-   ],
-   "read": 1,
-   "summary": "咱也不知道这是什么（",
-   "pinned": false,
-   "private": false,
-   "created": 1789669152000,
-   "chars": 13
-  }
- ]
+  "posts": [
+    {
+      "title": "花璃 v2.9.0 更新公告",
+      "slug": "flowerie-bot-2.9.0",
+      "date": "2026-10-25",
+      "tags": [
+        "bot"
+      ],
+      "summary": "花璃记人了——群友画像：每日摘要后自动提炼性格/喜好/个人生活/特点，融入对话的长期记忆",
+      "created": 1792872223358,
+      "pinned": false,
+      "private": false,
+      "read": 5,
+      "chars": 1328
+    },
+    {
+      "title": "花璃 v2.8.0 更新公告",
+      "slug": "flowerie-bot-2.8.0",
+      "date": "2026-10-23",
+      "tags": [
+        "bot"
+      ],
+      "summary": "花璃挂起来不重启了——每日凌晨滚动摘要，让花璃记住跨周跨月的群聊",
+      "created": 1792773163566,
+      "pinned": false,
+      "private": false,
+      "read": 4,
+      "chars": 1062
+    },
+    {
+      "title": "花璃 v2.7.0 更新公告",
+      "slug": "flowerie-bot-2.7.0",
+      "date": "2026-10-24",
+      "tags": [
+        "bot"
+      ],
+      "summary": "把 v2.6.0 的 17 个审计项全部修掉，外加本机自建模型免 Key 接入",
+      "created": 1792604314966,
+      "pinned": false,
+      "private": false,
+      "read": 6,
+      "chars": 1647
+    },
+    {
+      "title": "花璃 v2.6.0 更新公告",
+      "slug": "flowerie-bot-2.6.0",
+      "date": "2026-10-20",
+      "tags": [
+        "bot"
+      ],
+      "summary": "花璃终于可以把话说完了——长回复边界切分 + 流式分句，全部默认关闭",
+      "created": 1792604314966,
+      "pinned": false,
+      "private": false,
+      "read": 4,
+      "chars": 1124
+    },
+    {
+      "title": "花璃 v2.5.0 更新公告",
+      "slug": "flowerie-bot-v2-5-0",
+      "date": "2026-09-30",
+      "tags": [
+        "bot"
+      ],
+      "summary": "MCP 终于能连需要认证的服务器了：五种认证方式、密钥全程不外露、五语言 SDK 同步跟上；顺带接上两条一直没接上的生产线路",
+      "created": "1790711509243",
+      "pinned": false,
+      "private": false,
+      "read": 7,
+      "chars": 2563
+    },
+    {
+      "title": "花璃 v2.4.0 更新公告",
+      "slug": "flowerie-bot-v2-4-0",
+      "date": "2026-09-29",
+      "tags": [
+        "bot"
+      ],
+      "summary": "没有新玩法，但把里外翻修了一遍：拆开最胖的类、给旧插件通道补上环保护与可配超时、消息主路径提速（备份 407ms → 0），还有几个终于生效的老功能 uwu",
+      "created": 1790614143860,
+      "pinned": false,
+      "private": false,
+      "read": 9,
+      "chars": 3073
+    },
+    {
+      "title": "花璃 v2.3.0 更新公告",
+      "slug": "flowerie-bot-v2-3-0",
+      "date": "2026-09-26",
+      "tags": [
+        "bot"
+      ],
+      "summary": "跨语言插件平台正式成型：五套官方 SDK、插件间通信、Plugin WebUI，还有版本号终于规范了 uwu",
+      "created": 1790363595621,
+      "pinned": false,
+      "private": false,
+      "read": 8,
+      "chars": 2967
+    },
+    {
+      "title": "Song of Myself (Excerpt from Section 1)",
+      "slug": "poem",
+      "date": "2026-09-25",
+      "tags": [
+        "摘抄"
+      ],
+      "summary": "摘自《Leaves of Grass》 By Walt Whitman",
+      "created": 1790321917226,
+      "pinned": false,
+      "private": false,
+      "read": 2,
+      "chars": 832
+    },
+    {
+      "title": "花璃 v2.2.2222 更新公告",
+      "slug": "flowerie-bot",
+      "date": "2026-09-19",
+      "tags": [
+        "bot"
+      ],
+      "read": 7,
+      "chars": 2226,
+      "summary": "是的——这是一次维护性更新uwu",
+      "created": 1789830018177,
+      "pinned": false,
+      "private": false
+    },
+    {
+      "title": "自我介绍——",
+      "slug": "introduce",
+      "date": "2026-09-18",
+      "tags": [
+        "随笔"
+      ],
+      "read": 4,
+      "chars": 1024,
+      "summary": "你好w，这里是铃酱——",
+      "created": 1789753759802,
+      "pinned": false,
+      "private": false
+    },
+    {
+      "title": "随便写写…",
+      "slug": "post-mu5upy6g",
+      "date": "2026-09-17",
+      "tags": [
+        "随笔"
+      ],
+      "read": 1,
+      "summary": "咱也不知道这是什么（",
+      "pinned": false,
+      "private": false,
+      "created": 1789669152000,
+      "chars": 13
+    }
+  ]
 }

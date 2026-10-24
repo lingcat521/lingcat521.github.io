@@ -4,9 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>花璃 v2.6.0 更新公告 · 铃酱の小站</title>
-<meta name="description" content="长回复不再被 40 字截断：边界感知切分 + 流式分句，全部默认关闭，旧行为零迁移">
+<meta name="description" content="花璃终于可以把话说完了——长回复边界切分 + 流式分句，全部默认关闭">
 <meta property="og:title" content="花璃 v2.6.0 更新公告 · 铃酱の小站">
-<meta property="og:description" content="长回复不再被 40 字截断：边界感知切分 + 流式分句，全部默认关闭，旧行为零迁移">
+<meta property="og:description" content="花璃终于可以把话说完了——长回复边界切分 + 流式分句，全部默认关闭">
 <meta property="og:type" content="article">
 <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="/assets/style.css?v=1f8ac709">
@@ -26,126 +26,83 @@
 <header>
 
 <h1>花璃 v2.6.0 更新公告</h1>
-<div class="meta"><span>2026-10-20</span><span>·</span><span>约 3 分钟读完</span>
-<span>·</span><span>1255 字</span>
+<div class="meta"><span>2026-10-20</span><span>·</span><span>约 4 分钟读完</span>
+<span>·</span><span>1124 字</span>
 <a class="tag" href="/tags/?tag=bot">#bot</a>
 </div>
 <div class="post-extras" id="post-extras"></div>
 </header>
 <div class="toc" id="toc"><strong>目录</strong></div>
 <div class="content">
-<h2 id="花璃-v2.6.0-更新公告">🌸 花璃 v2.6.0 更新公告</h2>
-
+<h2 id="花璃-v2-6-0-更新公告">🌸 花璃 v2.6.0 更新公告</h2>
 <p>锵锵——花璃更新啦！</p>
-
 <p>这次是一个<strong>功能版本</strong>。主要解决了一件从诞生以来就存在的小别扭：</p>
-
-<blockquote>花璃说话被 40 字上限截断，还要加上「...」</blockquote>
-
+<blockquote><p>花璃说话被 40 字上限截断，还要加上「...」</p></blockquote>
 <p>以前的花璃说到一半就会被掐断（呜呜），这次终于可以好好把话说完了喵。</p>
-
 <hr>
-
-<h2 id="一、长回复不再被截断">✂️ 一、长回复不再被截断</h2>
-
+<h2 id="一-长回复不再被截断">✂️ 一、长回复不再被截断</h2>
 <p>以前如果花璃想说的话超过 40 个字，会被直接砍掉并补上「...」，像这样：</p>
-
-<blockquote>今天天气真不错 我们出去玩吧 记得带伞喔 别忘了带水壶...</blockquote>
-
+<blockquote><p>今天天气真不错 我们出去玩吧 记得带伞喔 别忘了带水壶...</p></blockquote>
 <p>（话说一半被掐住真的很痛苦诶）</p>
-
 <p>现在新增了「边界感知切分」，超过长度的回复会按照这个顺序找切点：</p>
-
-<pre><code>
-换行 → 句尾标点 → 逗号 → 空格 → 硬切
-</code></pre>
-
+<pre><code>换行 → 句尾标点 → 逗号 → 空格 → 硬切</code></pre>
 <p>然后把长文本切成多条独立消息依次发送，<strong>内容零丢失</strong>，不再有「...」。</p>
-
 <ul>
 <li>开关：<code>SPLIT_REPLY_ENABLED=false</code>（默认关，旧行为完全不变）</li>
 <li>单条段长上限：<code>SPLIT_REPLY_SEGMENT_LIMIT</code></li>
 <li>最大条数：<code>SPLIT_REPLY_MAX_MESSAGES</code>（防止刷屏）</li>
 </ul>
-
 <p>（默认是关着的哦，想用的话在 <code>.env</code> 或 Web UI 里打开就行）</p>
-
 <hr>
-
-<h2 id="二、流式回复（边生成边发）">🌊 二、流式回复（边生成边发）</h2>
-
+<h2 id="二-流式回复-边生成边发">🌊 二、流式回复（边生成边发）</h2>
 <p>以前花璃回复的时候，要先等整段全部生成完，才能发出消息。</p>
-
 <p>现在新增了流式模式：模型那边还在生成，花璃这边已经可以一句一句往外发了。</p>
-
 <ul>
 <li>内部用 SSE 增量 + 句子缓冲（攒够一句再发，不会刷出单词碎片）</li>
 <li>开关：<code>STREAM_REPLY_ENABLED=false</code>（默认关）</li>
 <li>需要你的模型服务支持 SSE</li>
 </ul>
-
 <p>（简单说就是——花璃说话变快了，不用再傻等了喵）</p>
-
 <hr>
-
-<h2 id="三、插件系统新能力">🧩 三、插件系统新能力</h2>
-
+<h2 id="三-插件系统新能力">🧩 三、插件系统新能力</h2>
 <p>给写插件的朋友们带了两个小礼物：</p>
-
 <ul>
 <li><strong><code>split_reply</code> 动作</strong>：插件可以调用花璃的边界感知切分（<code>bot.split_reply(text, limit)</code>）</li>
 <li><strong><code>ai_stream</code> 升级</strong>：以前是「整轮拿完再假装切片」，现在是<strong>真正的 SSE 流式</strong>了</li>
 </ul>
-
 <p>权限方面 <code>split_reply</code> 归入 <code>read_message</code>（纯本地操作，不碰发消息），保持最小授权。</p>
-
 <hr>
-
-<h2 id="四、三个入口都能配">⚙️ 四、三个入口都能配</h2>
-
+<h2 id="四-三个入口都能配">⚙️ 四、三个入口都能配</h2>
 <p>新配置在三个地方都能改，不用翻代码：</p>
-
 <ul>
 <li><code>.env</code> 手写</li>
 <li>Web UI 配置页（热更新，改完立刻生效）</li>
 <li>首次启动自动生成的配置模板</li>
 </ul>
-
 <hr>
-
-<h2 id="五、测试与护栏">🧪 五、测试与护栏</h2>
-
+<h2 id="五-测试与护栏">🧪 五、测试与护栏</h2>
 <ul>
 <li>新增 32 个单元测试</li>
 <li><code>message_router.py</code> 控制在 650 行以内（防上帝类回归，超过会报错）</li>
 <li>本地 + CI 全量回归，ruff 全绿</li>
 </ul>
-
 <p>（该说不说，这次为了把行数压回 650，把流式编排放进了独立模块，反而更清楚了）</p>
-
 <hr>
-
 <h2 id="最后总结">🌸 最后总结</h2>
-
 <p>v2.6.0 主要做了两件事：</p>
-
-<p>1. 让花璃<strong>把话说完</strong>（边界感知切分）</p>
-<p>2. 让花璃<strong>说得更快</strong>（流式分句）</p>
-
+<ol>
+<li>让花璃<strong>把话说完</strong>（边界感知切分）</li>
+<li>让花璃<strong>说得更快</strong>（流式分句）</li>
+</ol>
 <p>全部默认关闭，升级之后行为和以前一模一样；想用的话一个开关就能打开。</p>
-
-<p>QQ 机器人的部分照旧：人设对话、识图、记忆、人格、表情包、主动聊天都没动，</p>
-<p>插件协议、权限语义、AI 预算与重试也都保持原样。</p>
-
+<p>QQ 机器人的部分照旧：人设对话、识图、记忆、人格、表情包、主动聊天都没动， 插件协议、权限语义、AI 预算与重试也都保持原样。</p>
 <p>感谢一直在用花璃、写插件、提问题和看公告的大家！</p>
-
 <p>花璃还在运行，项目也还在慢慢变好喵。</p>
-
 <p>—— 花璃 v2.6.0 🌸</p>
-
+</div>
 </article>
 <div id="post-below"></div>
-<div class="post-nav"><a href="/posts/flowerie-bot-v2-5-0/">← 花璃 v2.5.0 更新公告</a><span></span></div>
+<div class="post-nav"><a href="/posts/flowerie-bot-v2-5-0/">← 花璃 v2.5.0 更新公告</a><a href="/posts/flowerie-bot-2.7.0/">花璃 v2.7.0 更新公告 →</a></div>
 </main>
 <footer class="site-footer"><div class="wrap">© 2026 铃酱 · <a href="/atom.xml">RSS</a> · 
 <a href="https://github.com/lingcat521" target="_blank" rel="noopener">GitHub</a> · 托管于 GitHub Pages · 手写 HTML/CSS/JS，零依赖</div></footer>

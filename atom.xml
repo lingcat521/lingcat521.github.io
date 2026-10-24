@@ -3,75 +3,82 @@
   <title>铃酱の小站</title>
   <link href="https://lingcat521.github.io/atom.xml" rel="self"/>
   <link href="https://lingcat521.github.io/"/>
-  <updated>2026-10-23T16:00:00.000Z</updated>
+  <updated>2026-10-24T20:03:54.818Z</updated>
   <id>https://lingcat521.github.io/</id>
   <author><name>铃酱</name></author>
   <entry>
+    <title>花璃 v2.9.0 更新公告</title>
+    <link href="https://lingcat521.github.io/posts/" + encodeURIComponent(p.slug) + "/"/>
+    <id>https://lingcat521.github.io/posts/flowerie-bot-2.9.0/</id>
+    <updated>2026-10-25T12:00:00+08:00</updated>
+    <summary>花璃记人了——群友画像：每日摘要后自动提炼性格/喜好/个人生活/特点，融入对话的长期记忆</summary>
+  </entry>
+  <entry>
     <title>花璃 v2.8.0 更新公告</title>
-    <link href="https://lingcat521.github.io/posts/flowerie-bot-2.8.0/"/>
+    <link href="https://lingcat521.github.io/posts/" + encodeURIComponent(p.slug) + "/"/>
     <id>https://lingcat521.github.io/posts/flowerie-bot-2.8.0/</id>
     <updated>2026-10-23T12:00:00+08:00</updated>
     <summary>花璃挂起来不重启了——每日凌晨滚动摘要，让花璃记住跨周跨月的群聊</summary>
   </entry>
   <entry>
     <title>花璃 v2.7.0 更新公告</title>
-    <link href="https://lingcat521.github.io/posts/"/>
+    <link href="https://lingcat521.github.io/posts/" + encodeURIComponent(p.slug) + "/"/>
     <id>https://lingcat521.github.io/posts/flowerie-bot-2.7.0/</id>
     <updated>2026-10-24T12:00:00+08:00</updated>
     <summary>把 v2.6.0 的 17 个审计项全部修掉，外加本机自建模型免 Key 接入</summary>
   </entry>
   <entry>
     <title>花璃 v2.6.0 更新公告</title>
-    <link href="https://lingcat521.github.io/posts/"/>
+    <link href="https://lingcat521.github.io/posts/" + encodeURIComponent(p.slug) + "/"/>
     <id>https://lingcat521.github.io/posts/flowerie-bot-2.6.0/</id>
     <updated>2026-10-20T12:00:00+08:00</updated>
     <summary>花璃终于可以把话说完了——长回复边界切分 + 流式分句，全部默认关闭</summary>
   </entry>
   <entry>
     <title>花璃 v2.5.0 更新公告</title>
-    <link href="https://lingcat521.github.io/posts/"/>
+    <link href="https://lingcat521.github.io/posts/" + encodeURIComponent(p.slug) + "/"/>
     <id>https://lingcat521.github.io/posts/flowerie-bot-v2-5-0/</id>
     <updated>2026-09-30T12:00:00+08:00</updated>
     <summary>MCP 终于能连需要认证的服务器了：五种认证方式、密钥全程不外露、五语言 SDK 同步跟上；顺带接上两条一直没接上的生产线路</summary>
   </entry>
   <entry>
     <title>花璃 v2.4.0 更新公告</title>
-    <link href="https://lingcat521.github.io/posts/"/>
+    <link href="https://lingcat521.github.io/posts/" + encodeURIComponent(p.slug) + "/"/>
     <id>https://lingcat521.github.io/posts/flowerie-bot-v2-4-0/</id>
     <updated>2026-09-29T12:00:00+08:00</updated>
     <summary>没有新玩法，但把里外翻修了一遍：拆开最胖的类、给旧插件通道补上环保护与可配超时、消息主路径提速（备份 407ms → 0），还有几个终于生效的老功能 uwu</summary>
   </entry>
   <entry>
     <title>花璃 v2.3.0 更新公告</title>
-    <link href="https://lingcat521.github.io/posts/"/>
+    <link href="https://lingcat521.github.io/posts/" + encodeURIComponent(p.slug) + "/"/>
     <id>https://lingcat521.github.io/posts/flowerie-bot-v2-3-0/</id>
     <updated>2026-09-26T12:00:00+08:00</updated>
     <summary>跨语言插件平台正式成型：五套官方 SDK、插件间通信、Plugin WebUI，还有版本号终于规范了 uwu</summary>
   </entry>
   <entry>
     <title>Song of Myself (Excerpt from Section 1)</title>
-    <link href="https://lingcat521.github.io/posts/"/>
+    <link href="https://lingcat521.github.io/posts/" + encodeURIComponent(p.slug) + "/"/>
     <id>https://lingcat521.github.io/posts/poem/</id>
     <updated>2026-09-25T12:00:00+08:00</updated>
     <summary>摘自《Leaves of Grass》 By Walt Whitman</summary>
   </entry>
   <entry>
     <title>花璃 v2.2.2222 更新公告</title>
-    <link href="https://lingcat521.github.io/posts/"/>
+    <link href="https://lingcat521.github.io/posts/" + encodeURIComponent(p.slug) + "/"/>
     <id>https://lingcat521.github.io/posts/flowerie-bot/</id>
     <updated>2026-09-19T12:00:00+08:00</updated>
     <summary>是的——这是一次维护性更新uwu</summary>
   </entry>
   <entry>
     <title>自我介绍——</title>
-    <link href="https://lingcat521.github.io/posts/"/>
+    <link href="https://lingcat521.github.io/posts/" + encodeURIComponent(p.slug) + "/"/>
     <id>https://lingcat521.github.io/posts/introduce/</id>
     <updated>2026-09-18T12:00:00+08:00</updated>
     <summary>你好w，这里是铃酱——</summary>
   </entry>
   <entry>
     <title>随便写写…</title>
-    <link href="https://lingcat521.github.io/posts/"/>
+    <link href="https://lingcat521.github.io/posts/" + encodeURIComponent(p.slug) + "/"/>
     <id>https://lingcat521.github.io/posts/post-mu5upy6g/</id>
     <updated>2026-09-17T12:00:00+08:00</updated>
     <summary>咱也不知道这是什么（</summary>
