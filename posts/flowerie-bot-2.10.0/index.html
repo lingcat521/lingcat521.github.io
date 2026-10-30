@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="auto" data-post-slug="flowerie-bot-2.10.0">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>花璃 v2.10.0 更新公告 · 铃酱の小站</title>
+<meta name="description" content="群管理控制台（12 个操作）+ QQ空间（发说说/配图/发布历史），SDK 同步扩展">
+<meta property="og:title" content="花璃 v2.10.0 更新公告 · 铃酱の小站">
+<meta property="og:description" content="群管理控制台（12 个操作）+ QQ空间（发说说/配图/发布历史），SDK 同步扩展">
+<meta property="og:type" content="article">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/assets/style.css?v=1f8ac709">
+<link rel="alternate" type="application/atom+xml" title="铃酱の小站" href="/atom.xml">
+<script>(function(){try{var t=localStorage.getItem("theme")||"auto";document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
+</head>
+<body>
+<div id="progress"></div>
+<header class="site-header"><div class="wrap header-inner">
+<a class="brand" href="/"><span class="brand-mark">❀</span> 铃酱の小站</a>
+<nav class="nav"><a href="/">首页</a><a href="/archive/">归档</a><a href="/tags/">标签</a><a href="/about/">关于</a>
+<a href="https://github.com/lingcat521" target="_blank" rel="noopener">GitHub</a></nav>
+<button id="theme-toggle" class="icon-btn" type="button" aria-label="切换主题" title="切换主题">🌗</button>
+</div></header>
+<main class="wrap fade-in">
+<article class="post">
+<header>
+
+<h1>花璃 v2.10.0 更新公告</h1>
+<div class="meta"><span>2026-10-26</span><span>·</span><span>约 2 分钟读完</span>
+<span>·</span><span>775 字</span>
+<a class="tag" href="/tags/?tag=bot">#bot</a>
+</div>
+<div class="post-extras" id="post-extras"></div>
+</header>
+<div class="toc" id="toc"><strong>目录</strong></div>
+<div class="content">
+<h2 id="花璃-v2-10-0-更新公告">🌸 花璃 v2.10.0 更新公告</h2>
+<p>这次花璃学会了<strong>管群</strong>和<strong>发说说</strong>。</p>
+<p>以前的 Web UI 只能改配置，群管理全靠管理员自己敲 OneBot 接口；QQ空间更是 只有命令行。这次把两件事都搬进了「零 JS」的管理后台——点一点就生效， 和改配置是同一套热更新。</p>
+<hr>
+<h2 id="一-群管理控制台-12-个操作">🛡️ 一、群管理控制台（12 个操作）</h2>
+<p>Web UI 新增「群管理」页签：</p>
+<ul>
+<li>设为/取消管理员、禁言/解禁、踢人（可选拒绝再加群）</li>
+<li>改群名片、改群名称、设专属头衔</li>
+<li>全员禁言开关、禁言列表、退群（群主可解散）</li>
+</ul>
+<p>服务层是新的 <code>GroupAdminService</code>——统一参数校验、错误收敛， 面板不写一行 JavaScript。SDK 侧同步开放 <code>set_group_admin</code> 等 10 个 Bot 方法， 插件也能调（走权限批准）。</p>
+<blockquote><p>边界：操作都经过 Bot 自身权限自检——花璃没有管理权限的群， 操作会被明确拒绝并说明原因，不会瞎点。</p></blockquote>
+<hr>
+<h2 id="二-QQ空间-发说说-图片-发布历史">🌸 二、QQ空间（发说说 + 图片 + 发布历史）</h2>
+<ul>
+<li>发说说：正文 + 最多 9 张图，权限 1/4/16/64/128（16/128 需权限对象）</li>
+<li>图片来源三种都认：<code>file://</code> / <code>http(s)://</code> / <code>base64://</code></li>
+<li>按 tid 删除说说；本机发布历史原子落盘（<code>data/qzone_history.json</code>）</li>
+</ul>
+<p>底层是 NapCat 的 <code>send_qzone_msg</code> / <code>delete_qzone_msg</code> 扩展动作， SDK 开放 <code>qzone_publish</code> / <code>qzone_delete</code>。</p>
+<hr>
+<h2 id="三-SDK-同步扩展">🔌 三、SDK 同步扩展</h2>
+<ul>
+<li><code>Bot.set_group_admin</code> / <code>kick_with_reject</code> / <code>get_group_shut_list</code> /</li>
+</ul>
+<p><code>leave_group</code> … 共 10 个群管方法</p>
+<ul>
+<li>QQ空间动作对插件开放（权限批准制）</li>
+</ul>
+<blockquote><p>兼容性：老配置零迁移；新能力对插件只做加法。</p></blockquote>
+<hr>
+<h2 id="四-测试">🧪 四、测试</h2>
+<ul>
+<li>CI 三档 + ruff 全绿；新增面板渲染/参数校验/历史落盘测试</li>
+<li>NapCat 动作实测记录见 <code>docs/reference/napcat-admin-qzone.md</code></li>
+</ul>
+</div>
+</article>
+<div id="post-below"></div>
+<div class="post-nav"><a href="/posts/flowerie-bot-2.10.1/">← 花璃 v2.10.1 更新公告</a><a href="/posts/flowerie-bot-2.13.0/">花璃 v2.13.0 更新公告 →</a></div>
+</main>
+<footer class="site-footer"><div class="wrap">© 2026 铃酱 · <a href="/atom.xml">RSS</a> · 
+<a href="https://github.com/lingcat521" target="_blank" rel="noopener">GitHub</a> · 托管于 GitHub Pages · 手写 HTML/CSS/JS，零依赖</div></footer>
+<button id="to-top" type="button" aria-label="回到顶部">↑</button>
+<script src="/assets/app.js?v=1f8ac709" defer></script>
+<script src="/assets/extras.js?v=1f8ac709" defer></script>
+
+</body>
+</html>

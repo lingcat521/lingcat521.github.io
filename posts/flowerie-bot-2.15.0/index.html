@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="auto" data-post-slug="flowerie-bot-2.15.0">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>花璃 v2.15.0 更新公告 · 铃酱の小站</title>
+<meta name="description" content="原生网页搜索（免 key）：4 引擎失败感知回退 + Web UI 试搜/自检">
+<meta property="og:title" content="花璃 v2.15.0 更新公告 · 铃酱の小站">
+<meta property="og:description" content="原生网页搜索（免 key）：4 引擎失败感知回退 + Web UI 试搜/自检">
+<meta property="og:type" content="article">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/assets/style.css?v=1f8ac709">
+<link rel="alternate" type="application/atom+xml" title="铃酱の小站" href="/atom.xml">
+<script>(function(){try{var t=localStorage.getItem("theme")||"auto";document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
+</head>
+<body>
+<div id="progress"></div>
+<header class="site-header"><div class="wrap header-inner">
+<a class="brand" href="/"><span class="brand-mark">❀</span> 铃酱の小站</a>
+<nav class="nav"><a href="/">首页</a><a href="/archive/">归档</a><a href="/tags/">标签</a><a href="/about/">关于</a>
+<a href="https://github.com/lingcat521" target="_blank" rel="noopener">GitHub</a></nav>
+<button id="theme-toggle" class="icon-btn" type="button" aria-label="切换主题" title="切换主题">🌗</button>
+</div></header>
+<main class="wrap fade-in">
+<article class="post">
+<header>
+
+<h1>花璃 v2.15.0 更新公告</h1>
+<div class="meta"><span>2026-10-29</span><span>·</span><span>约 2 分钟读完</span>
+<span>·</span><span>601 字</span>
+<a class="tag" href="/tags/?tag=bot">#bot</a>
+</div>
+<div class="post-extras" id="post-extras"></div>
+</header>
+<div class="toc" id="toc"><strong>目录</strong></div>
+<div class="content">
+<h2 id="花璃-v2-15-0-更新公告">🌸 花璃 v2.15.0 更新公告</h2>
+<p>这次花璃长出了<strong>搜索能力</strong>——而且不要 key。</p>
+<p>以前想让花璃查实时信息（新闻、价格、新版本）只能接 MCP server， 配 key、配 server、配白名单，门槛不低。这次把一个免 key 的 搜索引擎层<strong>内置</strong>进 AI 工具层：<code>web_search</code> / <code>web_fetch</code>。</p>
+<hr>
+<h2 id="一-引擎层-4-个免-key-引擎">🔍 一、引擎层（4 个免 key 引擎）</h2>
+<ul>
+<li>DuckDuckGo HTML / DuckDuckGo Lite / Bing / SearXNG（6 个公共实例轮询）</li>
+<li><strong>失败感知回退链</strong>：transient 错误重试一次、403/429 反爬冷却 60s、</li>
+</ul>
+<p>总预算 30s——一个引擎挂了自动换下一个</p>
+<ul>
+<li>Bing 反爬适配（<code>ck/a</code> 跳转解包 + 无结果缓存 SERP 判定）</li>
+<li>LRU 结果缓存（TTL 可配 0–5 分钟）、域名黑名单、安全搜索档</li>
+</ul>
+<p><code>web_fetch</code> 抓正文复用 MCP 同款 SSRF 防线（回环/私网拒绝）。</p>
+<hr>
+<h2 id="二-和-AI-工具层同款护栏">🛡️ 二、和 AI 工具层同款护栏</h2>
+<ul>
+<li>双闸开关：<code>AI_SEARCH_ENABLED</code> 配置 + 服务注入，缺一不可</li>
+<li>结果按<strong>不可信外部数据</strong>处理：prompt 里明确标注、关键结论要核对来源</li>
+<li>只在模型判断需要实时信息时调用；纯闲聊不调用</li>
+</ul>
+<hr>
+<h2 id="三-Web-UI-网页搜索-页">🖥️ 三、Web UI「网页搜索」页</h2>
+<ul>
+<li>引擎状态卡片（启用/停用一目了然）</li>
+<li><strong>试搜</strong>：填关键词跑一次真实搜索，看结果回显</li>
+<li><strong>逐引擎自检</strong>：手动触发，看每个引擎通不通、延迟多少</li>
+</ul>
+<p>（自检请求公共实例，别频繁点。）</p>
+<blockquote><p>配置对齐顺手做了：插件页补了两个此前只在 .env 能改的超时键， 现在 WebUI 也有入口了。</p></blockquote>
+</div>
+</article>
+<div id="post-below"></div>
+<div class="post-nav"><a href="/posts/flowerie-bot-2.14.0/">← 花璃 v2.14.0 更新公告</a><a href="/posts/flowerie-bot-2.17.0/">花璃 v2.17.0 更新公告 →</a></div>
+</main>
+<footer class="site-footer"><div class="wrap">© 2026 铃酱 · <a href="/atom.xml">RSS</a> · 
+<a href="https://github.com/lingcat521" target="_blank" rel="noopener">GitHub</a> · 托管于 GitHub Pages · 手写 HTML/CSS/JS，零依赖</div></footer>
+<button id="to-top" type="button" aria-label="回到顶部">↑</button>
+<script src="/assets/app.js?v=1f8ac709" defer></script>
+<script src="/assets/extras.js?v=1f8ac709" defer></script>
+
+</body>
+</html>

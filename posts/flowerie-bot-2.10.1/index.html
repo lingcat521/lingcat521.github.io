@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="auto" data-post-slug="flowerie-bot-2.10.1">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>花璃 v2.10.1 更新公告 · 铃酱の小站</title>
+<meta name="description" content="本地路径自动转 file://——QQ空间配图与群头像的来源归一化修复">
+<meta property="og:title" content="花璃 v2.10.1 更新公告 · 铃酱の小站">
+<meta property="og:description" content="本地路径自动转 file://——QQ空间配图与群头像的来源归一化修复">
+<meta property="og:type" content="article">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/assets/style.css?v=1f8ac709">
+<link rel="alternate" type="application/atom+xml" title="铃酱の小站" href="/atom.xml">
+<script>(function(){try{var t=localStorage.getItem("theme")||"auto";document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
+</head>
+<body>
+<div id="progress"></div>
+<header class="site-header"><div class="wrap header-inner">
+<a class="brand" href="/"><span class="brand-mark">❀</span> 铃酱の小站</a>
+<nav class="nav"><a href="/">首页</a><a href="/archive/">归档</a><a href="/tags/">标签</a><a href="/about/">关于</a>
+<a href="https://github.com/lingcat521" target="_blank" rel="noopener">GitHub</a></nav>
+<button id="theme-toggle" class="icon-btn" type="button" aria-label="切换主题" title="切换主题">🌗</button>
+</div></header>
+<main class="wrap fade-in">
+<article class="post">
+<header>
+
+<h1>花璃 v2.10.1 更新公告</h1>
+<div class="meta"><span>2026-10-26</span><span>·</span><span>约 1 分钟读完</span>
+<span>·</span><span>419 字</span>
+<a class="tag" href="/tags/?tag=bot">#bot</a>
+</div>
+<div class="post-extras" id="post-extras"></div>
+</header>
+<div class="toc" id="toc"><strong>目录</strong></div>
+<div class="content">
+<h2 id="花璃-v2-10-1-更新公告">🌸 花璃 v2.10.1 更新公告</h2>
+<p>一个小但很烦的 bug：面板里填<strong>本地绝对路径</strong>的图片，发布被拒。</p>
+<p>原因：协议端上传器只认 URI（<code>file://</code> / <code>http(s)://</code> / <code>base64://</code>）， 而面板把裸路径原样转发了——<code>/sdcard/a.jpg</code> 这种写法会被当成非法来源。</p>
+<hr>
+<h2 id="修复内容">🔧 修复内容</h2>
+<p>新增统一 helper <code>src/utils/file_source.py::to_uri_source</code>：</p>
+<ul>
+<li>scheme 透传（已经是 URI 的原样过）</li>
+<li>绝对路径自动补 <code>file://</code></li>
+<li><code>~</code> 展开</li>
+<li>strict 模式拒绝相对路径（并给出明确报错）</li>
+</ul>
+<p>覆盖两处：</p>
+<ul>
+<li><strong>QQ空间说说图片</strong>：<code>/sdcard/a.jpg</code>、<code>~/a.jpg</code> 自动转 <code>file://</code>；</li>
+</ul>
+<p>相对路径明确报错（面板提示同步改为「本地绝对路径（自动转 file://）」）</p>
+<ul>
+<li><strong>群头像</strong> <code>set_group_portrait</code>：本地绝对路径同样归一化；</li>
+</ul>
+<p>base64 裸串等其它形态原样透传</p>
+<p>+4 单元测试：归一化语义、QQ空间校验与发布链路传的确实是 <code>file://</code>、 群头像透传。</p>
+</div>
+</article>
+<div id="post-below"></div>
+<div class="post-nav"><a href="/posts/flowerie-bot-2.9.0/">← 花璃 v2.9.0 更新公告</a><a href="/posts/flowerie-bot-2.10.0/">花璃 v2.10.0 更新公告 →</a></div>
+</main>
+<footer class="site-footer"><div class="wrap">© 2026 铃酱 · <a href="/atom.xml">RSS</a> · 
+<a href="https://github.com/lingcat521" target="_blank" rel="noopener">GitHub</a> · 托管于 GitHub Pages · 手写 HTML/CSS/JS，零依赖</div></footer>
+<button id="to-top" type="button" aria-label="回到顶部">↑</button>
+<script src="/assets/app.js?v=1f8ac709" defer></script>
+<script src="/assets/extras.js?v=1f8ac709" defer></script>
+
+</body>
+</html>

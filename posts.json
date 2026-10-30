@@ -1,6 +1,118 @@
 {
   "posts": [
     {
+      "title": "花璃 v2.16.0 更新公告",
+      "slug": "flowerie-bot-2.16.0",
+      "date": "2026-10-30",
+      "tags": [
+        "bot"
+      ],
+      "summary": "Web UI 新增「自动化」页签：AI 工具层 + QQ空间配套配置集中管理",
+      "created": 1793377431704,
+      "pinned": false,
+      "private": false,
+      "read": 2,
+      "chars": 509
+    },
+    {
+      "title": "花璃 v2.17.0 更新公告",
+      "slug": "flowerie-bot-2.17.0",
+      "date": "2026-10-30",
+      "tags": [
+        "bot"
+      ],
+      "summary": "AI 工具层扩展：群成员/群友画像/群知识/戳一戳 + 自检预算修复",
+      "created": 1793377431704,
+      "pinned": false,
+      "private": false,
+      "read": 3,
+      "chars": 947
+    },
+    {
+      "title": "花璃 v2.15.0 更新公告",
+      "slug": "flowerie-bot-2.15.0",
+      "date": "2026-10-29",
+      "tags": [
+        "bot"
+      ],
+      "summary": "原生网页搜索（免 key）：4 引擎失败感知回退 + Web UI 试搜/自检",
+      "created": 1793377431704,
+      "pinned": false,
+      "private": false,
+      "read": 2,
+      "chars": 601
+    },
+    {
+      "title": "花璃 v2.14.0 更新公告",
+      "slug": "flowerie-bot-2.14.0",
+      "date": "2026-10-28",
+      "tags": [
+        "bot"
+      ],
+      "summary": "私聊按 QQ 号完全隔离：上下文/记忆/人格/预算各人独立，默认关",
+      "created": 1793377431704,
+      "pinned": false,
+      "private": false,
+      "read": 2,
+      "chars": 520
+    },
+    {
+      "title": "花璃 v2.12.0 更新公告",
+      "slug": "flowerie-bot-2.12.0",
+      "date": "2026-10-27",
+      "tags": [
+        "bot"
+      ],
+      "summary": "AI 自主工具层：模型自己发说说/禁言/读记忆，全开关默认关 + 权限护栏",
+      "created": 1793377431704,
+      "pinned": false,
+      "private": false,
+      "read": 3,
+      "chars": 729
+    },
+    {
+      "title": "花璃 v2.13.0 更新公告",
+      "slug": "flowerie-bot-2.13.0",
+      "date": "2026-10-27",
+      "tags": [
+        "bot"
+      ],
+      "summary": "手机窄屏导航收成 ☰ 抽屉——纯 HTML+CSS，零 JavaScript",
+      "created": 1793377431704,
+      "pinned": false,
+      "private": false,
+      "read": 2,
+      "chars": 412
+    },
+    {
+      "title": "花璃 v2.10.0 更新公告",
+      "slug": "flowerie-bot-2.10.0",
+      "date": "2026-10-26",
+      "tags": [
+        "bot"
+      ],
+      "summary": "群管理控制台（12 个操作）+ QQ空间（发说说/配图/发布历史），SDK 同步扩展",
+      "created": 1793377431704,
+      "pinned": false,
+      "private": false,
+      "read": 2,
+      "chars": 775
+    },
+    {
+      "title": "花璃 v2.10.1 更新公告",
+      "slug": "flowerie-bot-2.10.1",
+      "date": "2026-10-26",
+      "tags": [
+        "bot"
+      ],
+      "summary": "本地路径自动转 file://——QQ空间配图与群头像的来源归一化修复",
+      "created": 1793377431704,
+      "pinned": false,
+      "private": false,
+      "read": 1,
+      "chars": 419
+    },
+    {
       "title": "花璃 v2.9.0 更新公告",
       "slug": "flowerie-bot-2.9.0",
       "date": "2026-10-25",

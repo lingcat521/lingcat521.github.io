@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="auto" data-post-slug="flowerie-bot-2.16.0">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>花璃 v2.16.0 更新公告 · 铃酱の小站</title>
+<meta name="description" content="Web UI 新增「自动化」页签：AI 工具层 + QQ空间配套配置集中管理">
+<meta property="og:title" content="花璃 v2.16.0 更新公告 · 铃酱の小站">
+<meta property="og:description" content="Web UI 新增「自动化」页签：AI 工具层 + QQ空间配套配置集中管理">
+<meta property="og:type" content="article">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/assets/style.css?v=1f8ac709">
+<link rel="alternate" type="application/atom+xml" title="铃酱の小站" href="/atom.xml">
+<script>(function(){try{var t=localStorage.getItem("theme")||"auto";document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
+</head>
+<body>
+<div id="progress"></div>
+<header class="site-header"><div class="wrap header-inner">
+<a class="brand" href="/"><span class="brand-mark">❀</span> 铃酱の小站</a>
+<nav class="nav"><a href="/">首页</a><a href="/archive/">归档</a><a href="/tags/">标签</a><a href="/about/">关于</a>
+<a href="https://github.com/lingcat521" target="_blank" rel="noopener">GitHub</a></nav>
+<button id="theme-toggle" class="icon-btn" type="button" aria-label="切换主题" title="切换主题">🌗</button>
+</div></header>
+<main class="wrap fade-in">
+<article class="post">
+<header>
+
+<h1>花璃 v2.16.0 更新公告</h1>
+<div class="meta"><span>2026-10-30</span><span>·</span><span>约 2 分钟读完</span>
+<span>·</span><span>509 字</span>
+<a class="tag" href="/tags/?tag=bot">#bot</a>
+</div>
+<div class="post-extras" id="post-extras"></div>
+</header>
+<div class="toc" id="toc"><strong>目录</strong></div>
+<div class="content">
+<h2 id="花璃-v2-16-0-更新公告">🌸 花璃 v2.16.0 更新公告</h2>
+<p>一个「收拾屋子」的版本。</p>
+<p>v2.12.0 以来 AI 工具层的开关散落在三个配置分类里： <code>Qzone</code> 分类塞着 AI 空间开关和配图池参数，<code>Admin</code> 塞着群管开关， <code>AI</code> 塞着记忆开关——想开「让 AI 自己发说说」要在三个页面之间跳。</p>
+<p>这次全部收进新页签「<strong>自动化</strong>」。</p>
+<hr>
+<h2 id="一-新页签-自动化-抽屉内独立-tab">🗂️ 一、新页签「自动化」（抽屉内独立 tab）</h2>
+<p>15 个配置集中管理：</p>
+<ul>
+<li><strong>AI 工具层</strong>：<code>AI_QZONE_*</code> / <code>AI_ADMIN_ENABLED</code> / <code>AI_MEMORY_ENABLED</code> /</li>
+</ul>
+<p><code>AI_TOOL_PROMPT</code></p>
+<ul>
+<li><strong>QQ空间配套</strong>：<code>QZONE_IMAGE_*</code> / <code>QZONE_ENABLED</code> /</li>
+</ul>
+<p><code>QZONE_DEFAULT_UGC_RIGHT</code> / <code>QZONE_HISTORY_*</code></p>
+<p>单表单保存，复用 ConfigService 的 <code>.env</code>（原子）+ <code>settings.db</code> 双写与热更新。</p>
+<hr>
+<h2 id="二-配置页同步瘦身">✂️ 二、配置页同步瘦身</h2>
+<ul>
+<li><code>Qzone</code> 分类整体迁出（12 键并入「自动化」），配置页分类导航少一项</li>
+<li><code>Admin</code> 分类只剩群管控制台三键</li>
+<li>自动化页按声明顺序排序，保存走<code>update_many</code> 校验</li>
+</ul>
+<hr>
+<h2 id="三-测试">🧪 三、测试</h2>
+<ul>
+<li><code>test_automation_panel.py</code>：键集合精确匹配、旧分类已清空、</li>
+</ul>
+<p>渲染过滤（非本页键不展示）、全部键在 SCHEMA</p>
+<ul>
+<li>配置页测试同步断言旧键已迁出</li>
+</ul>
+</div>
+</article>
+<div id="post-below"></div>
+<div class="post-nav"><a href="/posts/flowerie-bot-2.17.0/">← 花璃 v2.17.0 更新公告</a><span></span></div>
+</main>
+<footer class="site-footer"><div class="wrap">© 2026 铃酱 · <a href="/atom.xml">RSS</a> · 
+<a href="https://github.com/lingcat521" target="_blank" rel="noopener">GitHub</a> · 托管于 GitHub Pages · 手写 HTML/CSS/JS，零依赖</div></footer>
+<button id="to-top" type="button" aria-label="回到顶部">↑</button>
+<script src="/assets/app.js?v=1f8ac709" defer></script>
+<script src="/assets/extras.js?v=1f8ac709" defer></script>
+
+</body>
+</html>

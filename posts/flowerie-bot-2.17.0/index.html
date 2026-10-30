@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="auto" data-post-slug="flowerie-bot-2.17.0">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>花璃 v2.17.0 更新公告 · 铃酱の小站</title>
+<meta name="description" content="AI 工具层扩展：群成员/群友画像/群知识/戳一戳 + 自检预算修复">
+<meta property="og:title" content="花璃 v2.17.0 更新公告 · 铃酱の小站">
+<meta property="og:description" content="AI 工具层扩展：群成员/群友画像/群知识/戳一戳 + 自检预算修复">
+<meta property="og:type" content="article">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/assets/style.css?v=1f8ac709">
+<link rel="alternate" type="application/atom+xml" title="铃酱の小站" href="/atom.xml">
+<script>(function(){try{var t=localStorage.getItem("theme")||"auto";document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
+</head>
+<body>
+<div id="progress"></div>
+<header class="site-header"><div class="wrap header-inner">
+<a class="brand" href="/"><span class="brand-mark">❀</span> 铃酱の小站</a>
+<nav class="nav"><a href="/">首页</a><a href="/archive/">归档</a><a href="/tags/">标签</a><a href="/about/">关于</a>
+<a href="https://github.com/lingcat521" target="_blank" rel="noopener">GitHub</a></nav>
+<button id="theme-toggle" class="icon-btn" type="button" aria-label="切换主题" title="切换主题">🌗</button>
+</div></header>
+<main class="wrap fade-in">
+<article class="post">
+<header>
+
+<h1>花璃 v2.17.0 更新公告</h1>
+<div class="meta"><span>2026-10-30</span><span>·</span><span>约 3 分钟读完</span>
+<span>·</span><span>947 字</span>
+<a class="tag" href="/tags/?tag=bot">#bot</a>
+</div>
+<div class="post-extras" id="post-extras"></div>
+</header>
+<div class="toc" id="toc"><strong>目录</strong></div>
+<div class="content">
+<h2 id="花璃-v2-17-0-更新公告">🌸 花璃 v2.17.0 更新公告</h2>
+<p>承接 v2.12.0——这次把 AI 工具层<strong>铺开</strong>了。</p>
+<p>v2.12.0 给了花璃「手」（QQ空间/群管理/记忆）；v2.15.0 给了「眼睛」 （网页搜索）。这次补上剩下的：<strong>认人</strong>和<strong>互动</strong>。</p>
+<p>全部默认关，「自动化」页一键开。</p>
+<hr>
+<h2 id="一-四个新工具">🤖 一、四个新工具</h2>
+<ul>
+<li><code>group_members</code> —— 看当前群成员名单（昵称/角色）</li>
+<li><code>member_profile</code> —— 看某人的群友画像（v2.9.0 的积累终于能让 AI 直接读了）：</li>
+</ul>
+<p>性格 / 喜好 / 个人生活 / 特点；没有画像会直说，不编</p>
+<ul>
+<li><code>group_knowledge</code> —— 检索本群知识/梗（群里只有你们懂的约定，</li>
+</ul>
+<p>花璃可以查自己的小本本）</p>
+<ul>
+<li><code>poke</code> —— 戳一戳：像朋友之间戳一下的互动玩笑</li>
+</ul>
+<hr>
+<h2 id="二-poke-的护栏-互动类工具的样板">🛡️ 二、poke 的护栏（互动类工具的样板）</h2>
+<ul>
+<li>不戳管理员（身份实时校验，查失败按保守策略拒绝）</li>
+<li>不戳调用者本人、不戳花璃自己</li>
+<li>目标必须 QQ 号合法；与群管工具同款管理员保护</li>
+</ul>
+<p>只读类工具（members/profile/knowledge）没有动作面， 但也单独开关——不想让 AI 读画像就关掉，干净。</p>
+<hr>
+<h2 id="三-开关统一收口">🗂️ 三、开关统一收口</h2>
+<p><code>AI_SEARCH_ENABLED</code> 从「配置页·搜索」迁到「自动化」tab—— 至此所有 <code>AI_*_ENABLED</code> 工具开关都在同一个页面： QQ空间 / 群管理 / 记忆 / 搜索 / 群信息 / 画像 / 群知识 / 戳一戳。</p>
+<p>新配置项：<code>AI_GROUP_INFO_ENABLED</code> / <code>AI_PROFILES_ENABLED</code> / <code>AI_KNOWLEDGE_ENABLED</code> / <code>AI_POKE_ENABLED</code>（全默认关）。</p>
+<hr>
+<h2 id="四-顺带修的两个自检-bug">🔧 四、顺带修的两个自检 bug</h2>
+<ul>
+<li><strong>网页搜索 tab 的按钮「消失」</strong>：试搜/自检表单提交后页面重载，</li>
+</ul>
+<p><code>&lt;details&gt;</code> 默认收起，按钮被折叠掉——改为常开</p>
+<ul>
+<li><strong>自检必然全超时</strong>：<code>test_engines</code> 的 wait_for 上限是</li>
+</ul>
+<p><code>SEARCH_TIMEOUT</code>（10s），但单引擎内部重试链最大 ~34s、 SearXNG 串 6 个实例要 ~48s——预算永远不够。 改成 <code>SEARCH_TIMEOUT × 4</code>（最小 40s）</p>
+<p>真实搜索的总预算不变（还是 30s），只是自检这种「看谁挂了」的场景给足时间。</p>
+<hr>
+<h2 id="五-测试">🧪 五、测试</h2>
+<ul>
+<li>新增 8 个工具测试：schema 显式必填参数、双闸开关、</li>
+</ul>
+<p>members/profile/knowledge 三个工具的读写、poke 的全部护栏分支、 prompt 说明注入</p>
+<ul>
+<li>2656 passed（本地全量）</li>
+</ul>
+</div>
+</article>
+<div id="post-below"></div>
+<div class="post-nav"><a href="/posts/flowerie-bot-2.15.0/">← 花璃 v2.15.0 更新公告</a><a href="/posts/flowerie-bot-2.16.0/">花璃 v2.16.0 更新公告 →</a></div>
+</main>
+<footer class="site-footer"><div class="wrap">© 2026 铃酱 · <a href="/atom.xml">RSS</a> · 
+<a href="https://github.com/lingcat521" target="_blank" rel="noopener">GitHub</a> · 托管于 GitHub Pages · 手写 HTML/CSS/JS，零依赖</div></footer>
+<button id="to-top" type="button" aria-label="回到顶部">↑</button>
+<script src="/assets/app.js?v=1f8ac709" defer></script>
+<script src="/assets/extras.js?v=1f8ac709" defer></script>
+
+</body>
+</html>
