@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="auto" data-post-slug="flowerie-bot-2.18.0">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>花璃 v2.18.0 更新公告 · 铃酱の小站</title>
+<meta name="description" content="分句规则化 + 表情包三通道（标记/概率/工具）+ 识图双路由；删除流式与 AI 多条">
+<meta property="og:title" content="花璃 v2.18.0 更新公告 · 铃酱の小站">
+<meta property="og:description" content="分句规则化 + 表情包三通道（标记/概率/工具）+ 识图双路由；删除流式与 AI 多条">
+<meta property="og:type" content="article">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/assets/style.css?v=1f8ac709">
+<link rel="alternate" type="application/atom+xml" title="铃酱の小站" href="/atom.xml">
+<script>(function(){try{var t=localStorage.getItem("theme")||"auto";document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
+</head>
+<body>
+<div id="progress"></div>
+<header class="site-header"><div class="wrap header-inner">
+<a class="brand" href="/"><span class="brand-mark">❀</span> 铃酱の小站</a>
+<nav class="nav"><a href="/">首页</a><a href="/archive/">归档</a><a href="/tags/">标签</a><a href="/about/">关于</a>
+<a href="https://github.com/lingcat521" target="_blank" rel="noopener">GitHub</a></nav>
+<button id="theme-toggle" class="icon-btn" type="button" aria-label="切换主题" title="切换主题">🌗</button>
+</div></header>
+<main class="wrap fade-in">
+<article class="post">
+<header>
+
+<h1>花璃 v2.18.0 更新公告</h1>
+<div class="meta"><span>2026-11-04</span><span>·</span><span>约 5 分钟读完</span>
+<span>·</span><span>1555 字</span>
+<a class="tag" href="/tags/?tag=bot">#bot</a>
+</div>
+<div class="post-extras" id="post-extras"></div>
+</header>
+<div class="toc" id="toc"><strong>目录</strong></div>
+<div class="content">
+<h2 id="花璃-v2-18-0-更新公告">🌸 花璃 v2.18.0 更新公告</h2>
+<p>承接 v2.17.0——这次不铺新能力，回头把<strong>「怎么说话」</strong>重做了一遍。</p>
+<p>之前有四套拆句机制叠在一起（AI 多条 JSON / 边界切分 / 按空格切 / 流式）， 互相打架还经常把话切碎。这次全部收敛成一套规则，顺手删掉两套没人用的。</p>
+<hr>
+<h2 id="一-分句只剩三条规则">✂️ 一、分句只剩三条规则</h2>
+<ol>
+<li>总长 <strong>超过 100 字</strong>：整条发，不拆</li>
+<li><strong>不到 40 字</strong>：按空格和句末标点拆</li>
+<li>中间：整条发</li>
+</ol>
+<p>逗号、顿号、小数点、括号<strong>不再当切点</strong>。之前 <code>3.5</code> 会被切成 <code>3.</code> 和 <code>5</code>， <code>（气鼓鼓）</code> 也会被切出来单独成句——很蠢，改掉了。</p>
+<p>一次最多拆 3 句，多出来的进缓存，隔 4~6 秒补发。防刷屏，但不丢内容。</p>
+<hr>
+<h2 id="二-表情包三条通道">🎭 二、表情包三条通道</h2>
+<p>之前只能靠模型在回复里写 <code>[STICKER:文件名]</code>，而且<strong>分句关掉时这个标记会原样发给用户</strong>—— 群里见过 <code>[STICKER:7N07_偷看.gif]</code> 这种鬼东西，就是这么漏出去的。</p>
+<p>现在标记在<strong>解析层</strong>就被剥离，跟分句开关彻底无关。文本一条、图片一条，分开发。</p>
+<p>三条通道，各自开关：</p>
+<ul>
+<li><strong>文本标记</strong>：模型自己写 <code>[STICKER:xxx]</code></li>
+<li><strong>概率附图</strong>：被 @ 或叫名字时，10% 概率补一张随机图</li>
+<li><strong>工具调用</strong>：<code>sticker_search</code> 搜、<code>sticker_send</code> 发，模型自己决定</li>
+</ul>
+<p>（「自动化」页新增 <code>AI_STICKER_ENABLED</code>）</p>
+<p>GIF <strong>保留动图</strong>。之前我把 GIF 转成静态 PNG 是判断错了——官方接口其实吃 GIF， 实测 639KB 的动图能正常发出去；真被拒了才降级成首帧 PNG。</p>
+<p>索引也修了：并发（默认 4 路）+ 批量上限，几百张表情包不用一次跑完。 描述从 25 字短句改成正经的 80~150 字（外观 / 动作 / 表情 / 适用场景）。</p>
+<hr>
+<h2 id="三-识图-主模型能自己看就别绕路">👁️ 三、识图：主模型能自己看就别绕路</h2>
+<p><code>VISION_ROUTE_MODE</code> 三档：</p>
+<ul>
+<li><code>auto</code> —— 主模型在白名单里就自己看，不在就调外部识图模型</li>
+<li><code>external</code> —— 永远走外部</li>
+<li><code>native</code> —— 强制主模型直看</li>
+</ul>
+<p>实测推理型模型单图要吃 500~3000 reasoning tokens，所以直看有<strong>独立预算</strong> <code>VISION_CHAT_MAX_TOKENS</code>，不跟聊天的 <code>DEEPSEEK_MAX_TOKENS</code> 抢额度。</p>
+<p>另外纯图片消息（没有文字）默认只识图记上下文、<strong>不触发回复</strong>—— 之前每张图都要回一句，群里太吵了。</p>
+<hr>
+<h2 id="四-删掉的两套机制">🗑️ 四、删掉的两套机制</h2>
+<ul>
+<li><strong>流式回复</strong>：框架本身不支持 SSE 增量发送，留着是死代码</li>
+<li><strong>AI 自主多条</strong>（<code>{"messages":[...]}</code>）：和分句功能重复，语义还打架</li>
+</ul>
+<p>配置键一起删了（<code>STREAM_REPLY_<em></code> / <code>MULTI_REPLY_</em></code>）。 <code>.env</code> 里还留着的话启动时会跳过，不报错。</p>
+<hr>
+<h2 id="五-顺带修的">🔧 五、顺带修的</h2>
+<ul>
+<li><strong>@ 召唤绕过节流</strong>：之前连续回 3 条就把群封 60 秒。你在群里喊她完全没反应，</li>
+</ul>
+<p>就是撞上这个了。现在被 @ 或直接回复消息不受连回上限约束，只有自发接话才限流</p>
+<ul>
+<li><strong>接话概率</strong> <code>REPLY_PROBABILITY</code>：官方机器人只收 @ 消息，桥接器得给每条都注入 @，</li>
+</ul>
+<p>所以必须有个概率门才能限频</p>
+<ul>
+<li><strong>配置读取</strong>：从 <code>settings.db</code> 读（db &gt; .env &gt; 代码默认）。长驻看守进程持着旧</li>
+</ul>
+<p>shell 函数会一直用旧环境变量拉子进程——改配置请走 Web UI 或数据库</p>
+<hr>
+<h2 id="六-协议层没动">🔌 六、协议层没动</h2>
+<p>OneBot11 / Milky 的适配层和传输层<strong>一行没改</strong>。发图还是标准 <code>image</code> 段 + <code>file://</code> 绝对路径，NapCat 原生支持。</p>
+<p>唯一注意：换回 NapCat 时把 <code>MENTION_REPLY_GATE_ENABLED</code> 关掉（默认就是关）， 真实 @ 才能必回。</p>
+<hr>
+<h2 id="七-测试">🧪 七、测试</h2>
+<ul>
+<li>新增解析层矩阵测试：分句开/关 × 有/无标记 六种组合，验证「文本与图片分开且标记不外发」</li>
+<li>拆出 <code>multimodal.py</code>（多模态加载）与 <code>reply_guard.py</code>（图片跳过 / @门 / 召唤判定），</li>
+</ul>
+<p>守住 ai_client 430 行、message_router 650 行的防上帝类上限</p>
+<ul>
+<li>2556 passed / 157 skipped（本地全量；perl 插件在 Termux 编译超时是环境老问题）</li>
+</ul>
+</div>
+</article>
+<div id="post-below"></div>
+<div class="post-nav"><a href="/posts/flowerie-bot-2.16.0/">← 花璃 v2.16.0 更新公告</a><span></span></div>
+</main>
+<footer class="site-footer"><div class="wrap">© 2026 铃酱 · <a href="/atom.xml">RSS</a> · 
+<a href="https://github.com/lingcat521" target="_blank" rel="noopener">GitHub</a> · 托管于 GitHub Pages · 手写 HTML/CSS/JS，零依赖</div></footer>
+<button id="to-top" type="button" aria-label="回到顶部">↑</button>
+<script src="/assets/app.js?v=1f8ac709" defer></script>
+<script src="/assets/extras.js?v=1f8ac709" defer></script>
+
+</body>
+</html>
