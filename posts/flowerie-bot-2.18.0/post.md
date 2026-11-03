@@ -95,3 +95,17 @@ OneBot11 / Milky 的适配层和传输层**一行没改**。发图还是标准 `
 - 拆出 `multimodal.py`（多模态加载）与 `reply_guard.py`（图片跳过 / @门 / 召唤判定），
   守住 ai_client 430 行、message_router 650 行的防上帝类上限
 - 2556 passed / 157 skipped（本地全量；perl 插件在 Termux 编译超时是环境老问题）
+
+---
+
+## 🔧 八、发布后补丁（v2.18.1）
+
+推上去验收挂了，两件事：
+
+1. **bing 的安全搜索参数从来没生效**——拼在未定义的 `url` 上（应为 `path`），
+   静态检查报 `F821` 才发现。已修
+2. **残留死代码**：Native Reply Tool 删掉后，`ai_gateway` 里还留着 `reply_capture` 引用
+   和两处 `if False:` 分支，一并清了
+3. `ruff I001` 导入排序 4 处，isort 修掉
+
+验收恢复全绿：Acceptance 37/37、CI pytest **2673 passed**。

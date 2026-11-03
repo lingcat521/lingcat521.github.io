@@ -1,18 +1,18 @@
 {
   "posts": [
     {
-      "title": "花璃 v2.18.0 更新公告",
+      "title": "花璃 v2.18.0 / v2.18.1 更新公告",
       "slug": "flowerie-bot-2.18.0",
       "date": "2026-11-04",
       "tags": [
         "bot"
       ],
-      "summary": "分句规则化 + 表情包三通道（标记/概率/工具）+ 识图双路由；删除流式与 AI 多条",
+      "summary": "分句规则化 + 表情包三通道 + 识图双路由；v2.18.1 修 bing 安全搜索与 ruff 告警",
       "created": 1793726415133,
       "pinned": false,
       "private": false,
       "read": 5,
-      "chars": 1555
+      "chars": 1777
     },
     {
       "title": "花璃 v2.16.0 更新公告",
