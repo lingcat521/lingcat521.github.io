@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="auto" data-post-slug="flowerie-bot-2.19.0">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>花璃 v2.19.x 更新公告 · 铃酱の小站</title>
+<meta name="description" content="插件 WebUI SDK + 平台 API（25 action）+ 夜间控制台 + 背景智能裁剪 + 文件解析开关；含两个 Android 专属坑">
+<meta property="og:title" content="花璃 v2.19.x 更新公告 · 铃酱の小站">
+<meta property="og:description" content="插件 WebUI SDK + 平台 API（25 action）+ 夜间控制台 + 背景智能裁剪 + 文件解析开关；含两个 Android 专属坑">
+<meta property="og:type" content="article">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/assets/style.css?v=1f8ac709">
+<link rel="alternate" type="application/atom+xml" title="铃酱の小站" href="/atom.xml">
+<script>(function(){try{var t=localStorage.getItem("theme")||"auto";document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
+</head>
+<body>
+<div id="progress"></div>
+<header class="site-header"><div class="wrap header-inner">
+<a class="brand" href="/"><span class="brand-mark">❀</span> 铃酱の小站</a>
+<nav class="nav"><a href="/">首页</a><a href="/archive/">归档</a><a href="/tags/">标签</a><a href="/about/">关于</a>
+<a href="https://github.com/lingcat521" target="_blank" rel="noopener">GitHub</a></nav>
+<button id="theme-toggle" class="icon-btn" type="button" aria-label="切换主题" title="切换主题">🌗</button>
+</div></header>
+<main class="wrap fade-in">
+<article class="post">
+<header>
+
+<h1>花璃 v2.19.x 更新公告</h1>
+<div class="meta"><span>2026-11-16</span><span>·</span><span>约 7 分钟读完</span>
+<span>·</span><span>2704 字</span>
+<a class="tag" href="/tags/?tag=bot">#bot</a>
+</div>
+<div class="post-extras" id="post-extras"></div>
+</header>
+<div class="toc" id="toc"><strong>目录</strong></div>
+<div class="content">
+<h2 id="花璃-v2-19-x-更新公告">🌸 花璃 v2.19.x 更新公告</h2>
+<p>承接 v2.18.1——这轮跨度有点大，一口气三个小版本：<strong>插件从「能说话」变成「能干活」</strong>， 控制台也跟着换了一遍皮，最后还踩了两个 Android 专属的坑。</p>
+<hr>
+<h2 id="一-插件-WebUI-SDK-插件不用写-HTML-了">🧩 一、插件 WebUI SDK：插件不用写 HTML 了</h2>
+<p>以前插件想有自己的管理页，得自己拼 HTML + CSS，还要跟着控制台主题改。</p>
+<p>现在只声明<strong>内容</strong>，宿主负责渲染、跟随主题、校验表单、显示字段错误：</p>
+<pre><code>from flowerie_sdk import webui
+
+def webui_render(page, context):
+    return webui.page(
+        webui.text("日报设置", "status"),
+        form=webui.form("save", [
+            webui.field("limit", "每日报告上限", "integer", required=True),
+            webui.field("enabled", "启用日报", "boolean"),
+        ]),
+    )</code></pre>
+<p>五种语言同一套结构：</p>
+<p>| SDK | 页面构造入口 | | :--- | :--- | | Python | <code>webui.page(*blocks, form=...)</code> | | TypeScript | <code>webuiView.page(blocks, form)</code> | | Go | <code>flowerie.WebUIPage(form, blocks...)</code> | | Rust | <code>webui_view::page(blocks, Some(form))</code> | | Java | <code>FloweriePlugin.WebUIView.page(blocks, form)</code> |</p>
+<p>组件：文字 / 状态 / 日志 / 表格（1–12 列 × 500 行，分页 1–50）。 表单：每页 1 个，1–32 字段，类型 <code>text</code> / <code>textarea</code> / <code>integer</code> / <code>boolean</code> / <code>select</code>。</p>
+<p><strong>所有展示值由宿主转义</strong>——我拿 <code>&lt;script&gt;alert(1)&lt;/script&gt;&lt;img src=x onerror=alert(2)&gt;</code> 实测过，输出是 <code>&amp;lt;script&amp;gt;...</code>，属性引号也转了。页面照样零 JavaScript 能操作。</p>
+<hr>
+<h2 id="二-插件平台-API-25-个-action">🔌 二、插件平台 API：25 个 action</h2>
+<p>插件以前只能收发消息，现在能调宿主能力了，<strong>全部走权限闸门</strong>（manifest 声明 + 管理员批准）：</p>
+<p>| 类别 | action | | :--- | :--- | | 画像 | <code>profile_get</code> / <code>profile_set_section</code> / <code>profile_delete</code> | | 搜索 | <code>web_search</code> | | 知识 | <code>knowledge_list</code> | | 人格/昵称 | <code>persona_resolve</code> / <code>nickname_resolve</code> | | QQ空间 | <code>qzone_history</code> / <code>qzone_rights</code> / <code>qzone_publish</code> | | 自动化 | <code>automation_status</code> / <code>schedule_register</code> / <code>schedule_list</code> / <code>schedule_cancel</code> | | 私聊 | <code>send_private_message</code> / <code>user_history</code> | | 群管理 | <code>get_group_members</code> / <code>group_ban</code> / <code>group_kick</code> / <code>group_admin</code> / <code>group_whole_ban</code> / <code>group_rename</code> / <code>group_card</code> / <code>group_title</code> / <code>group_shut_list</code> | | 文档解析 | <code>file_parse</code> / <code>file_parse_local</code> / <code>file_parse_status</code> |</p>
+<p>配套的底层也改了：自动化模块统一吐 <code>last_run</code>（供 <code>automation_status</code>）、 画像支持按群分页、MCP 客户端能读 <code>resources</code> / <code>prompts</code>（原来只有 <code>tools</code>）。</p>
+<p><strong>协议还是 v1</strong>，旧插件一行不用改。</p>
+<hr>
+<h2 id="三-夜间控制台">🌙 三、夜间控制台</h2>
+<p>顶部一排文字页签全拆了，换成<strong>桌面侧栏 + 手机底部折叠导航</strong>：</p>
+<ul>
+<li>面板页 HTML 从 1.7 KB 涨到 15 KB，多出来的是 34 个<strong>内联 SVG 图标</strong></li>
+<li>加了「跳到正文」无障碍链接</li>
+<li>品牌区是花璃的花标（纯 <code>math</code> 算出来的，没引入任何图片）</li>
+<li>侧栏按五组分：运行配置 / 对话与记忆 / QQ 与社群 / 工具与扩展 / 面板与诊断</li>
+</ul>
+<p>仍是<strong>零 JavaScript、零外部资源</strong>——手机端折叠用的是原生 <code>&lt;details&gt;</code>。</p>
+<hr>
+<h2 id="四-背景图会自己算怎么裁-v2-19-2">🖼️ 四、背景图会自己算怎么裁（v2.19.2）</h2>
+<p>以前背景图只有 <code>cover</code> 和 <code>contain</code> 两种，一张竖图铺桌面必然裁掉脑袋。</p>
+<p>现在桌面和手机分开配：</p>
+<ul>
+<li><strong>模式</strong>：<code>auto</code>（按比例智能挑）/ <code>cover</code>（焦点铺满）/ <code>contain</code>（完整显示）/ <code>soft</code>（完整显示 + 柔化补边）</li>
+<li><strong>焦点</strong>：center / top / bottom / left / right，也能填 <code>50,30</code> 这种自定义百分比</li>
+<li><strong>保护区</strong>：框住不能被裁掉的主体，服务端按容器比例算最终裁切</li>
+<li>外观页有「预览裁剪」，提交前能看实际效果</li>
+</ul>
+<p>日志页也跟着改了：每条日志变成<strong>可选中卡片</strong>，底色跟随面板透明度（100% 实底，调低透出背景）。</p>
+<hr>
+<h2 id="五-文件解析终于有开关了">📄 五、文件解析终于有开关了</h2>
+<p>之前这块<strong>只有上限参数，没有开关</strong>——任何群里发个 2MB 的 PDF 都会解析、烧 token。</p>
+<p>现在：</p>
+<p>| 键 | 作用 | | :--- | :--- | | <code>FILE_PARSE_ENABLED</code> | 总开关 | | <code>FILE_PARSE_GROUP_UPLOAD_ENABLED</code> | 群文件自动解析单独开关 | | <code>FILE_PARSE_FORMATS</code> | 格式白名单（默认 <code>txt,pdf,docx,xlsx,csv</code>） |</p>
+<p>顺手修了个 <code>KeyError</code>：<code>pending_files.pop(key)</code> 改成 <code>pop(key, None)</code>—— 键不存在时以前会直接抛异常。</p>
+<hr>
+<h2 id="六-两个-Android-专属的坑-v2-19-1">🤖 六、两个 Android 专属的坑（v2.19.1）</h2>
+<p>这俩在 Linux CI 上永远不会出现，在 Android 上必现。</p>
+<h3 id="1-usr-bin-env-ruby-解析不了">1. <code>#!/usr/bin/env ruby</code> 解析不了</h3>
+<p>Android 没有 <code>/usr/bin/env</code>，内核看到这种 shebang 直接失败。表现是<strong>插件启动等到 30 秒超时</strong>， 不是报错，很难查。</p>
+<p>现在 runtime 会先看 shebang：如果是 <code>env</code> 形式且那个 <code>env</code> 不存在，就改成 「解释器绝对路径 + 脚本」调用。Linux 上行为完全不变。</p>
+<h3 id="2-Perl-连-use-strict-都失败">2. Perl 连 <code>use strict</code> 都失败</h3>
+<p><code>@INC</code> 是<strong>编译进 perl 二进制</strong>的，前缀一变就全指向旧路径。改 <code>Config.pm</code> 没用——那是「报告」不是「来源」。</p>
+<p>唯一能覆盖它的是 <code>PERL5LIB</code>。现在 runtime 会自动探测同前缀的 <code>lib/perl5</code> 并注入， 用户自己设了就不覆盖。</p>
+<hr>
+<h2 id="七-测试">🧪 七、测试</h2>
+<pre><code>2589 passed / 149 skipped / 0 failed</code></pre>
+<p>新增的：<code>test_background_crop.py</code>（背景裁剪的 12 条）、平台动作、WebUI 视图、 文件解析面（<code>test_file_parse_surface.py</code>）。</p>
+<p>修的：6 个旧测试还在测已经被删掉的 <code>_render_cat_nav</code> 和 <code>.cats-summary</code> 系列类， 按新结构重写了断言。</p>
+<hr>
+<h2 id="八-顺手修的">🔧 八、顺手修的</h2>
+<ul>
+<li><strong>默认打开面板看不到任何配置项</strong>：<code>cat</code> 为空字符串时被当成未知分类，直接退回索引页。</li>
+</ul>
+<p>现在空分类归一化为 <code>all</code></p>
+<ul>
+<li><strong>CI 的 Node 20</strong>：TypeScript 插件构建要 Node ≥ 22.6，升到 22</li>
+<li><strong><code>qzone_auto</code> 导入顺序</strong>：<code>asyncio/time/json</code> → <code>asyncio/json/time</code>（ruff I001）</li>
+<li><strong><code>ruff</code> 编译 SIGABRT</strong>：<code>-C lto=fat</code> 在 Android 链接阶段 OOM，关掉 LTO 才编得过</li>
+</ul>
+<hr>
+<p>插件生态这块算是补完一轮了：能画页面、能调能力、权限收得住。下一轮想回头收拾一下 记忆那块——现在群知识、群友画像、长期记忆三套东西各管各的，有点散。</p>
+</div>
+</article>
+<div id="post-below"></div>
+<div class="post-nav"><a href="/posts/flowerie-bot-2.18.0/">← 花璃 v2.18.0 / v2.18.1 更新公告</a><span></span></div>
+</main>
+<footer class="site-footer"><div class="wrap">© 2026 铃酱 · <a href="/atom.xml">RSS</a> · 
+<a href="https://github.com/lingcat521" target="_blank" rel="noopener">GitHub</a> · 托管于 GitHub Pages · 手写 HTML/CSS/JS，零依赖</div></footer>
+<button id="to-top" type="button" aria-label="回到顶部">↑</button>
+<script src="/assets/app.js?v=1f8ac709" defer></script>
+<script src="/assets/extras.js?v=1f8ac709" defer></script>
+
+</body>
+</html>

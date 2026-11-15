@@ -1,6 +1,20 @@
 {
   "posts": [
     {
+      "title": "花璃 v2.19.x 更新公告",
+      "slug": "flowerie-bot-2.19.0",
+      "date": "2026-11-16",
+      "tags": [
+        "bot"
+      ],
+      "summary": "插件 WebUI SDK + 平台 API（25 action）+ 夜间控制台 + 背景智能裁剪 + 文件解析开关；含两个 Android 专属坑",
+      "created": 1794763838362,
+      "pinned": false,
+      "private": false,
+      "read": 7,
+      "chars": 2704
+    },
+    {
       "title": "花璃 v2.18.0 / v2.18.1 更新公告",
       "slug": "flowerie-bot-2.18.0",
       "date": "2026-11-04",
