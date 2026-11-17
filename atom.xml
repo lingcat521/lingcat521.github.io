@@ -3,9 +3,16 @@
   <title>铃酱の小站</title>
   <link href="https://lingcat521.github.io/atom.xml" rel="self"/>
   <link href="https://lingcat521.github.io/"/>
-  <updated>2026-11-15T17:30:55.296Z</updated>
+  <updated>2026-11-17T19:08:33.349Z</updated>
   <id>https://lingcat521.github.io/</id>
   <author><name>铃酱</name></author>
+  <entry>
+    <title>花璃 v2.19.3 更新公告</title>
+    <link href="https://lingcat521.github.io/posts/" + encodeURIComponent(p.slug) + "/"/>
+    <id>https://lingcat521.github.io/posts/flowerie-bot-2.19.3/</id>
+    <updated>2026-11-18T12:00:00+08:00</updated>
+    <summary>DeepSeek 原生搜索（服务端 web_search）+ 付费总开关 + AI 自主选引擎 + 搜索页重做</summary>
+  </entry>
   <entry>
     <title>花璃 v2.19.x 更新公告</title>
     <link href="https://lingcat521.github.io/posts/" + encodeURIComponent(p.slug) + "/"/>

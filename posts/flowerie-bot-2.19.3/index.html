@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="auto" data-post-slug="flowerie-bot-2.19.3">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>花璃 v2.19.3 更新公告 · 铃酱の小站</title>
+<meta name="description" content="DeepSeek 原生搜索（服务端 web_search）+ 付费总开关 + AI 自主选引擎 + 搜索页重做">
+<meta property="og:title" content="花璃 v2.19.3 更新公告 · 铃酱の小站">
+<meta property="og:description" content="DeepSeek 原生搜索（服务端 web_search）+ 付费总开关 + AI 自主选引擎 + 搜索页重做">
+<meta property="og:type" content="article">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/assets/style.css?v=1f8ac709">
+<link rel="alternate" type="application/atom+xml" title="铃酱の小站" href="/atom.xml">
+<script>(function(){try{var t=localStorage.getItem("theme")||"auto";document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
+</head>
+<body>
+<div id="progress"></div>
+<header class="site-header"><div class="wrap header-inner">
+<a class="brand" href="/"><span class="brand-mark">❀</span> 铃酱の小站</a>
+<nav class="nav"><a href="/">首页</a><a href="/archive/">归档</a><a href="/tags/">标签</a><a href="/about/">关于</a>
+<a href="https://github.com/lingcat521" target="_blank" rel="noopener">GitHub</a></nav>
+<button id="theme-toggle" class="icon-btn" type="button" aria-label="切换主题" title="切换主题">🌗</button>
+</div></header>
+<main class="wrap fade-in">
+<article class="post">
+<header>
+
+<h1>花璃 v2.19.3 更新公告</h1>
+<div class="meta"><span>2026-11-18</span><span>·</span><span>约 6 分钟读完</span>
+<span>·</span><span>1739 字</span>
+<a class="tag" href="/tags/?tag=bot">#bot</a>
+</div>
+<div class="post-extras" id="post-extras"></div>
+</header>
+<div class="toc" id="toc"><strong>目录</strong></div>
+<div class="content">
+<h2 id="花璃-v2-19-3-更新公告">🌸 花璃 v2.19.3 更新公告</h2>
+<p>承接 v2.19.2——这轮给搜索装了个<strong>会自己花钱的引擎</strong>，顺便把「愿不愿意花这个钱」的决定权交回你手上。</p>
+<hr>
+<h2 id="一-搜索多了一条路-让模型自己去搜">🔍 一、搜索多了一条路：让模型自己去搜</h2>
+<p>之前四个引擎都是<strong>花璃抓 HTML 自己解析</strong>——DuckDuckGo、Bing、SearXNG，免费但经常被反爬。</p>
+<p>这次接的是完全不同的机制：<strong>搜索在 DeepSeek 服务端执行</strong>。花璃只发一个「请搜索 X」的请求， 模型在云端自己调搜索工具，把结构化结果连文本一起返回：</p>
+<pre><code>POST {端点}/messages
+{
+  "model": "deepseek-v4-flash",
+  "messages": [{"role": "user", "content": "Perform a web search for the query: ..."}],
+  "tools": [{"type": "web_search_20250305", "name": "web_search", "max_uses": 3}],
+  "thinking": {"type": "disabled"}        ← 搜索不需要推理，省 token
+}</code></pre>
+<p>解析这块有个坑值得说：<strong>结果项本身通常不带摘要</strong>，只有 url 和标题。 摘要在 <code>text</code> 块的 <code>citations[].cited_text</code> 里，得按 url 建映射才能补齐。 照搬了 DeepSeek Harness 的实现思路，实测能用：</p>
+<pre><code>引擎: deepseek-native
+- DeepSeek V4 双版本正式上线，采用华为昇腾芯片
+- DeepSeek V4 成本暴降 73%…</code></pre>
+<p>顺带一个原则：<strong>没有结果块就直接报错，不降级去正则刮正文</strong>。刮出来的东西没法保证是搜索结果。</p>
+<hr>
+<h2 id="二-两个开关-别搞混">💸 二、两个开关，别搞混</h2>
+<p>这是我想了半天才拆清楚的：</p>
+<p>| 开关 | 管什么 | 关掉会怎样 | | :--- | :--- | :--- | | <code>SEARCH_PAID_ENABLED</code> | <strong>允不允许花钱</strong>（总闸） | 把 <code>deepseek-native</code> 从执行链里<strong>彻底剔除</strong>，就算你手动写进 <code>SEARCH_ENGINES</code> 也不用 | | <code>SEARCH_DEEPSEEK_PRIORITY</code> | 允许之后，<strong>要不要排第一</strong> | 不自动前置，但配置里写了它还是会用 |</p>
+<p>一句话：<strong>PAID 是「能不能用」，PRIORITY 是「排不排前面」</strong>。</p>
+<p>我一开始只做了 PRIORITY，后来发现不对劲——那只能控制顺序，管不住「到底允不允许花这个钱」。 加完 PAID 才算真的把闸门装上了。</p>
+<p>还有个细节：<strong><code>.env</code> 里留着 <code>sk-original</code> 这种模板值，会被识别成「未配置」</strong>。 不然链路每次都要先去打一个必然 401 的端点，白白慢一秒。</p>
+<hr>
+<h2 id="三-让-AI-自己决定用哪条路">🤔 三、让 AI 自己决定用哪条路</h2>
+<p>配了可用 Key 之后，<code>web_search</code> 工具会多一个可选参数：</p>
+<pre><code>{"query": "DeepSeek V4 发布时间", "engine": "deepseek-native"}   # 要准确，愿意花钱
+{"query": "今天天气", "engine": "bing"}                          # 省着点
+{"query": "Python 3.14 新特性"}                                  # 不传，宿主自己挑</code></pre>
+<p>工具描述里直接写了取舍，模型自己权衡：</p>
+<blockquote><p>deepseek-native（走模型服务端搜索，结果更准且有摘要，但较慢且按 token 计费） 或免费引擎 ddg/bing/searxng（快、免费、可能被反爬）。 不确定时不要传，宿主会按配置自动挑。</p></blockquote>
+<p>两个刻意设计的地方：</p>
+<ol>
+<li><strong>没配 Key 时根本不暴露这个参数</strong>——免费引擎之间（ddg / bing / searxng）的差别对模型没有决策意义，</li>
+</ol>
+<p>让它纠结用哪个纯属浪费 token，交给自动回退就够了</p>
+<ol>
+<li><strong>模型传了不存在的引擎名，静默忽略</strong>——不返回错误。不然它会看到报错然后重试，把对话上下文打乱</li>
+</ol>
+<hr>
+<h2 id="四-搜索页重做了一遍">🖥️ 四、搜索页重做了一遍</h2>
+<p>这轮交给 6.2sol 做 UI，我给了它一份很长的提示词（包括「不许动这几个文件」和「必须跑全量测试」）。</p>
+<p>结果意外地守规矩：18 个改动文件全在允许范围内，四个禁改文件一个字没动。</p>
+<p>现在的搜索页：</p>
+<ul>
+<li><strong>顶部一行说清「为什么这么搜」</strong>：实际执行顺序 + 编排原因</li>
+<li><strong>引擎卡片分五种状态</strong>：付费关闭 / Key 缺失 / 模板值 / 可用 / 冷却中</li>
+</ul>
+<p>（之前全显示成红叉，根本分不清是没配还是挂了）</p>
+<ul>
+<li><strong>试搜可以指定引擎</strong>，页面显示实际命中的是哪个</li>
+<li><strong>逐引擎自检显示耗时与预算</strong>——原生搜索要 30 秒级别，不能按免费引擎的秒级预算判它超时</li>
+</ul>
+<p>用户状态页也加了一张卡，但它是<strong>省钱版</strong>：</p>
+<pre><code>点「连通性测试」时：
+  不带 tools        ← 不触发真实搜索
+  max_tokens: 16   ← 只验端点活着
+  超时 20 秒        ← 这是模型回合，比别的 ping 慢</code></pre>
+<p>结果文案会写「未消耗搜索额度」。401 和 404 分开报——一个是 Key 不对，一个是端点路径配错， 这两个用户能自己修，但得先知道是哪种。</p>
+<hr>
+<h2 id="五-顺手修的">🐛 五、顺手修的</h2>
+<ul>
+<li><strong>占位符黑名单太宽</strong>：原来有 <code>sk-xxx</code>，结果任何含连续 x 的真 key 都被误判成模板值。删了</li>
+<li><strong>一个测试写死了「引擎数量 = 4」</strong>，加新引擎就挂。改成按语义断言</li>
+<li><strong>6.2sol 改了一行测试地址</strong>（<code>example.com</code> → IP 字面量），因为它那边解析不了 DNS。</li>
+</ul>
+<p>我验证本机和 CI 都能解析，把改动还原了——保留原测试对 DNS 解析路径的覆盖</p>
+<hr>
+<h2 id="六-测试">🧪 六、测试</h2>
+<pre><code>2687 passed / 0 failed</code></pre>
+<p>本地是分批跑的——这台机器一次跑全量到 60% 就被系统杀了两次，改成逐文件跑（176 个文件）。</p>
+<p>新增的：</p>
+<ul>
+<li><code>test_web_search_deepseek_native.py</code>：27 条，覆盖结果解析、编排矩阵、引擎选择、付费开关</li>
+<li><code>test_search_webui.py</code>：7 条，路由 / 热更新 / Key 掩码 / 试搜命中 / 自检预算 / ping 不带 tools</li>
+</ul>
+<hr>
+<p>搜索这块现在是：免费引擎打底，付费引擎按需，开关在你手上。</p>
+<p>下轮想回去收拾记忆——群知识、群友画像、长期记忆三套东西还是各管各的。</p>
+</div>
+</article>
+<div id="post-below"></div>
+<div class="post-nav"><a href="/posts/flowerie-bot-2.19.0/">← 花璃 v2.19.x 更新公告</a><span></span></div>
+</main>
+<footer class="site-footer"><div class="wrap">© 2026 铃酱 · <a href="/atom.xml">RSS</a> · 
+<a href="https://github.com/lingcat521" target="_blank" rel="noopener">GitHub</a> · 托管于 GitHub Pages · 手写 HTML/CSS/JS，零依赖</div></footer>
+<button id="to-top" type="button" aria-label="回到顶部">↑</button>
+<script src="/assets/app.js?v=1f8ac709" defer></script>
+<script src="/assets/extras.js?v=1f8ac709" defer></script>
+
+</body>
+</html>
