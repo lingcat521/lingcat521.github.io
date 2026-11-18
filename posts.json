@@ -1,6 +1,20 @@
 {
   "posts": [
     {
+      "title": "花璃 v2.19.4 更新公告",
+      "slug": "flowerie-bot-2.19.4",
+      "date": "2026-11-19",
+      "tags": [
+        "bot"
+      ],
+      "summary": "五个性能基准脚本：微基准 / 负载五档 / 全功能压测 / 资源谱系 / GPU 亲和性；含树莓派硬件评估",
+      "created": 1795022575817,
+      "pinned": false,
+      "private": false,
+      "read": 8,
+      "chars": 2570
+    },
+    {
       "title": "花璃 v2.19.3 更新公告",
       "slug": "flowerie-bot-2.19.3",
       "date": "2026-11-18",

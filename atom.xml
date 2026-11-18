@@ -3,9 +3,16 @@
   <title>铃酱の小站</title>
   <link href="https://lingcat521.github.io/atom.xml" rel="self"/>
   <link href="https://lingcat521.github.io/"/>
-  <updated>2026-11-17T19:08:33.349Z</updated>
+  <updated>2026-11-18T17:22:59.339Z</updated>
   <id>https://lingcat521.github.io/</id>
   <author><name>铃酱</name></author>
+  <entry>
+    <title>花璃 v2.19.4 更新公告</title>
+    <link href="https://lingcat521.github.io/posts/" + encodeURIComponent(p.slug) + "/"/>
+    <id>https://lingcat521.github.io/posts/flowerie-bot-2.19.4/</id>
+    <updated>2026-11-19T12:00:00+08:00</updated>
+    <summary>五个性能基准脚本：微基准 / 负载五档 / 全功能压测 / 资源谱系 / GPU 亲和性；含树莓派硬件评估</summary>
+  </entry>
   <entry>
     <title>花璃 v2.19.3 更新公告</title>
     <link href="https://lingcat521.github.io/posts/" + encodeURIComponent(p.slug) + "/"/>

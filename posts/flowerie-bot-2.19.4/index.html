@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="auto" data-post-slug="flowerie-bot-2.19.4">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>花璃 v2.19.4 更新公告 · 铃酱の小站</title>
+<meta name="description" content="五个性能基准脚本：微基准 / 负载五档 / 全功能压测 / 资源谱系 / GPU 亲和性；含树莓派硬件评估">
+<meta property="og:title" content="花璃 v2.19.4 更新公告 · 铃酱の小站">
+<meta property="og:description" content="五个性能基准脚本：微基准 / 负载五档 / 全功能压测 / 资源谱系 / GPU 亲和性；含树莓派硬件评估">
+<meta property="og:type" content="article">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/assets/style.css?v=1f8ac709">
+<link rel="alternate" type="application/atom+xml" title="铃酱の小站" href="/atom.xml">
+<script>(function(){try{var t=localStorage.getItem("theme")||"auto";document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
+</head>
+<body>
+<div id="progress"></div>
+<header class="site-header"><div class="wrap header-inner">
+<a class="brand" href="/"><span class="brand-mark">❀</span> 铃酱の小站</a>
+<nav class="nav"><a href="/">首页</a><a href="/archive/">归档</a><a href="/tags/">标签</a><a href="/about/">关于</a>
+<a href="https://github.com/lingcat521" target="_blank" rel="noopener">GitHub</a></nav>
+<button id="theme-toggle" class="icon-btn" type="button" aria-label="切换主题" title="切换主题">🌗</button>
+</div></header>
+<main class="wrap fade-in">
+<article class="post">
+<header>
+
+<h1>花璃 v2.19.4 更新公告</h1>
+<div class="meta"><span>2026-11-19</span><span>·</span><span>约 8 分钟读完</span>
+<span>·</span><span>2570 字</span>
+<a class="tag" href="/tags/?tag=bot">#bot</a>
+</div>
+<div class="post-extras" id="post-extras"></div>
+</header>
+<div class="toc" id="toc"><strong>目录</strong></div>
+<div class="content">
+<h2 id="花璃-v2-19-4-更新公告">🌸 花璃 v2.19.4 更新公告</h2>
+<p>这轮没加功能，做的是<strong>尺子</strong>。</p>
+<p>你要把花璃搬到树莓派上，但「能不能跑」这种事不该靠感觉——所以我把它全测了一遍， 测出来的东西都写成了脚本，你换机器可以自己再跑一遍对比。</p>
+<hr>
+<h2 id="一-五个脚本-五种问法">📏 一、五个脚本，五种问法</h2>
+<p>| 脚本 | 回答什么问题 | 跑多久 | | :--- | :--- | :--- | | <code>bench.py</code> | 单个操作有多快 | 1 分钟 | | <code>bench_load.py</code> | 多群群聊能扛多少 | 1 分钟 | | <code>bench_stress.py</code> | 所有功能同时开会怎样 | 90 秒 | | <code>bench_resources.py</code> | 除了 CPU 内存还吃什么 | 20 秒 | | <code>bench_gpu.py</code> | 到底用不用 GPU | 1 秒 |</p>
+<p>都能 <code>--json</code>，方便拿两台机器的输出直接对比。</p>
+<hr>
+<h2 id="二-先说结论-本地开销可以忽略">⚡ 二、先说结论：本地开销可以忽略</h2>
+<p>一条群消息的本地处理链——@ 检测 → 文本消毒 → 分句——<strong>0.128 毫秒</strong>。</p>
+<p>而一次 LLM 往返要 1000~5000 毫秒。</p>
+<pre><code>总延迟 ≈ 10ms（网络） + 1500ms（LLM） + 0.13ms（花璃本地）
+                                    ↑ 占 0.009%</code></pre>
+<p><strong>本地处理再慢 20 倍也不到 2.5 毫秒。</strong></p>
+<p>这是树莓派能跑的根本原因——花璃不是计算密集型，是 IO 等待型（等 API 返回）。</p>
+<hr>
+<h2 id="三-负载五档-真实场景离极限很远">📊 三、负载五档：真实场景离极限很远</h2>
+<p>| 档位 | 群数×速率 | 附件 | 实际吞吐 | p95 | CPU | RSS | | :--- | :--- | :--- | ---: | ---: | ---: | ---: | | 轻载 | 1×1/s | 无 | 1.0 msg/s | 15.5 ms | 0% | 70 MB | | 日常 | 5×2/s | 2%/5%/2% | 10.0 msg/s | 3.5 ms | 1% | 70 MB | | 繁忙 | 10×5/s | 5%/10%/5% | 49.6 msg/s | 6.6 ms | <strong>6%</strong> | 70 MB | | 压力 | 30×10/s | 10%/20%/10% | 294 msg/s | 8.3 ms | 46% | 71 MB | | 极限 | 50×20/s | 10%/25%/10% | 947 msg/s | 11.3 ms | 78% | 71 MB |</p>
+<p>10 个群最繁忙也就 10~20 msg/s（受 LLM 往返限制）。实测 50 msg/s <strong>只用 6% 单核</strong>， 余量超过 15 倍。</p>
+<p>内存从 1 群到 50 群、从 1 到 947 msg/s，<strong>全程 70~71 MB</strong>，一点没涨。</p>
+<p>因为消息处理是「进来→处理→丢弃」的无状态流水线，不积累。</p>
+<hr>
+<h2 id="四-全功能压测-9-个子系统同时跑">🔥 四、全功能压测：9 个子系统同时跑</h2>
+<p>前面测的是「某个功能多快」，这里测「<strong>全都开着</strong>会不会崩」。</p>
+<p>消息链 / 文档解析 / 图片转码 / UI 渲染 / SQLite / 记忆写入 / 表情索引 / 插件往返 / 摘要拼装—— 9 路同时满速，最高开到 6 倍并发：</p>
+<p>| 档位 | 总吞吐 | 错误 | CPU | RSS | | :--- | ---: | ---: | ---: | ---: | | x1 | 743 ops/s | <strong>0</strong> | 67% | 74 MB | | x3 | 1080 ops/s | <strong>0</strong> | 74% | 74 MB | | x6 | 1138 ops/s | <strong>0</strong> | 70% | 75 MB |</p>
+<p><strong>76000+ 次操作，零错误。</strong> SQLite 没有 database is locked，asyncio 没有阻塞告警。</p>
+<p>有意思的是并发从 3 路加到 6 路，吞吐只涨 5%，CPU 停在 70%—— 这是<strong>单核饱和</strong>，Python 的 GIL 让所有 CPU 活排在一个核上。</p>
+<p>还有一个现象：文档解析的 p95 从 16ms（x1）涨到 74ms（x3）再到 <strong>159ms</strong>（x6）。 延迟涨了 10 倍，吞吐只涨 55%。这是教科书级的<strong>队列饱和</strong>。</p>
+<p>但真实场景不需要担心：一个群同时来 6 份文档的概率基本为零。</p>
+<hr>
+<h2 id="五-SD-卡会不会写坏">💾 五、SD 卡会不会写坏？</h2>
+<p>这是我原本最担心的。实测：</p>
+<pre><code>真实速率（20 msg/min）= 25.8 KB / 条消息
+每天活跃 8 小时 ≈ 242 MB/天 ≈ 86 GB/年</code></pre>
+<p>128GB TLC 卡（标称 100 TBW，写入放大 2x）→ <strong>约 594 年</strong>。</p>
+<p>就算按 3 倍保守估（还有配置、画像、知识库、日志），也是几十年。</p>
+<p><strong>SD 卡不会因为写入量写坏。</strong> 真正的问题是写入<strong>延迟</strong>—— 花璃默认 <code>synchronous=FULL</code>（每次都 fsync），内存盘上 3.4ms，换 SD 卡可能 50~200ms。</p>
+<p>慢盘上建议改：</p>
+<pre><code>PRAGMA synchronous = NORMAL;</code></pre>
+<p>WAL + NORMAL 下崩溃最多丢最后几条事务，不会损坏库，写入延迟从百毫秒降到个位数。</p>
+<p>还有个好消息：<strong>空闲时零写入</strong>。静置 5 秒，磁盘写入 0 MB，write 系统调用 0 次。 没有心跳写盘。</p>
+<hr>
+<h2 id="六-GPU-这条-测不了-所以我去证了">🎮 六、GPU 这条：测不了，所以我去证了</h2>
+<p>你问「Web UI 不需要 GPU 吗」，我想直接测，结果发现三条路全堵：</p>
+<ul>
+<li>Mali 的 <code>/sys/class/misc/mali0/device/utilization</code> → 不存在</li>
+<li><code>/sys/kernel/debug</code> → 要 root</li>
+<li><code>dumpsys SurfaceFlinger</code> → 权限拒绝</li>
+</ul>
+<p>根因是：<strong>Linux 没有进程级 GPU 统计</strong>。CPU 和内存是进程隔离的，GPU 是全局资源， 内核对「某个进程用了多少 GPU」这件事压根没概念。</p>
+<p>所以换个思路：既然测不了用量，就证明<strong>根本没有调用路径</strong>。</p>
+<pre><code>[1] 代码层  cairo/skia/opengl/vulkan/webgl 引用     0 处
+[2] 链接层  libGL/libEGL/libGLESv2/libvulkan 加载   0 个
+[3] 驱动层  GPU 设备节点是否被打开
+            系统存在: /dev/mali0, /dev/dri/card0
+            本进程打开: 无
+[4] 线程层  渲染线程                                0 个（全进程 1 线程）
+
+结论：GPU 零路径</code></pre>
+<p>第 3 项特别有说服力——这台机器确实有 Mali GPU，设备节点也在，但花璃进程连 fd 都没开过。</p>
+<p>这比「占用 0.1%」强得多：低占用还可能波动，零路径是结构性的。</p>
+<p>顺带澄清：Web UI 的图形在<strong>打开页面的人</strong>的设备上渲染，不在服务器。 服务端只做一件事——拼 15 KB 的 HTML 字符串，3.06 毫秒。</p>
+<hr>
+<h2 id="七-一个坑-必须装-64-位系统">⚠️ 七、一个坑：必须装 64 位系统</h2>
+<p>测资源时发现 VMS 是 <strong>10,850 MB</strong>，吓了一跳。查了才知道：</p>
+<pre><code>空 Python 进程 VmSize: 10,830 MB
+实际 RSS:                 43 MB   ← 才是真占用</code></pre>
+<p>Python 3.14 在 64 位系统上会预留极大的虚拟地址空间，这是 arena 分配策略，不是内存占用。</p>
+<p>但这条有个实际后果：<strong>32 位系统的地址空间只有 4 GB，解释器起不来</strong>。</p>
+<p>所以树莓派必须装 64 位系统。Pi 4/5 的 64 位 Pi OS 没问题，Pi 3 装 32 位就会踩。</p>
+<hr>
+<h2 id="八-树莓派怎么选">🍓 八、树莓派怎么选</h2>
+<p>| 机型 | 极限吞吐 | 10 群真实负载 | 内存 | 判断 | | :--- | ---: | :--- | :--- | :--- | | Pi 5 | ~1250 ops/s | CPU &lt;10% | 4~8 GB | ✅ 充裕 | | Pi 4 | ~620 ops/s | CPU &lt;20% | 2~4 GB | ✅ <strong>推荐</strong> | | Pi 3B+ | ~285 ops/s | CPU &lt;35% | 1 GB | ⚠️ 别装重插件 | | Zero 2 W | ~140 ops/s | CPU 约 35% | 512 MB | ❌ 会 OOM |</p>
+<p><strong>Pi 4 (2GB) 就够了。</strong> 记住配合：</p>
+<ul>
+<li>USB 3.0 SSD 启动（或至少 A2 级 microSD）</li>
+<li>64 位系统</li>
+<li>慢盘上改 <code>synchronous=NORMAL</code></li>
+</ul>
+<hr>
+<h2 id="九-测试">🧪 九、测试</h2>
+<pre><code>2687 passed / 0 failed</code></pre>
+<p>顺便修了 CI 的两处：</p>
+<ol>
+<li><strong>Ruff 17 个告警</strong>——新写的 bench 脚本有导入排序、未用变量、空 f-string 之类</li>
+<li><strong>E2E 导航定位</strong>——上一版把导航分组后，<code>details.mobile-navigation</code> 里有 5 个 <code>&lt;summary&gt;</code></li>
+</ol>
+<p>（1 个总开关 + 4 个分组），Playwright 的 strict 模式直接报「匹配到 5 个元素」。 改成 <code>.first</code> 明确点总开关</p>
+<hr>
+<p>五个脚本，五种问法，你换机器跑一遍就有数了。</p>
+<pre><code>python3 scripts/bench.py --json &gt; old.json
+# 换到树莓派后
+python3 scripts/bench.py --json &gt; new.json
+# 对比两份 JSON 就知道差多少</code></pre>
+<p>下轮想回去收拾记忆——群知识、群友画像、长期记忆还是三套东西各管各的。</p>
+</div>
+</article>
+<div id="post-below"></div>
+<div class="post-nav"><a href="/posts/flowerie-bot-2.19.3/">← 花璃 v2.19.3 更新公告</a><span></span></div>
+</main>
+<footer class="site-footer"><div class="wrap">© 2026 铃酱 · <a href="/atom.xml">RSS</a> · 
+<a href="https://github.com/lingcat521" target="_blank" rel="noopener">GitHub</a> · 托管于 GitHub Pages · 手写 HTML/CSS/JS，零依赖</div></footer>
+<button id="to-top" type="button" aria-label="回到顶部">↑</button>
+<script src="/assets/app.js?v=1f8ac709" defer></script>
+<script src="/assets/extras.js?v=1f8ac709" defer></script>
+
+</body>
+</html>
