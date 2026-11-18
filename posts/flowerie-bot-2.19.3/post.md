@@ -39,10 +39,13 @@ POST {端点}/messages
 
 这是我想了半天才拆清楚的：
 
-| 开关 | 管什么 | 关掉会怎样 |
-| :--- | :--- | :--- |
-| `SEARCH_PAID_ENABLED` | **允不允许花钱**（总闸） | 把 `deepseek-native` 从执行链里**彻底剔除**，就算你手动写进 `SEARCH_ENGINES` 也不用 |
-| `SEARCH_DEEPSEEK_PRIORITY` | 允许之后，**要不要排第一** | 不自动前置，但配置里写了它还是会用 |
+
+```
+开关                      管什么                  关掉会怎样
+SEARCH_PAID_ENABLED       允不允许花钱（总闸）    把 deepseek-native 从执行链里彻底剔除，
+SEARCH_DEEPSEEK_PRIORITY  允许之后，要不要排第一  不自动前置，但配置里写了它还是会用
+```
+
 
 一句话：**PAID 是「能不能用」，PRIORITY 是「排不排前面」**。
 

@@ -26,8 +26,8 @@
 <header>
 
 <h1>花璃 v2.19.x 更新公告</h1>
-<div class="meta"><span>2026-11-16</span><span>·</span><span>约 7 分钟读完</span>
-<span>·</span><span>2704 字</span>
+<div class="meta"><span>2026-11-16</span><span>·</span><span>约 5 分钟读完</span>
+<span>·</span><span>1921 字</span>
 <a class="tag" href="/tags/?tag=bot">#bot</a>
 </div>
 <div class="post-extras" id="post-extras"></div>
@@ -51,13 +51,27 @@ def webui_render(page, context):
         ]),
     )</code></pre>
 <p>五种语言同一套结构：</p>
-<p>| SDK | 页面构造入口 | | :--- | :--- | | Python | <code>webui.page(*blocks, form=...)</code> | | TypeScript | <code>webuiView.page(blocks, form)</code> | | Go | <code>flowerie.WebUIPage(form, blocks...)</code> | | Rust | <code>webui_view::page(blocks, Some(form))</code> | | Java | <code>FloweriePlugin.WebUIView.page(blocks, form)</code> |</p>
+<pre><code>SDK         页面构造入口
+Python      webui.page(*blocks, form=...)
+TypeScript  webuiView.page(blocks, form)
+Go          flowerie.WebUIPage(form, blocks...)
+Rust        webui_view::page(blocks, Some(form))
+Java        FloweriePlugin.WebUIView.page(blocks, fo</code></pre>
 <p>组件：文字 / 状态 / 日志 / 表格（1–12 列 × 500 行，分页 1–50）。 表单：每页 1 个，1–32 字段，类型 <code>text</code> / <code>textarea</code> / <code>integer</code> / <code>boolean</code> / <code>select</code>。</p>
 <p><strong>所有展示值由宿主转义</strong>——我拿 <code>&lt;script&gt;alert(1)&lt;/script&gt;&lt;img src=x onerror=alert(2)&gt;</code> 实测过，输出是 <code>&amp;lt;script&amp;gt;...</code>，属性引号也转了。页面照样零 JavaScript 能操作。</p>
 <hr>
 <h2 id="二-插件平台-API-25-个-action">🔌 二、插件平台 API：25 个 action</h2>
 <p>插件以前只能收发消息，现在能调宿主能力了，<strong>全部走权限闸门</strong>（manifest 声明 + 管理员批准）：</p>
-<p>| 类别 | action | | :--- | :--- | | 画像 | <code>profile_get</code> / <code>profile_set_section</code> / <code>profile_delete</code> | | 搜索 | <code>web_search</code> | | 知识 | <code>knowledge_list</code> | | 人格/昵称 | <code>persona_resolve</code> / <code>nickname_resolve</code> | | QQ空间 | <code>qzone_history</code> / <code>qzone_rights</code> / <code>qzone_publish</code> | | 自动化 | <code>automation_status</code> / <code>schedule_register</code> / <code>schedule_list</code> / <code>schedule_cancel</code> | | 私聊 | <code>send_private_message</code> / <code>user_history</code> | | 群管理 | <code>get_group_members</code> / <code>group_ban</code> / <code>group_kick</code> / <code>group_admin</code> / <code>group_whole_ban</code> / <code>group_rename</code> / <code>group_card</code> / <code>group_title</code> / <code>group_shut_list</code> | | 文档解析 | <code>file_parse</code> / <code>file_parse_local</code> / <code>file_parse_status</code> |</p>
+<pre><code>类别       action
+画像       profile_get / profile_set_section / prof
+搜索       web_search
+知识       knowledge_list
+人格/昵称  persona_resolve / nickname_resolve
+QQ空间     qzone_history / qzone_rights / qzone_pub
+自动化     automation_status / schedule_register /
+私聊       send_private_message / user_history
+群管理     get_group_members / group_ban / group_ki
+文档解析   file_parse / file_parse_local / file_par</code></pre>
 <p>配套的底层也改了：自动化模块统一吐 <code>last_run</code>（供 <code>automation_status</code>）、 画像支持按群分页、MCP 客户端能读 <code>resources</code> / <code>prompts</code>（原来只有 <code>tools</code>）。</p>
 <p><strong>协议还是 v1</strong>，旧插件一行不用改。</p>
 <hr>
@@ -85,7 +99,10 @@ def webui_render(page, context):
 <h2 id="五-文件解析终于有开关了">📄 五、文件解析终于有开关了</h2>
 <p>之前这块<strong>只有上限参数，没有开关</strong>——任何群里发个 2MB 的 PDF 都会解析、烧 token。</p>
 <p>现在：</p>
-<p>| 键 | 作用 | | :--- | :--- | | <code>FILE_PARSE_ENABLED</code> | 总开关 | | <code>FILE_PARSE_GROUP_UPLOAD_ENABLED</code> | 群文件自动解析单独开关 | | <code>FILE_PARSE_FORMATS</code> | 格式白名单（默认 <code>txt,pdf,docx,xlsx,csv</code>） |</p>
+<pre><code>键                               作用
+FILE_PARSE_ENABLED               总开关
+FILE_PARSE_GROUP_UPLOAD_ENABLED  群文件自动解析单独开关
+FILE_PARSE_FORMATS               格式白名单（默认 txt,pdf,docx,xlsx,csv）</code></pre>
 <p>顺手修了个 <code>KeyError</code>：<code>pending_files.pop(key)</code> 改成 <code>pop(key, None)</code>—— 键不存在时以前会直接抛异常。</p>
 <hr>
 <h2 id="六-两个-Android-专属的坑-v2-19-1">🤖 六、两个 Android 专属的坑（v2.19.1）</h2>
