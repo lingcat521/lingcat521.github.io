@@ -26,8 +26,8 @@
 <header>
 
 <h1>花璃 v2.19.4 更新公告</h1>
-<div class="meta"><span>2026-11-19</span><span>·</span><span>约 6 分钟读完</span>
-<span>·</span><span>1862 字</span>
+<div class="meta"><span>2026-11-19</span><span>·</span><span>约 8 分钟读完</span>
+<span>·</span><span>2570 字</span>
 <a class="tag" href="/tags/?tag=bot">#bot</a>
 </div>
 <div class="post-extras" id="post-extras"></div>
@@ -39,12 +39,7 @@
 <p>你要把花璃搬到树莓派上，但「能不能跑」这种事不该靠感觉——所以我把它全测了一遍， 测出来的东西都写成了脚本，你换机器可以自己再跑一遍对比。</p>
 <hr>
 <h2 id="一-五个脚本-五种问法">📏 一、五个脚本，五种问法</h2>
-<pre><code>脚本                回答什么问题           跑多久
-bench.py            单个操作有多快         1 分钟
-bench_load.py       多群群聊能扛多少       1 分钟
-bench_stress.py     所有功能同时开会怎样   90 秒
-bench_resources.py  除了 CPU 内存还吃什么  20 秒
-bench_gpu.py        到底用不用 GPU         1 秒</code></pre>
+<div class="table-wrap"><table><thead><tr><th>脚本</th><th>回答什么问题</th><th>跑多久</th></tr></thead><tbody><tr><td><code>bench.py</code></td><td>单个操作有多快</td><td>1 分钟</td></tr><tr><td><code>bench_load.py</code></td><td>多群群聊能扛多少</td><td>1 分钟</td></tr><tr><td><code>bench_stress.py</code></td><td>所有功能同时开会怎样</td><td>90 秒</td></tr><tr><td><code>bench_resources.py</code></td><td>除了 CPU 内存还吃什么</td><td>20 秒</td></tr><tr><td><code>bench_gpu.py</code></td><td>到底用不用 GPU</td><td>1 秒</td></tr></tbody></table></div>
 <p>都能 <code>--json</code>，方便拿两台机器的输出直接对比。</p>
 <hr>
 <h2 id="二-先说结论-本地开销可以忽略">⚡ 二、先说结论：本地开销可以忽略</h2>
@@ -56,12 +51,7 @@ bench_gpu.py        到底用不用 GPU         1 秒</code></pre>
 <p>这是树莓派能跑的根本原因——花璃不是计算密集型，是 IO 等待型（等 API 返回）。</p>
 <hr>
 <h2 id="三-负载五档-真实场景离极限很远">📊 三、负载五档：真实场景离极限很远</h2>
-<pre><code>档位  群数×速率  附件         实际吞吐    p95      CPU  RSS
-轻载  1×1/s      无           1.0 msg/s   15.5 ms  0%   70 MB
-日常  5×2/s      2%/5%/2%     10.0 msg/s  3.5 ms   1%   70 MB
-繁忙  10×5/s     5%/10%/5%    49.6 msg/s  6.6 ms   6%   70 MB
-压力  30×10/s    10%/20%/10%  294 msg/s   8.3 ms   46%  71 MB
-极限  50×20/s    10%/25%/10%  947 msg/s   11.3 ms  78%  71 MB</code></pre>
+<div class="table-wrap"><table><thead><tr><th>档位</th><th>群数×速率</th><th>附件</th><th style="text-align:right">实际吞吐</th><th style="text-align:right">p95</th><th style="text-align:right">CPU</th><th style="text-align:right">RSS</th></tr></thead><tbody><tr><td>轻载</td><td>1×1/s</td><td>无</td><td style="text-align:right">1.0 msg/s</td><td style="text-align:right">15.5 ms</td><td style="text-align:right">0%</td><td style="text-align:right">70 MB</td></tr><tr><td>日常</td><td>5×2/s</td><td>2%/5%/2%</td><td style="text-align:right">10.0 msg/s</td><td style="text-align:right">3.5 ms</td><td style="text-align:right">1%</td><td style="text-align:right">70 MB</td></tr><tr><td>繁忙</td><td>10×5/s</td><td>5%/10%/5%</td><td style="text-align:right">49.6 msg/s</td><td style="text-align:right">6.6 ms</td><td style="text-align:right"><strong>6%</strong></td><td style="text-align:right">70 MB</td></tr><tr><td>压力</td><td>30×10/s</td><td>10%/20%/10%</td><td style="text-align:right">294 msg/s</td><td style="text-align:right">8.3 ms</td><td style="text-align:right">46%</td><td style="text-align:right">71 MB</td></tr><tr><td>极限</td><td>50×20/s</td><td>10%/25%/10%</td><td style="text-align:right">947 msg/s</td><td style="text-align:right">11.3 ms</td><td style="text-align:right">78%</td><td style="text-align:right">71 MB</td></tr></tbody></table></div>
 <p>10 个群最繁忙也就 10~20 msg/s（受 LLM 往返限制）。实测 50 msg/s <strong>只用 6% 单核</strong>， 余量超过 15 倍。</p>
 <p>内存从 1 群到 50 群、从 1 到 947 msg/s，<strong>全程 70~71 MB</strong>，一点没涨。</p>
 <p>因为消息处理是「进来→处理→丢弃」的无状态流水线，不积累。</p>
@@ -69,10 +59,7 @@ bench_gpu.py        到底用不用 GPU         1 秒</code></pre>
 <h2 id="四-全功能压测-9-个子系统同时跑">🔥 四、全功能压测：9 个子系统同时跑</h2>
 <p>前面测的是「某个功能多快」，这里测「<strong>全都开着</strong>会不会崩」。</p>
 <p>消息链 / 文档解析 / 图片转码 / UI 渲染 / SQLite / 记忆写入 / 表情索引 / 插件往返 / 摘要拼装—— 9 路同时满速，最高开到 6 倍并发：</p>
-<pre><code>档位  总吞吐      错误  CPU  RSS
-x1    743 ops/s   0     67%  74 MB
-x3    1080 ops/s  0     74%  74 MB
-x6    1138 ops/s  0     70%  75 MB</code></pre>
+<div class="table-wrap"><table><thead><tr><th>档位</th><th style="text-align:right">总吞吐</th><th style="text-align:right">错误</th><th style="text-align:right">CPU</th><th style="text-align:right">RSS</th></tr></thead><tbody><tr><td>x1</td><td style="text-align:right">743 ops/s</td><td style="text-align:right"><strong>0</strong></td><td style="text-align:right">67%</td><td style="text-align:right">74 MB</td></tr><tr><td>x3</td><td style="text-align:right">1080 ops/s</td><td style="text-align:right"><strong>0</strong></td><td style="text-align:right">74%</td><td style="text-align:right">74 MB</td></tr><tr><td>x6</td><td style="text-align:right">1138 ops/s</td><td style="text-align:right"><strong>0</strong></td><td style="text-align:right">70%</td><td style="text-align:right">75 MB</td></tr></tbody></table></div>
 <p><strong>76000+ 次操作，零错误。</strong> SQLite 没有 database is locked，asyncio 没有阻塞告警。</p>
 <p>有意思的是并发从 3 路加到 6 路，吞吐只涨 5%，CPU 停在 70%—— 这是<strong>单核饱和</strong>，Python 的 GIL 让所有 CPU 活排在一个核上。</p>
 <p>还有一个现象：文档解析的 p95 从 16ms（x1）涨到 74ms（x3）再到 <strong>159ms</strong>（x6）。 延迟涨了 10 倍，吞吐只涨 55%。这是教科书级的<strong>队列饱和</strong>。</p>
@@ -120,11 +107,7 @@ x6    1138 ops/s  0     70%  75 MB</code></pre>
 <p>所以树莓派必须装 64 位系统。Pi 4/5 的 64 位 Pi OS 没问题，Pi 3 装 32 位就会踩。</p>
 <hr>
 <h2 id="八-树莓派怎么选">🍓 八、树莓派怎么选</h2>
-<pre><code>机型      极限吞吐     10 群真实负载  内存    判断
-Pi 5      ~1250 ops/s  CPU &lt;10%       4~8 GB  ✅ 充裕
-Pi 4      ~620 ops/s   CPU &lt;20%       2~4 GB  ✅ 推荐
-Pi 3B+    ~285 ops/s   CPU &lt;35%       1 GB    ⚠️ 别装重插件
-Zero 2 W  ~140 ops/s   CPU 约 35%     512 MB  ❌ 会 OOM</code></pre>
+<div class="table-wrap"><table><thead><tr><th>机型</th><th style="text-align:right">极限吞吐</th><th>10 群真实负载</th><th>内存</th><th>判断</th></tr></thead><tbody><tr><td>Pi 5</td><td style="text-align:right">~1250 ops/s</td><td>CPU &lt;10%</td><td>4~8 GB</td><td>✅ 充裕</td></tr><tr><td>Pi 4</td><td style="text-align:right">~620 ops/s</td><td>CPU &lt;20%</td><td>2~4 GB</td><td>✅ <strong>推荐</strong></td></tr><tr><td>Pi 3B+</td><td style="text-align:right">~285 ops/s</td><td>CPU &lt;35%</td><td>1 GB</td><td>⚠️ 别装重插件</td></tr><tr><td>Zero 2 W</td><td style="text-align:right">~140 ops/s</td><td>CPU 约 35%</td><td>512 MB</td><td>❌ 会 OOM</td></tr></tbody></table></div>
 <p><strong>Pi 4 (2GB) 就够了。</strong> 记住配合：</p>
 <ul>
 <li>USB 3.0 SSD 启动（或至少 A2 级 microSD）</li>

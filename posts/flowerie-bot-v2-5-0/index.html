@@ -27,7 +27,7 @@
 
 <h1>花璃 v2.5.0 更新公告</h1>
 <div class="meta"><span>2026-09-30</span><span>·</span><span>约 7 分钟读完</span>
-<span>·</span><span>2469 字</span>
+<span>·</span><span>2563 字</span>
 <a class="tag" href="/tags/?tag=bot">#bot</a>
 </div>
 <div class="post-extras" id="post-extras"></div>
@@ -69,12 +69,7 @@
 <hr>
 <h2 id="三-插件侧-五语言同一套写法">🔌 三、插件侧：五语言同一套写法</h2>
 <p>Python / TypeScript / Go / Rust / Java 都新增了 MCP facade，语义完全一致：</p>
-<pre><code>语言        入口
-Python      bot.mcp
-TypeScript  ctx.mcp
-Go          ctx.MCP()
-Rust        ctx.mcp()
-Java        ctx.mcp()</code></pre>
+<div class="table-wrap"><table><thead><tr><th>语言</th><th>入口</th></tr></thead><tbody><tr><td>Python</td><td><code>bot.mcp</code></td></tr><tr><td>TypeScript</td><td><code>ctx.mcp</code></td></tr><tr><td>Go</td><td><code>ctx.MCP()</code></td></tr><tr><td>Rust</td><td><code>ctx.mcp()</code></td></tr><tr><td>Java</td><td><code>ctx.mcp()</code></td></tr></tbody></table></div>
 <p>方法都是 <code>servers / tools / call / status / auth</code>。老方法（<code>bot.mcp_call</code> 之类）一个没动， 老插件照旧跑。</p>
 <p>（为了让"五语言真能用"不是嘴上说说，验收测试是<strong>真起五个插件进程</strong>、真连一个假 MCP 服务器， 断言服务端<strong>实际收到</strong>的 <code>Authorization: Bearer test-token</code> —— 写的时候还因此抓出两个 SDK 的真 bug， 比如 TS 的 <code>ctx.mcp</code> 之前压根不存在喵）</p>
 <hr>

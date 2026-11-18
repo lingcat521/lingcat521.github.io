@@ -136,6 +136,22 @@ article.post h1{margin:.2rem 0 .6rem;font-size:1.6rem;line-height:1.35;letter-sp
 .content pre{background:var(--code-bg);border:1px solid var(--line);border-radius:12px;
   padding:.9rem 1rem;overflow-x:auto;position:relative}
 .content pre code{background:none;padding:0;font-size:.88rem;line-height:1.65}
+/* 表格：横向可滚动包装 + 斑马纹 + 表头强调 */
+.content .table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:1.2rem 0;
+  border:1px solid var(--line);border-radius:12px;background:var(--card-bg)}
+.content table{border-collapse:collapse;width:100%;font-size:.9rem;min-width:100%}
+.content th,.content td{padding:.55rem .8rem;border-bottom:1px solid var(--line);
+  text-align:left;vertical-align:top;line-height:1.5}
+.content thead th{background:var(--bg-soft);font-weight:600;white-space:nowrap;
+  position:sticky;top:0;z-index:1}
+.content tbody tr:last-child td{border-bottom:none}
+.content tbody tr:nth-child(even){background:var(--bg-soft)}
+.content table code{font-size:.85em;white-space:nowrap}
+/* 窄屏：字号收紧，允许横向滑动查看完整表格 */
+@media (max-width:640px){
+  .content table{font-size:.82rem}
+  .content th,.content td{padding:.45rem .6rem}
+}
 .copy-btn{position:absolute;top:.5rem;right:.5rem;border:1px solid var(--line);background:var(--card);
   color:var(--muted);border-radius:8px;padding:.2rem .55rem;font-size:.75rem;cursor:pointer;opacity:0;transition:opacity .15s}
 .content pre:hover .copy-btn{opacity:1}

@@ -26,8 +26,8 @@
 <header>
 
 <h1>花璃 v2.19.3 更新公告</h1>
-<div class="meta"><span>2026-11-18</span><span>·</span><span>约 5 分钟读完</span>
-<span>·</span><span>1585 字</span>
+<div class="meta"><span>2026-11-18</span><span>·</span><span>约 6 分钟读完</span>
+<span>·</span><span>1739 字</span>
 <a class="tag" href="/tags/?tag=bot">#bot</a>
 </div>
 <div class="post-extras" id="post-extras"></div>
@@ -55,9 +55,7 @@
 <hr>
 <h2 id="二-两个开关-别搞混">💸 二、两个开关，别搞混</h2>
 <p>这是我想了半天才拆清楚的：</p>
-<pre><code>开关                      管什么                  关掉会怎样
-SEARCH_PAID_ENABLED       允不允许花钱（总闸）    把 deepseek-native 从执行链里彻底剔除，
-SEARCH_DEEPSEEK_PRIORITY  允许之后，要不要排第一  不自动前置，但配置里写了它还是会用</code></pre>
+<div class="table-wrap"><table><thead><tr><th>开关</th><th>管什么</th><th>关掉会怎样</th></tr></thead><tbody><tr><td><code>SEARCH_PAID_ENABLED</code></td><td><strong>允不允许花钱</strong>（总闸）</td><td>把 <code>deepseek-native</code> 从执行链里<strong>彻底剔除</strong>，就算你手动写进 <code>SEARCH_ENGINES</code> 也不用</td></tr><tr><td><code>SEARCH_DEEPSEEK_PRIORITY</code></td><td>允许之后，<strong>要不要排第一</strong></td><td>不自动前置，但配置里写了它还是会用</td></tr></tbody></table></div>
 <p>一句话：<strong>PAID 是「能不能用」，PRIORITY 是「排不排前面」</strong>。</p>
 <p>我一开始只做了 PRIORITY，后来发现不对劲——那只能控制顺序，管不住「到底允不允许花这个钱」。 加完 PAID 才算真的把闸门装上了。</p>
 <p>还有个细节：<strong><code>.env</code> 里留着 <code>sk-original</code> 这种模板值，会被识别成「未配置」</strong>。 不然链路每次都要先去打一个必然 401 的端点，白白慢一秒。</p>

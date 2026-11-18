@@ -1,4 +1,4 @@
-/* 极简 Markdown 渲染（零依赖）——够用就好：标题/列表/引用/代码块/链接/粗斜体/分割线 */
+/* 极简 Markdown 渲染（零依赖）——标题/列表/引用/代码块/链接/粗斜体/分割线/表格 */
 (function () {
   "use strict";
 
@@ -23,6 +23,55 @@
 
   function slugId(t) {
     return String(t).replace(/[^\w\u4e00-\u9fa5]+/g, "-").replace(/^-|-$/g, "") || "h";
+  }
+
+  /* 把 |a|b| 拆成单元格（支持转义 \|） */
+  function splitCells(row) {
+    var s = row.trim();
+    if (s.charAt(0) === "|") s = s.slice(1);
+    if (s.slice(-1) === "|") s = s.slice(0, -1);
+    var cells = [], buf = "", esc = false;
+    for (var k = 0; k < s.length; k++) {
+      var ch = s.charAt(k);
+      if (esc) { buf += ch; esc = false; continue; }
+      if (ch === "\\") { esc = true; continue; }
+      if (ch === "|") { cells.push(buf.trim()); buf = ""; continue; }
+      buf += ch;
+    }
+    cells.push(buf.trim());
+    return cells;
+  }
+
+  /* 表格渲染：第一行表头，第二行对齐标记，其余为数据行 */
+  function renderTable(rows) {
+    if (rows.length < 2) return "";
+    var header = splitCells(rows[0]);
+    var aligns = splitCells(rows[1]).map(function (c) {
+      var l = c.charAt(0) === ":", r = c.charAt(c.length - 1) === ":";
+      if (l && r) return "center";
+      if (r) return "right";
+      return "left";
+    });
+    var body = rows.slice(2);
+    var ncol = header.length;
+
+    function cell(tag, text, idx) {
+      var al = aligns[idx] || "left";
+      var style = al !== "left" ? ' style="text-align:' + al + '"' : "";
+      return "<" + tag + style + ">" + inline(text) + "</" + tag + ">";
+    }
+
+    var h = "<div class=\"table-wrap\"><table><thead><tr>";
+    for (var c = 0; c < ncol; c++) h += cell("th", header[c] || "", c);
+    h += "</tr></thead><tbody>";
+    for (var r = 0; r < body.length; r++) {
+      var cells = splitCells(body[r]);
+      h += "<tr>";
+      for (var c2 = 0; c2 < ncol; c2++) h += cell("td", cells[c2] || "", c2);
+      h += "</tr>";
+    }
+    h += "</tbody></table></div>";
+    return h;
   }
 
   function render(src) {
@@ -95,6 +144,19 @@
         if (list !== "ol") { closeList(); html.push("<ol>"); list = "ol"; }
         html.push("<li>" + inline(t.replace(/^\d+[.)]\s+/, "")) + "</li>");
         i++; continue;
+      }
+
+      /* 表格：行首 | 且下一行是分隔行（| :--- | ---: |） */
+      if (t.charAt(0) === "|" && i + 1 < lines.length &&
+          /^\|?[\s:-]*-[\s:-]*\|/.test(lines[i + 1].trim()) &&
+          lines[i + 1].trim().indexOf("-") !== -1) {
+        flushPara(); closeList();
+        var tbl = [];
+        while (i < lines.length && lines[i].trim().charAt(0) === "|") {
+          tbl.push(lines[i].trim()); i++;
+        }
+        html.push(renderTable(tbl));
+        continue;
       }
 
       /* 普通段落 */

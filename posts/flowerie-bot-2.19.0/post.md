@@ -26,16 +26,13 @@ def webui_render(page, context):
 
 五种语言同一套结构：
 
-
-```
-SDK         页面构造入口
-Python      webui.page(*blocks, form=...)
-TypeScript  webuiView.page(blocks, form)
-Go          flowerie.WebUIPage(form, blocks...)
-Rust        webui_view::page(blocks, Some(form))
-Java        FloweriePlugin.WebUIView.page(blocks, fo
-```
-
+| SDK | 页面构造入口 |
+| :--- | :--- |
+| Python | `webui.page(*blocks, form=...)` |
+| TypeScript | `webuiView.page(blocks, form)` |
+| Go | `flowerie.WebUIPage(form, blocks...)` |
+| Rust | `webui_view::page(blocks, Some(form))` |
+| Java | `FloweriePlugin.WebUIView.page(blocks, form)` |
 
 组件：文字 / 状态 / 日志 / 表格（1–12 列 × 500 行，分页 1–50）。
 表单：每页 1 个，1–32 字段，类型 `text` / `textarea` / `integer` / `boolean` / `select`。
@@ -49,20 +46,17 @@ Java        FloweriePlugin.WebUIView.page(blocks, fo
 
 插件以前只能收发消息，现在能调宿主能力了，**全部走权限闸门**（manifest 声明 + 管理员批准）：
 
-
-```
-类别       action
-画像       profile_get / profile_set_section / prof
-搜索       web_search
-知识       knowledge_list
-人格/昵称  persona_resolve / nickname_resolve
-QQ空间     qzone_history / qzone_rights / qzone_pub
-自动化     automation_status / schedule_register /
-私聊       send_private_message / user_history
-群管理     get_group_members / group_ban / group_ki
-文档解析   file_parse / file_parse_local / file_par
-```
-
+| 类别 | action |
+| :--- | :--- |
+| 画像 | `profile_get` / `profile_set_section` / `profile_delete` |
+| 搜索 | `web_search` |
+| 知识 | `knowledge_list` |
+| 人格/昵称 | `persona_resolve` / `nickname_resolve` |
+| QQ空间 | `qzone_history` / `qzone_rights` / `qzone_publish` |
+| 自动化 | `automation_status` / `schedule_register` / `schedule_list` / `schedule_cancel` |
+| 私聊 | `send_private_message` / `user_history` |
+| 群管理 | `get_group_members` / `group_ban` / `group_kick` / `group_admin` / `group_whole_ban` / `group_rename` / `group_card` / `group_title` / `group_shut_list` |
+| 文档解析 | `file_parse` / `file_parse_local` / `file_parse_status` |
 
 配套的底层也改了：自动化模块统一吐 `last_run`（供 `automation_status`）、
 画像支持按群分页、MCP 客户端能读 `resources` / `prompts`（原来只有 `tools`）。
@@ -105,14 +99,11 @@ QQ空间     qzone_history / qzone_rights / qzone_pub
 
 现在：
 
-
-```
-键                               作用
-FILE_PARSE_ENABLED               总开关
-FILE_PARSE_GROUP_UPLOAD_ENABLED  群文件自动解析单独开关
-FILE_PARSE_FORMATS               格式白名单（默认 txt,pdf,docx,xlsx,csv）
-```
-
+| 键 | 作用 |
+| :--- | :--- |
+| `FILE_PARSE_ENABLED` | 总开关 |
+| `FILE_PARSE_GROUP_UPLOAD_ENABLED` | 群文件自动解析单独开关 |
+| `FILE_PARSE_FORMATS` | 格式白名单（默认 `txt,pdf,docx,xlsx,csv`） |
 
 顺手修了个 `KeyError`：`pending_files.pop(key)` 改成 `pop(key, None)`——
 键不存在时以前会直接抛异常。

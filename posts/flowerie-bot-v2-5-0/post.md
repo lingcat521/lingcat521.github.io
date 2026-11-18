@@ -53,16 +53,13 @@ MCP_SERVERS=[
 
 Python / TypeScript / Go / Rust / Java 都新增了 MCP facade，语义完全一致：
 
-
-```
-语言        入口
-Python      bot.mcp
-TypeScript  ctx.mcp
-Go          ctx.MCP()
-Rust        ctx.mcp()
-Java        ctx.mcp()
-```
-
+| 语言 | 入口 |
+| :--- | :--- |
+| Python | `bot.mcp` |
+| TypeScript | `ctx.mcp` |
+| Go | `ctx.MCP()` |
+| Rust | `ctx.mcp()` |
+| Java | `ctx.mcp()` |
 
 方法都是 `servers / tools / call / status / auth`。老方法（`bot.mcp_call` 之类）一个没动，
 老插件照旧跑。
