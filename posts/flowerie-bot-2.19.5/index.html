@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="auto" data-post-slug="flowerie-bot-2.19.5">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>花璃 v2.19.5 更新公告 · 铃酱の小站</title>
+<meta name="description" content="模型探测 + 群消息独立分析（引战+喜好）+ DDG 解析换掉正则 + ConfigService 拆分">
+<meta property="og:title" content="花璃 v2.19.5 更新公告 · 铃酱の小站">
+<meta property="og:description" content="模型探测 + 群消息独立分析（引战+喜好）+ DDG 解析换掉正则 + ConfigService 拆分">
+<meta property="og:type" content="article">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/assets/style.css?v=1f8ac709">
+<link rel="alternate" type="application/atom+xml" title="铃酱の小站" href="/atom.xml">
+<script>(function(){try{var t=localStorage.getItem("theme")||"auto";document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
+</head>
+<body>
+<div id="progress"></div>
+<header class="site-header"><div class="wrap header-inner">
+<a class="brand" href="/"><span class="brand-mark">❀</span> 铃酱の小站</a>
+<nav class="nav"><a href="/">首页</a><a href="/archive/">归档</a><a href="/tags/">标签</a><a href="/about/">关于</a>
+<a href="https://github.com/lingcat521" target="_blank" rel="noopener">GitHub</a></nav>
+<button id="theme-toggle" class="icon-btn" type="button" aria-label="切换主题" title="切换主题">🌗</button>
+</div></header>
+<main class="wrap fade-in">
+<article class="post">
+<header>
+
+<h1>花璃 v2.19.5 更新公告</h1>
+<div class="meta"><span>2026-11-24</span><span>·</span><span>约 5 分钟读完</span>
+<span>·</span><span>1852 字</span>
+<a class="tag" href="/tags/?tag=bot">#bot</a>
+</div>
+<div class="post-extras" id="post-extras"></div>
+</header>
+<div class="toc" id="toc"><strong>目录</strong></div>
+<div class="content">
+<h2 id="花璃-v2-19-5-更新公告">🌸 花璃 v2.19.5 更新公告</h2>
+<p>承接 v2.19.4——这轮三件事：<strong>探测模型</strong>、<strong>独立分析群消息</strong>、<strong>把正则换掉</strong>。</p>
+<p>顺带我被自己的架构门禁拦了一次，也漏提交了一次。都写在下面。</p>
+<hr>
+<h2 id="一-模型探测-哪个能用一个按钮看清">🔍 一、模型探测：哪个能用一个按钮看清</h2>
+<p>之前想知道「我配的那几个模型接口还活着吗」，只能去各自的页面点测试， 而且聊天、视觉、引战、向量、重排各点一遍。</p>
+<p>现在有一个统一的探测：</p>
+<pre><code>bot.ping_models(target="all")</code></pre>
+<p>它只发<strong>固定的最小测试请求</strong>——不带你的任何数据，不会把聊天记录发出去。返回每个端点的：</p>
+<div class="table-wrap"><table><thead><tr><th>项</th><th>说明</th></tr></thead><tbody><tr><td>可达性</td><td>能不能连上、认证过不过</td></tr><tr><td>耗时</td><td>这次探测花了多久</td></tr><tr><td>错误</td><td>失败时具体是哪一类（401 / 超时 / DNS）</td></tr></tbody></table></div>
+<p>新权限叫 <code>ping_models</code>。为什么单独开一个权限——因为它<strong>会真的调模型</strong>， 按 token 计费，不能让插件随便刷。</p>
+<hr>
+<h2 id="二-群消息独立分析-引战和喜好-一次调用">🧠 二、群消息独立分析：引战和喜好，一次调用</h2>
+<p>之前引战检测（<code>TOXIC_*</code>）是一套，群友画像提炼是另一套，两条独立的模型调用。</p>
+<p>这次改成<strong>一次调用同时产出两样</strong>：</p>
+<ul>
+<li><strong>引战判定</strong>：这条消息是不是在挑事</li>
+<li><strong>喜好原话</strong>：谁说了「我最近迷上了钓鱼」这种可以直接存进画像的话</li>
+</ul>
+<p>用<strong>独立模型</strong>，不占主对话的额度。配置项拉了 14 个：</p>
+<pre><code>MESSAGE_ANALYSIS_API_URL / API_KEY / MODEL          # 共用一套
+MESSAGE_ANALYSIS_PREFERENCE_*                        # 喜好链路单独覆盖
+MESSAGE_ANALYSIS_TOXIC_*                             # 引战链路单独覆盖
+MESSAGE_ANALYSIS_GROUP_IDS                           # 只分析这些群
+MESSAGE_ANALYSIS_TIMEOUT                             # 3-30 秒
+MESSAGE_ANALYSIS_DAILY_LIMIT                         # 全局日限额，默认 1000
+MESSAGE_ANALYSIS_GROUP_DAILY_LIMIT                   # 单群日限额，默认 300</code></pre>
+<p>两条限额是重点。这个功能是<strong>每条消息都可能触发一次模型调用</strong>，没有闸就是无底洞。 所以默认值给得不激进：单群一天 300 次，够用，但烧不穿。</p>
+<hr>
+<h2 id="三-DDG-解析-正则换掉了">🧹 三、DDG 解析：正则换掉了</h2>
+<p>你说过一句「受不了再用正则表达式匹配了」，我完全同意。</p>
+<p>DuckDuckGo 的结果卡片之前是这么抓的：一堆 <code>re.findall</code> 匹配 <code>class="result__a"</code> 之类。 问题很直接——<strong>对方改一次 class 名，全部失效</strong>，而且不报错，只是搜不到东西。</p>
+<p>现在换成 <code>html.parser.HTMLParser</code> 的子类（<code>src/services/ddg_html.py</code>，57 行）：</p>
+<pre><code>class DuckDuckGoResults(HTMLParser):
+    def handle_starttag(self, tag, attrs): ...
+    def handle_data(self, data): ...</code></pre>
+<p>代码多了一点，但它是<strong>按 HTML 结构走</strong>的，不是按字符串碰运气。</p>
+<hr>
+<h2 id="四-被自己的门禁拦了一次">🏗️ 四、被自己的门禁拦了一次</h2>
+<p>新增的群消息分析读写，被塞进了 <code>config_service.py</code>。那个文件从 700 行涨到 <strong>774 行</strong>。</p>
+<p>然后架构门禁报警了：</p>
+<pre><code>AssertionError: src/services/config_service.py 行数 774 超限 700（防上帝类回归）</code></pre>
+<p>这个 700 是<strong>我自己设的</strong>。设的时候就写了注释：「数据声明已拆到 config_schema.py」。 结果新代码又把它填回去了。</p>
+<p>按职责拆开：</p>
+<pre><code>config_service.py                  774 → 671 行
+message_analysis_service.py        99 行（新，群消息分析配置读写）
+password.py                        47 行（新，scrypt 口令哈希）</code></pre>
+<p>密码那组为什么要拆——它是纯函数，无状态，本来就不该住在配置服务里。 顺手把 <code>verify_password</code> 的旧明文兼容也搬过去了，13 条密码测试全过。</p>
+<hr>
+<h2 id="五-我漏提交了一次">🐛 五、我漏提交了一次</h2>
+<p>这个必须写下来。</p>
+<p>合并时我用了白名单：</p>
+<pre><code>git add -A src/ tests/ docs/ CHANGELOG.md README.md pyproject.toml
+#        ↑ 少了 plugin_sdk/ 和 sdk/</code></pre>
+<p>结果本地测试全过，CI 挂了：</p>
+<pre><code>AttributeError: 'FlowerieBot' object has no attribute 'message_analysis_update'</code></pre>
+<p>原因是测试会执行 <code>shutil.copytree(仓库/plugin_sdk/flowerie_sdk, 临时插件目录)</code>， 而仓库里的 SDK 还是旧版——1252 行，没有新方法。我本地是 1263 行。</p>
+<p><strong>本地过、CI 挂</strong>，就是这种最难受的差异。补提交 <code>9364b24</code> 后全绿。</p>
+<p>教训：合并时先 <code>git status</code> 看一眼全量，别用白名单。</p>
+<hr>
+<h2 id="六-SDK-五语言都同步了">📋 六、SDK 五语言都同步了</h2>
+<div class="table-wrap"><table><thead><tr><th>语言</th><th>新方法</th></tr></thead><tbody><tr><td>Python</td><td><code>bot.ping_models()</code> / <code>message_analysis_get()</code> / <code>update()</code></td></tr><tr><td>Go</td><td><code>Plugin.PingModels()</code> / <code>MessageAnalysisGet()</code> / <code>MessageAnalysisUpdate()</code></td></tr><tr><td>Java</td><td><code>plugin.pingModels()</code> / <code>messageAnalysisGet()</code> / <code>messageAnalysisUpdate()</code></td></tr><tr><td>Rust</td><td><code>plugin.ping_models()</code> / <code>message_analysis_get()</code> / <code>message_analysis_update()</code></td></tr><tr><td>TypeScript</td><td><code>plugin.pingModels()</code> / <code>messageAnalysisGet()</code> / <code>messageAnalysisUpdate()</code></td></tr></tbody></table></div>
+<p>协议还是 <strong>v1</strong>，旧插件一行不用改。</p>
+<hr>
+<h2 id="七-测试">🧪 七、测试</h2>
+<pre><code>2400+ passed / 0 failed</code></pre>
+<p>分批跑的——这台机器一次跑全量到 60% 会被系统杀掉，改成每批 40-50 个文件。</p>
+<p>新增的：</p>
+<ul>
+<li><code>test_model_ping.py</code>：3 条，探测请求形态、错误分类、不泄漏数据</li>
+<li><code>test_message_analysis.py</code>：9 条，配置保存、密钥清除、热更新</li>
+<li><code>test_message_analysis_api.py</code>：2 条，HTTP API + 真实 Python SDK 传输</li>
+<li><code>test_chat_parsing_regressions.py</code>：8 条，DDG 解析换实现后的回归</li>
+</ul>
+<p>架构门禁、密码、新功能四套加起来 44 条，全绿。</p>
+<hr>
+<p>模型探测是为了少点几次页面，群消息分析是为了省一次模型调用， 换掉正则是因为它确实该换。</p>
+<p>这轮没什么花活。</p>
+</div>
+</article>
+<div id="post-below"></div>
+<div class="post-nav"><a href="/posts/flowerie-bot-2.19.4/">← 花璃 v2.19.4 更新公告</a><span></span></div>
+</main>
+<footer class="site-footer"><div class="wrap">© 2026 铃酱 · <a href="/atom.xml">RSS</a> · 
+<a href="https://github.com/lingcat521" target="_blank" rel="noopener">GitHub</a> · 托管于 GitHub Pages · 手写 HTML/CSS/JS，零依赖</div></footer>
+<button id="to-top" type="button" aria-label="回到顶部">↑</button>
+<script src="/assets/app.js?v=1f8ac709" defer></script>
+<script src="/assets/extras.js?v=1f8ac709" defer></script>
+
+</body>
+</html>

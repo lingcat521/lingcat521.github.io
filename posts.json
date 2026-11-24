@@ -1,6 +1,20 @@
 {
   "posts": [
     {
+      "title": "花璃 v2.19.5 更新公告",
+      "slug": "flowerie-bot-2.19.5",
+      "date": "2026-11-24",
+      "tags": [
+        "bot"
+      ],
+      "summary": "模型探测 + 群消息独立分析（引战+喜好）+ DDG 解析换掉正则 + ConfigService 拆分",
+      "created": 1795532918425,
+      "pinned": false,
+      "private": false,
+      "read": 5,
+      "chars": 1852
+    },
+    {
       "title": "花璃 v2.19.4 更新公告",
       "slug": "flowerie-bot-2.19.4",
       "date": "2026-11-19",
